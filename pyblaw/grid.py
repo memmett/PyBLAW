@@ -1,8 +1,8 @@
 """PyBLAW Grid class.
 
-   $Id: grid.py,v 1.3 2009/09/03 16:50:09 memmett Exp $
+   XXX: remove pyweno dependency
 
-   """
+"""
 
 import pyblaw.base
 import pyweno.grid

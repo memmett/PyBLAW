@@ -1,6 +1,6 @@
-"""PyBLAW Dumper class.
+"""PyBLAW abstract Dumper class.
 
-   $Id: dumper.py,v 1.3 2009/10/04 23:10:05 memmett Exp $
+   XXX: add an HDF5 dumper
 
 """
 

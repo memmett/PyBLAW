@@ -1,7 +1,5 @@
 """PyBLAW Solver class.
 
-   $Id: solver.py,v 1.5 2009/10/04 23:10:05 memmett Exp $
-
 """
 
 import numpy as np

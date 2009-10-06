@@ -1,6 +1,6 @@
-"""PyBLAW Reconstructor class.
+"""PyBLAW abstract Reconstructor class.
 
-   $Id: reconstructor.py,v 1.3 2009/10/04 23:10:05 memmett Exp $
+   XXX: add a few concrete reconstructors
 
 """
 

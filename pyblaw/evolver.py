@@ -1,6 +1,4 @@
-"""PyBLAW Evolver class.
-
-   $Id: evolver.py,v 1.5 2009/10/02 02:49:44 memmett Exp $
+"""PyBLAW abstract Evolver class and a few concrete evolvers.
 
 """
 
@@ -68,7 +66,7 @@ class Evolver(pyblaw.base.Base):
 ######################################################################
 
 class FE(Evolver):
-    """Forward-Euler time-stepper."""
+    """Forward-Euler evolver."""
 
     def allocate(self):
 
@@ -103,7 +101,7 @@ class FE(Evolver):
 ######################################################################
 
 class ERK2(Evolver):
-    """Explicit two-stage Runge-Kutta time-stepper."""
+    """Explicit two-stage Runge-Kutta evolver."""
 
     def allocate(self):
 
@@ -156,7 +154,7 @@ class ERK2(Evolver):
 ######################################################################
 
 class SSPERK3(Evolver):
-    """Strong stability-conserving explicit three-stage Runge-Kutta time-stepper."""
+    """Strong stability-conserving explicit three-stage Runge-Kutta evolver."""
 
     def allocate(self):
 

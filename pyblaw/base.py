@@ -1,7 +1,5 @@
 """PyBLAW Base class.
 
-   $Id: base.py,v 1.3 2009/10/02 02:49:44 memmett Exp $
-
 """
 
 class Base(object):

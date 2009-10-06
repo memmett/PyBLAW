@@ -1,0 +1,19 @@
+PyBLAW
+======
+
+PyBLAW is a python framework for solving one-dimensional system of
+hyperbolic balance laws.
+
+Please see
+
+  http://www.math.ualberta.ca/~memmett/pyblaw/
+
+for more information.
+
+
+License
+-------
+
+Please see LICENSE for copyright information.
+
+

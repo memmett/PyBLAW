@@ -1,6 +1,6 @@
-"""PyBLAW Source class.
+"""PyBLAW abstract Source class.
 
-   $Id: source.py,v 1.4 2009/10/02 02:49:45 memmett Exp $
+   XXX: add a concrete 3-point quadrature source
 
 """
 

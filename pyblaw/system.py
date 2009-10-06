@@ -1,6 +1,6 @@
-"""PyBLAW system class.
+"""PyBLAW abstract System class.
 
-   $Id: system.py,v 1.5 2009/10/02 02:49:45 memmett Exp $
+   XXX: add a concrete linear system class
 
 """
 

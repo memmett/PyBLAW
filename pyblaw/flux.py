@@ -1,6 +1,6 @@
-"""PyBLAW Flux class.
+"""PyBLAW abstract Flux class.
 
-   $Id: flux.py,v 1.5 2009/10/02 02:49:45 memmett Exp $
+   XXX: add some concrete fluxes
 
 """
 
