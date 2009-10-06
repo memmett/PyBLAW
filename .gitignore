@@ -1,9 +1,19 @@
+# backup files
 *~
 
-MANIFEST
-dist
-build
-PyBLAW*
-
+# compiled python
 *.pyc
 *.pyo
+
+# setuptools
+build
+dist
+PyBLAW*
+
+# sphinx
+_build
+_doctrees
+
+
+
+
