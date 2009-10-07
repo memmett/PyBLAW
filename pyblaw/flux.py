@@ -1,8 +1,4 @@
-"""PyBLAW abstract Flux class.
-
-   XXX: add some concrete fluxes
-
-   XXX: add a 'linear flux' as a c extension
+"""PyBLAW abstract Flux and concrete LinearLFFlux classes.
 
 """
 
@@ -60,7 +56,7 @@ class LinearLFFlux(Flux):
     """Linear Lax-Friedrichs flux.
 
        This flux uses the Lax-Friedrichs numerical flux associated
-       with the linear flux A, and is implemented in C.
+       with the linear flux A, and is implemented in C (clinearflux).
 
        Arguments:
 

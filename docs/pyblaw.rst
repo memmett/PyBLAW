@@ -23,6 +23,7 @@ Flux
 .. autoclass:: pyblaw.flux.Flux
    :members:
 
+.. autoclass:: pyblaw.flux.LinearLFFlux
 
 Source
 ------
