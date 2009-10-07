@@ -55,6 +55,8 @@ Dumper
 .. autoclass:: pyblaw.dumper.Dumper
    :members:
 
+.. autoclass:: pyblaw.dumper.H5PYDumper
+
 
 Solver
 ------
