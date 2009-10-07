@@ -1,9 +1,11 @@
 # backup files
 *~
 
-# compiled python
+# compiled python and shared objects
 *.pyc
 *.pyo
+*.so
+
 
 # setuptools
 build

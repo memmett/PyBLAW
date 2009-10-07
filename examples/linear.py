@@ -36,94 +36,20 @@ import pyblaw.dumper
 import pyblaw.solver
 import pyweno.stencil
 
-######################################################################
-# system
-#
 
-class ExampleLinearSystem(pyblaw.system.System):
-    """Example linear system.
+def initial_condition(x, t):
 
-       To use:
+    if x < -t or x > t:
+        return np.zeros(3)
 
-         1. set p, A, B for your system;
-         2. set the initial conditions q1, q2, and q3 (1st, 2nd, and
-            3rd components of respectively); and
-         3. tweak the 'mass' if you want.
-
-    """
-
-    p = 3
-    A = np.matrix('2 1 0; 1 -2.1 0; 0 0 0')
-    B = np.matrix('0 0 0.8; 0 0 0.5; 0.1 0.1 0')
-
-    def q1(self, x, t):
-        if t <= 0.0:
-            return 0.0
-
-        if x < -t or x > t:
-            return 0.0
-
-        return math.cos(math.pi/2.0 * x/t)
-
-    def q2(self, x, t):
-        return 0.0
-
-    def q3(self, x, t):
-        return 0.0
-
-    def initial_conditions(self, t, q):
-        q[:,0] = self.grid.average(lambda x: self.q1(x, t))
-        q[:,1] = self.grid.average(lambda x: self.q2(x, t))
-        q[:,2] = self.grid.average(lambda x: self.q3(x, t))
-
-    def mass(self, q):
-        return np.dot(q[:,0], self.grid.sizes())
-
-
-######################################################################
-# flux
-#
-
-class LinearFlux(pyblaw.flux.Flux):
-    """Linear flux.
-
-       The net flux is computed by taking the Lax-Friedrichs flux
-       associated with the linear flux A.
-
-       To use: don't do anything.
-
-    """
-
-    def __init__(self, A):
-        self.A = A
-
-    def pre_run(self, **kwargs):
-        self.dx = self.grid.x[1:] - self.grid.x[:-1]
-        self.alpha = max(abs(scipy.linalg.eigvals(self.A)))
-
-    def f_q(self, q):
-        """Flux (linear)."""
-        return np.dot(self.A, q)
-
-    def flux_lf(self, ql, qr):
-        """Lax-Friedrichs flux."""
-        return 0.5 * (self.f_q(ql) + self.f_q(qr) - self.alpha * (qr - ql) )
-
-    def flux(self, ql, qr, f):
-        """Net flux."""
-
-        N  = self.grid.N
-        dx = self.dx
-
-        for i in xrange(N-1):
-            fl = self.flux_lf(ql[i],   qr[i])
-            fr = self.flux_lf(ql[i+1], qr[i+1])
-            f[i] = - (fr - fl) / dx[i]
+    return np.array([ math.cos(0.5*math.pi*x/t), 0.0, 0.0 ])
 
 
 ######################################################################
 # source
 #
+
+# XXX: this is crap
 
 class LinearSource(pyblaw.source.Source):
     """Linear source.
@@ -149,18 +75,22 @@ class LinearSource(pyblaw.source.Source):
 
     def source(self, qq, s):
 
-        N = self.grid.N
-        w1 = self.w1
-        w2 = self.w2
-        w3 = self.w3
+        pass
 
-        for i in xrange(N):
-            s[i] = np.dot(self.B, w1 * qq[i*3+0,:] + w2 * qq[i*3+1,:] + w3 * qq[i*3+2,:])
+#         N = self.grid.N
+#         w1 = self.w1
+#         w2 = self.w2
+#         w3 = self.w3
+
+#         for i in xrange(N):
+#             s[i] = np.dot(self.B, w1 * qq[i*3+0,:] + w2 * qq[i*3+1,:] + w3 * qq[i*3+2,:])
 
 
 ######################################################################
 # reconstructor
 #
+
+# XXX: move this to pyblaw
 
 class PolynomialReconstructor(pyblaw.reconstructor.Reconstructor):
     """Polynomial reconstructor.
@@ -241,61 +171,12 @@ class PolynomialReconstructor(pyblaw.reconstructor.Reconstructor):
             qq[:,m] = self.QUAD * q[:,m]
 
 
-######################################################################
-# dumper
-#
-
-class HDF5Dumper(pyblaw.dumper.Dumper):
-    """HDF5 dumper.
-
-       The solution is dumped to an HDF5 file using h5py.
-
-       To use: tweak if you need to...
-
-    """
-
-    def __init__(self, output='output.hdf5', parameters=None):
-        self.output = output
-        self.parameters = parameters
-
-
-    def init_dump(self):
-
-        # initialise hdf
-        hdf = h5.File(self.output, 'w')
-
-        # x and t dimensions
-        sgrp = hdf.create_group('dims')
-        sgrp.create_dataset('xdim', data=self.x)
-        sgrp.create_dataset('tdim', data=self.t)
-
-        # parameters
-        sgrp = hdf.create_group('parameters')
-        for key, value in self.parameters.iteritems():
-            sgrp.attrs[key] = str(value)
-
-        # data sets (solution q)
-        sgrp = hdf.create_group('data')
-        dset = sgrp.create_dataset('q', (len(self.t), len(self.x), self.system.p))
-
-        # done
-        hdf.close()
-
-        self.last = 0
-
-
-    def dump(self, q):
-
-        hdf = h5.File(self.output, 'a')
-        dset = hdf['data/q']
-        dset[self.last,:,:] = q[:,:]
-        hdf.close()
-
-        self.last = self.last + 1
 
 ######################################################################
 # solver
 #
+
+# XXX: move this to pyblaw
 
 class ExampleLinearSolver(pyblaw.solver.Solver):
     """Example solver for a linear system.
@@ -304,15 +185,18 @@ class ExampleLinearSolver(pyblaw.solver.Solver):
 
     """
 
+    A = np.matrix('2.0 0.0 0.0; 0.0 -1.0 0.0; 0.0 0.0 -2.0')
+    B = np.matrix('0.0 0.0 0.0; 0.0 0.0 0.0; 0.0 -0.1 0.1')
+
     def __init__(self, order=8, cell_boundaries=None, times=None):
 
         grid          = pyblaw.grid.Grid(boundaries=cell_boundaries)
-        system        = ExampleLinearSystem()
+        system        = pyblaw.system.LinearSystem(self.A, self.B, initial_condition)
         reconstructor = PolynomialReconstructor(order)
-        flux          = LinearFlux(system.A)
+        flux          = pyblaw.flux.LinearLFFlux(system.A)
         source        = LinearSource(system.B)
         evolver       = pyblaw.evolver.SSPERK3()
-        dumper        = HDF5Dumper('output.hdf5', parameters={'A': system.A, 'B': system.B})
+        dumper        = pyblaw.dumper.H5PYDumper('output.h5')
 
         pyblaw.solver.Solver.__init__(self,
                                       grid=grid,

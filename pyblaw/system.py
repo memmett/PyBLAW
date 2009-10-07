@@ -2,6 +2,8 @@
 
 """
 
+import numpy as np
+
 import pyblaw.base
 
 
@@ -49,7 +51,7 @@ class System(pyblaw.base.Base):
 
 ######################################################################
 
-class LinearSystem(pyblaw.system.System):
+class LinearSystem(System):
     """Linear system.
 
        Define a linear system of hyperbolic equations of the form

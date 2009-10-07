@@ -4,7 +4,7 @@
 import h5py as h5
 import matplotlib.pyplot as plt
 
-hdf = h5.File('output.hdf5')
+hdf = h5.File('output.h5')
 q   = hdf['data/q']
 (M, N, p) = q.shape
 
