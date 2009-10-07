@@ -1,6 +1,7 @@
+"""PyBLAW setup script."""
+
 import setuptools
 
-# XXX: change to setuptools, add dependencies
 
 setuptools.setup(
 
@@ -8,6 +9,8 @@ setuptools.setup(
     version = "0.1",
     packages = ['pyblaw'],
     zip_safe = True,
+
+    install_requires = [ "numpy >= 1.0.3", "h5py >= 1.1.0", "pyweno >= 0.1" ],
 
     author = "Matthew Emmett",
     author_email = "matthew.emmett@ualberta.ca",
