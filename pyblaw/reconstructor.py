@@ -8,15 +8,12 @@ import pyblaw.base
 import pyblaw.grid
 import pyblaw.system
 
+
 class Reconstructor(pyblaw.base.Base):
     """Abstract reconstructor.
 
        Given the cell averages q, reconstruct the unkown at various
        points.
-
-       Instance variables:
-
-         * *n* - number of quadrature points per cell
 
        Instance variables pulled from elsewhere:
 
@@ -32,8 +29,6 @@ class Reconstructor(pyblaw.base.Base):
 
     grid   = None
     system = None
-
-    n = 0                               # XXX: move this to system?
 
     def set_grid(self, grid):
         self.grid = grid

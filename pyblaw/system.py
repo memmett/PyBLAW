@@ -12,6 +12,7 @@ class System(pyblaw.base.Base):
 
        Instance variables:
 
+         * *n*          - number of quadrature points per cell (for source)
          * *p*          - number of unknowns
          * *parameters* - parameters (dictionary)
 
@@ -27,6 +28,7 @@ class System(pyblaw.base.Base):
 
     """
 
+    n = 0                               # number of quadrature points
     p = 0                               # number of unknowns
     parameters = {}                     # parameters
 
@@ -59,6 +61,8 @@ class LinearSystem(pyblaw.system.System):
          * *A*  - linear flux matrix
          * *B*  - linear source matrix
          * *q0* - initial condition (callable)
+         * *n*  - number of quadrature points
+         * *parameters* - parameters (dictionary)
 
        The initial condition function is called as q0(x, t), and
        should return a vector.
@@ -67,13 +71,17 @@ class LinearSystem(pyblaw.system.System):
 
     """
 
-    def __init__(self, A, B, q0):
+    def __init__(self, A, B, q0, n=3, parameters={}):
 
         self.p = A.shape[0]
         self.A = A
         self.B = B
 
         self.q0 = q0
+
+        self.n = n
+
+        self.parameters = parameters
 
     def initial_conditions(self, t, q):
 

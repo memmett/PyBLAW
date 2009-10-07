@@ -1,8 +1,9 @@
-"""PyBLAW abstract Dumper class.
+"""PyBLAW abstract Dumper class and an HDF5 dumper.
 
 """
 
 import h5py
+
 
 class Dumper(object):
     """Abstract dumper.
@@ -55,20 +56,18 @@ class H5PYDumper(Dumper):
          * /parameters/X - parameters
          * /data/q - cell averages of solution q
 
+       The parameters are taken from the system (pyblaw.system.System).
+
        Arguments:
 
          * *output* - output file name
-         * *parameters* - dictionary of parameters that should be
-           saved in the /parameters group
 
     """
 
 
-    def __init__(self, output='output.h5', parameters={}):
+    def __init__(self, output='output.h5'):
 
         self.output = output
-        self.parameters = parameters
-
 
     def init_dump(self):
 
@@ -82,7 +81,7 @@ class H5PYDumper(Dumper):
 
         # parameters
         sgrp = hdf.create_group("parameters")
-        for key, value in self.parameters.iteritems():
+        for key, value in self.system.parameters.iteritems():
             sgrp.attrs[key] = value
 
         # data sets (solution q)
