@@ -14,6 +14,8 @@ System
 .. autoclass:: pyblaw.system.System
    :members:
 
+.. autoclass:: pyblaw.system.LinearSystem
+
 
 Flux
 ----
