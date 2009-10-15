@@ -45,46 +45,6 @@ def initial_condition(x, t):
     return np.array([ math.cos(0.5*math.pi*x/t), 0.0, 0.0 ])
 
 
-######################################################################
-# source
-#
-
-# XXX: this is crap
-
-class LinearSource(pyblaw.source.Source):
-    """Linear source.
-
-       The net source is computed by 3-point Gaussian quadrature (see
-       LinearReconstructor).
-
-       To use: don't do anything.
-
-    """
-
-    def __init__(self, B):
-        self.B = B
-
-    def pre_run(self, **kwargs):
-
-        if self.reconstructor.n != 3:
-            raise NotImplementedError, "only 3-point quadrature supported"
-
-        self.w1 = 5.0/9.0
-        self.w2 = 8.0/9.0
-        self.w3 = 5.0/9.0
-
-    def source(self, qq, s):
-
-        pass
-
-#         N = self.grid.N
-#         w1 = self.w1
-#         w2 = self.w2
-#         w3 = self.w3
-
-#         for i in xrange(N):
-#             s[i] = np.dot(self.B, w1 * qq[i*3+0,:] + w2 * qq[i*3+1,:] + w3 * qq[i*3+2,:])
-
 
 ######################################################################
 # reconstructor
@@ -194,7 +154,7 @@ class ExampleLinearSolver(pyblaw.solver.Solver):
         system        = pyblaw.system.LinearSystem(self.A, self.B, initial_condition)
         reconstructor = PolynomialReconstructor(order)
         flux          = pyblaw.flux.LinearLFFlux(system.A)
-        source        = LinearSource(system.B)
+        source        = pyblaw.source.LinearQuad3Source(system.B)
         evolver       = pyblaw.evolver.SSPERK3()
         dumper        = pyblaw.dumper.H5PYDumper('output.h5')
 

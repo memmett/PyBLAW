@@ -31,6 +31,8 @@ Source
 .. autoclass:: pyblaw.source.Source
    :members:
 
+.. autoclass:: pyblaw.source.LinearQuad3Source
+
 
 Reconstructor
 -------------
