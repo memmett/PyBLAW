@@ -1,4 +1,4 @@
-"""PyBLAW Solver class.
+"""PyBLAW generic Solver class.
 
 """
 
@@ -186,3 +186,4 @@ class Solver(pyblaw.base.Base):
         if len(self.t_dump) > 0:
             print "data dump at t = %11.2f, mass = %11.5f" % (self.t[-1], self.system.mass(q))
             self.dumper.dump(q)
+
