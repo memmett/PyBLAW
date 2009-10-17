@@ -88,14 +88,15 @@ API
 Obtaining PyBLAW
 ----------------
 
-Currently, you need PyWENO installed to use PyBLAWs Grid class.
+Download, build, and install from source.
 
-Download, build, and install :download:`PyBLAW 0.1
-<PyBLAW-0.1.tar.gz>` from source.
+The latest source distribution is available in either zip_ or tar_
+format.  You can also obtain the source code on GitHub through the
+`PyBLAW project page`_.  You can clone the project by running::
 
-The following is helpful::
+  $ git clone git://github.com/memmett/PyBLAW
 
-  $ python setup.py develop -d <your python path>
+PyBLAW uses the Python setuptools_ package for installation.
 
 
 Contributing
@@ -105,8 +106,8 @@ Contributions are welcome!  Please send comments, suggestions, and/or
 patches to the primary author (Matthew Emmett).  You will be credited.
 
 If you plan to extend or modify PyBLAW in a more substantial way,
-please let the author know (so that we can create a central
-repository).
+please see the `PyBLAW project page`_.
+
 
 
 .. toctree::
@@ -115,3 +116,8 @@ repository).
    self
    pyblaw
    examples
+
+.. _zip: http://github.com/memmett/PyBLAW/zipball/master
+.. _tar: http://github.com/memmett/PyBLAW/tarball/master
+.. _setuptools: http://pypi.python.org/pypi/setuptools
+.. _`PyBLAW project page`: http://github.com/memmett/PyBLAW
