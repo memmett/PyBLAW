@@ -30,15 +30,15 @@ flux(double *q, double *f)
 }
 
 void
-nflux_lf(double *q_l, double *q_r, double *f)
+nflux_lf(double *q_m, double *q_p, double *f)
 {
   int j;
 
-  flux(q_l, f_m);
-  flux(q_r, f_p);
+  flux(q_m, f_m);
+  flux(q_p, f_p);
 
   for (j=0; j<p; j++)
-    f[j] = 0.5 * (f_m[j] + f_p[j] - alpha * (q_r[j] - q_l[j]) );
+    f[j] = 0.5 * (f_m[j] + f_p[j] - alpha * (q_p[j] - q_m[j]) );
 }
 
 /*********************************************************************/
@@ -92,8 +92,8 @@ PyObject *
 linear_lf_flux(PyObject *self, PyObject *args)
 {
   long int i;
-  PyObject *ql_py, *qr_py, *f_py;
-  double *ql, *qr, *f;
+  PyObject *qm_py, *qp_py, *f_py;
+  double *qm, *qp, *f;
 
   int j;
 
@@ -101,22 +101,22 @@ linear_lf_flux(PyObject *self, PyObject *args)
    * parse options
    */
 
-  if (! PyArg_ParseTuple(args, "OOO", &ql_py, &qr_py, &f_py))
+  if (! PyArg_ParseTuple(args, "OOO", &qm_py, &qp_py, &f_py))
     return NULL;
 
-  if ((PyArray_FLAGS(ql_py) & NPY_IN_ARRAY) != NPY_IN_ARRAY) {
-    PyErr_SetString(PyExc_TypeError, "ql is not contiguous and/or aligned");
+  if ((PyArray_FLAGS(qm_py) & NPY_IN_ARRAY) != NPY_IN_ARRAY) {
+    PyErr_SetString(PyExc_TypeError, "qm is not contiguous and/or aligned");
     return NULL;
   }
-  Py_INCREF(ql_py);
-  ql = (double *) PyArray_DATA(ql_py);
+  Py_INCREF(qm_py);
+  qm = (double *) PyArray_DATA(qm_py);
 
-  if ((PyArray_FLAGS(qr_py) & NPY_IN_ARRAY) != NPY_IN_ARRAY) {
-    PyErr_SetString(PyExc_TypeError, "qr is not contiguous and/or aligned");
+  if ((PyArray_FLAGS(qp_py) & NPY_IN_ARRAY) != NPY_IN_ARRAY) {
+    PyErr_SetString(PyExc_TypeError, "qp is not contiguous and/or aligned");
     return NULL;
   }
-  Py_INCREF(qr_py);
-  qr = (double *) PyArray_DATA(qr_py);
+  Py_INCREF(qp_py);
+  qp = (double *) PyArray_DATA(qp_py);
 
   if ((PyArray_FLAGS(f_py) & NPY_IN_ARRAY) != NPY_IN_ARRAY) {
     PyErr_SetString(PyExc_TypeError, "f is not contiguous and/or aligned");
@@ -132,18 +132,16 @@ linear_lf_flux(PyObject *self, PyObject *args)
   N = PyArray_DIM(f_py, 0);
   p = PyArray_DIM(f_py, 1);
 
-  nflux_lf(ql, qr, f_r);
+  nflux_lf(qm, qp, f_r);
 
   for (i=1; i<N; i++) {
     for (j=0; j<p; j++)
       f_l[j] = f_r[j];
 
-    nflux_lf(ql + (i+1)*p, qr + (i+1)*p, f_r);
+    nflux_lf(qm + (i+1)*p, qp + (i+1)*p, f_r);
 
-    for (j=0; j<p; j++) {
+    for (j=0; j<p; j++)
       f[i*p+j] = - ( f_r[j] - f_l[j] ) / dx[i];
-      // printf("f[%d,%d] = %15.8e\n", i, j, f[i*p+j]);
-    }
   }
 
   /*

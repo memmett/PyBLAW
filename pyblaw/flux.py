@@ -43,9 +43,10 @@ class Flux(pyblaw.base.Base):
     def set_reconstructor(self, reconstructor):
         self.reconstructor = reconstructor
 
-    def flux(self, ql, qr, f):
-        """Return net fluxes for each cell given the left and right
-           reconstructions ql and qr, and store the result in f."""
+    def flux(self, qm, qp, f):
+        """Return net fluxes for each cell given the left (-) and
+           right (+) reconstructions qm and qp, and store the result
+           in f."""
 
         raise NotImplementedError
 
@@ -72,6 +73,6 @@ class LinearLFFlux(Flux):
         self.dx = self.grid.x[1:] - self.grid.x[:-1]
         pyblaw.clinearflux.init_linear_lf_flux(self.A, self.alpha, self.dx)
 
-    def flux(self, ql, qr, f):
+    def flux(self, qm, qp, f):
 
-        pyblaw.clinearflux.linear_lf_flux(ql, qr, f)
+        pyblaw.clinearflux.linear_lf_flux(qm, qp, f)
