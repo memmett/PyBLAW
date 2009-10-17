@@ -64,6 +64,9 @@ class LinearQuad3Source(Source):
         self.B = B
 
     def pre_run(self, **kwargs):
+        if self.reconstructor.n != 3:
+            raise ValueError, "reconstructor must reconstruct at 3 quadrature points"
+
         pyblaw.clinearsource.init_linear_q3_source(self.B)
 
     def source(self, qq, s):
