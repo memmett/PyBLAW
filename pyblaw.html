@@ -1,0 +1,523 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyBLAW API &mdash; PyBLAW v0.1 documentation</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PyBLAW v0.1 documentation" href="index.html" />
+    <link rel="next" title="PyBLAW Examples" href="examples.html" />
+    <link rel="prev" title="PyBLAW" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="PyBLAW Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="PyBLAW"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PyBLAW v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyblaw-api">
+<h1>PyBLAW API<a class="headerlink" href="#pyblaw-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="base">
+<h2>Base<a class="headerlink" href="#base" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.base.Base">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.base.</tt><tt class="descname">Base</tt><a class="headerlink" href="#pyblaw.base.Base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class.</p>
+<p>Instance variables:</p>
+<blockquote>
+<ul class="simple">
+<li><em>trace</em>  - trace level</li>
+</ul>
+</blockquote>
+<p>Methods that should be overridden:</p>
+<blockquote>
+<ul class="simple">
+<li><em>allocate</em> - allocate memory etc</li>
+<li><em>pre_run</em>  - pre run initialisation</li>
+</ul>
+</blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="system">
+<h2>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.system.System">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">System</tt><big>(</big><em>parameters={}</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.system.System" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract system.</p>
+<p>Define initial conditions, abstract mass, and other parameters.</p>
+<p>Instance variables:</p>
+<blockquote>
+<ul class="simple">
+<li><em>p</em>          - number of unknowns</li>
+<li><em>parameters</em> - parameters (dictionary)</li>
+</ul>
+</blockquote>
+<p>Instrance variables pulled from elsewhere:</p>
+<blockquote>
+<ul class="simple">
+<li><em>grid</em> - pyblaw.grid.Grid</li>
+</ul>
+</blockquote>
+<p>Methods that should be overridden:</p>
+<blockquote>
+<ul class="simple">
+<li><em>allocate</em>           - allocate memory</li>
+<li><em>initial_conditions</em> - set initial condtions at time t</li>
+<li><em>mass</em>               - compute &#8216;mass&#8217; of system</li>
+</ul>
+</blockquote>
+<dl class="method">
+<dt id="pyblaw.system.System.initial_conditions">
+<tt class="descname">initial_conditions</tt><big>(</big><em>t</em>, <em>q</em><big>)</big><a class="headerlink" href="#pyblaw.system.System.initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd>Initialise q.</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.system.System.mass">
+<tt class="descname">mass</tt><big>(</big><em>q</em><big>)</big><a class="headerlink" href="#pyblaw.system.System.mass" title="Permalink to this definition">¶</a></dt>
+<dd>Compute &#8216;mass&#8217; of q.</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.system.SimpleSystem">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">SimpleSystem</tt><big>(</big><em>p</em>, <em>q0</em>, <em>mass=1</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.system.SimpleSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple system.</p>
+<p>Define a simple system without any parameters.</p>
+<p>Arguments:</p>
+<blockquote>
+<ul class="simple">
+<li><em>p</em> - number of components</li>
+<li><em>q0</em> - initial condition (callable)</li>
+<li><em>m</em> - &#8216;mass&#8217; component</li>
+<li><em>parameters</em> - parameters (dictionary)</li>
+</ul>
+</blockquote>
+<p>The initial condition function is called as q0(x, t), and
+should return a vector.</p>
+<p>The <em>mass</em> component (indexed starting at 1) is taken to be the
+mass.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="flux">
+<h2>Flux<a class="headerlink" href="#flux" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.flux.Flux">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">Flux</tt><a class="headerlink" href="#pyblaw.flux.Flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract flux.</p>
+<p>Compute the net flux for each cell given the cell averages q.</p>
+<p>Instance variables pulled from elsewhere:</p>
+<blockquote>
+<ul class="simple">
+<li><em>grid</em>   - pyblaw.grid.Grid</li>
+<li><em>system</em> - pyblaw.system.System</li>
+<li><em>reconstructor</em> - pyblaw.system.Reconstructor</li>
+</ul>
+</blockquote>
+<p>Methods that should be overridden:</p>
+<blockquote>
+<ul class="simple">
+<li><em>allocate</em> - allocate memory etc</li>
+<li><em>flux</em>     - compute net fluxes</li>
+</ul>
+</blockquote>
+<dl class="method">
+<dt id="pyblaw.flux.Flux.flux">
+<tt class="descname">flux</tt><big>(</big><em>qm</em>, <em>qp</em>, <em>f</em><big>)</big><a class="headerlink" href="#pyblaw.flux.Flux.flux" title="Permalink to this definition">¶</a></dt>
+<dd>Return net fluxes for each cell given the left (-) and
+right (+) reconstructions qm and qp, and store the result
+in f.</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.flux.LinearLFFlux">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">LinearLFFlux</tt><big>(</big><em>A</em><big>)</big><a class="headerlink" href="#pyblaw.flux.LinearLFFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear Lax-Friedrichs flux.</p>
+<p>This flux uses the Lax-Friedrichs numerical flux associated
+with the linear flux A, and is implemented in C (clinearflux).</p>
+<p>Arguments:</p>
+<blockquote>
+<ul class="simple">
+<li><em>A</em> - linear flux matrix</li>
+</ul>
+</blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="source">
+<h2>Source<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.source.Source">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.source.</tt><tt class="descname">Source</tt><a class="headerlink" href="#pyblaw.source.Source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract source.</p>
+<p>Compute the source for each cell given the cell averages q.</p>
+<p>Instance variables pulled from elsewhere:</p>
+<blockquote>
+<ul class="simple">
+<li><em>grid</em>   - pyblaw.grid.Grid</li>
+<li><em>system</em> - pyblaw.system.System</li>
+<li><em>reconstructor</em> - pyblaw.reconstructor.Reconstructor</li>
+</ul>
+</blockquote>
+<p>Methods that should be overridden:</p>
+<blockquote>
+<ul class="simple">
+<li><em>allocate</em> - allocate memory etc</li>
+<li><em>source</em>   - compute sources</li>
+</ul>
+</blockquote>
+<dl class="method">
+<dt id="pyblaw.source.Source.source">
+<tt class="descname">source</tt><big>(</big><em>qq</em>, <em>s</em><big>)</big><a class="headerlink" href="#pyblaw.source.Source.source" title="Permalink to this definition">¶</a></dt>
+<dd>Return source for each cell at given the reconstruction qq,
+and store the result in s.</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.source.LinearQuad3Source">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.source.</tt><tt class="descname">LinearQuad3Source</tt><big>(</big><em>B</em><big>)</big><a class="headerlink" href="#pyblaw.source.LinearQuad3Source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear 3-point quadrature source.</p>
+<p>This source uses a 3-point Gaussian quadrature to evaluate the
+linear source B, and is implemented in C (clinearsource).</p>
+<p>Arguments:</p>
+<blockquote>
+<ul class="simple">
+<li><em>B</em> - linear source matrix</li>
+</ul>
+</blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="reconstructor">
+<h2>Reconstructor<a class="headerlink" href="#reconstructor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.reconstructor.Reconstructor">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.reconstructor.</tt><tt class="descname">Reconstructor</tt><a class="headerlink" href="#pyblaw.reconstructor.Reconstructor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract reconstructor.</p>
+<p>Given the cell averages q, reconstruct the unkown at various
+points.</p>
+<p>Instance variables:</p>
+<blockquote>
+<ul class="simple">
+<li><em>n</em>          - number of quadrature points per cell (for source)</li>
+</ul>
+</blockquote>
+<p>Instance variables pulled from elsewhere:</p>
+<blockquote>
+<ul class="simple">
+<li><em>grid</em>   - pyblaw.grid.Grid</li>
+<li><em>system</em> - pyblaw.system.System</li>
+</ul>
+</blockquote>
+<p>Methods that should be overridden:</p>
+<blockquote>
+<ul class="simple">
+<li><em>allocate</em>    - allocate memory etc</li>
+<li><em>reconstruct</em> - reconstruct</li>
+</ul>
+</blockquote>
+<dl class="method">
+<dt id="pyblaw.reconstructor.Reconstructor.reconstruct">
+<tt class="descname">reconstruct</tt><big>(</big><em>q</em>, <em>qm</em>, <em>qp</em>, <em>qq</em><big>)</big><a class="headerlink" href="#pyblaw.reconstructor.Reconstructor.reconstruct" title="Permalink to this definition">¶</a></dt>
+<dd>Reconstruct q and store the result in qm (-), qp (+), and
+qq (quadrature).</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="evolver">
+<h2>Evolver<a class="headerlink" href="#evolver" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.evolver.Evolver">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">Evolver</tt><a class="headerlink" href="#pyblaw.evolver.Evolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract evolver (time-stepper).</p>
+<p>Evolve the cell averages q given at time t^n to time t^{n+1}.</p>
+<p>Instance variables:</p>
+<blockquote>
+<ul class="simple">
+<li><em>t</em>             - times (time grid)</li>
+<li><em>dt</em>            - time step sizes</li>
+<li><em>grid</em>          - pyblaw.grid.Grid</li>
+<li><em>system</em>        - pyblaw.system.System</li>
+<li><em>reconstructor</em> - pyblaw.reconstructor.Reconstructor</li>
+<li><em>flux</em>          - pyblaw.flux.Flux</li>
+<li><em>source</em>        - pyblaw.grid.Source</li>
+</ul>
+</blockquote>
+<p>Methods that should be overridden:</p>
+<blockquote>
+<ul class="simple">
+<li><em>allocate</em> - allocates memory etc</li>
+<li><em>evolve</em>   - evolve q</li>
+</ul>
+</blockquote>
+<dl class="method">
+<dt id="pyblaw.evolver.Evolver.evolve">
+<tt class="descname">evolve</tt><big>(</big><em>q</em>, <em>qn</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.evolve" title="Permalink to this definition">¶</a></dt>
+<dd>Evolve q and store the result in qn.</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.evolver.Evolver.set_times">
+<tt class="descname">set_times</tt><big>(</big><em>times</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.set_times" title="Permalink to this definition">¶</a></dt>
+<dd>Set times at which the solution is computed to <em>times</em> and
+compute time step sizes.</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.evolver.FE">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">FE</tt><a class="headerlink" href="#pyblaw.evolver.FE" title="Permalink to this definition">¶</a></dt>
+<dd>Forward-Euler evolver.</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.evolver.ERK2">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">ERK2</tt><a class="headerlink" href="#pyblaw.evolver.ERK2" title="Permalink to this definition">¶</a></dt>
+<dd>Explicit two-stage Runge-Kutta evolver.</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.evolver.SSPERK3">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">SSPERK3</tt><a class="headerlink" href="#pyblaw.evolver.SSPERK3" title="Permalink to this definition">¶</a></dt>
+<dd>Strong stability-conserving explicit three-stage Runge-Kutta evolver.</dd></dl>
+
+</div>
+<div class="section" id="dumper">
+<h2>Dumper<a class="headerlink" href="#dumper" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.dumper.Dumper">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.dumper.</tt><tt class="descname">Dumper</tt><a class="headerlink" href="#pyblaw.dumper.Dumper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract dumper.</p>
+<p>Dump the cell averages q to a file.</p>
+<p>Instance variables:</p>
+<blockquote>
+<ul class="simple">
+<li><em>x</em> - cell centers</li>
+<li><em>t</em> - times</li>
+</ul>
+</blockquote>
+<p>Methods that should be overridden:</p>
+<blockquote>
+<ul class="simple">
+<li><em>init_dump</em> - init and create dump file etc</li>
+<li><em>dump</em>      - dump solution q</li>
+</ul>
+</blockquote>
+<dl class="method">
+<dt id="pyblaw.dumper.Dumper.dump">
+<tt class="descname">dump</tt><big>(</big><em>q</em><big>)</big><a class="headerlink" href="#pyblaw.dumper.Dumper.dump" title="Permalink to this definition">¶</a></dt>
+<dd>Dump q.</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.dumper.Dumper.init_dump">
+<tt class="descname">init_dump</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblaw.dumper.Dumper.init_dump" title="Permalink to this definition">¶</a></dt>
+<dd>Initialise dumper instance, create dump file, etc.</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.dumper.H5PYDumper">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.dumper.</tt><tt class="descname">H5PYDumper</tt><big>(</big><em>output='output.h5'</em><big>)</big><a class="headerlink" href="#pyblaw.dumper.H5PYDumper" title="Permalink to this definition">¶</a></dt>
+<dd><p>HDF5 dumper (using the h5py Python package).</p>
+<p>Dump the cell averages q to an HDF5 file.  The hierarchy
+created within the HDF5 file is:</p>
+<blockquote>
+<ul class="simple">
+<li>/dims/xdim - cell centres</li>
+<li>/dims/tdim - dump times</li>
+<li>/parameters/X - parameters</li>
+<li>/data/q - cell averages of solution q</li>
+</ul>
+</blockquote>
+<p>The parameters are taken from the system (pyblaw.system.System).</p>
+<p>Arguments:</p>
+<blockquote>
+<ul class="simple">
+<li><em>output</em> - output file name</li>
+</ul>
+</blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="solver">
+<h2>Solver<a class="headerlink" href="#solver" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyblaw.solver.Solver">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.solver.</tt><tt class="descname">Solver</tt><big>(</big><em>grid=None</em>, <em>system=None</em>, <em>reconstructor=None</em>, <em>flux=None</em>, <em>evolver=None</em>, <em>source=None</em>, <em>dumper=None</em>, <em>dump_times=None</em>, <em>times=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solver for 1D systems of balance laws.</p>
+<p>Numerically approximates the solution of a system of hyperbolic
+balances laws of the form</p>
+<blockquote>
+<img class="math" src="images/math/f4d77f4eeeae8de498a13f8578f50c203a495a3b.png" alt="q_t + f(q)_x = s"/>.</blockquote>
+<p>The PyBLAW System, Flux, Source, and Evolver classes should be
+extended to define the system, compute the flux, compute the
+source terms, and evolve the system.</p>
+<p>The constructor takes care of connecting the PyBLAW classes
+that you have extended (as mentioned in the previous paragraph)
+and calling their <em>allocate</em> methods.</p>
+<p>Keyword arguments:</p>
+<blockquote>
+<ul class="simple">
+<li><em>grid</em>           - pyblaw.grid.Grid</li>
+<li><em>system</em>         - pyblaw.system.System</li>
+<li><em>reconstructor</em>  - pyblaw.system.Reconstructor</li>
+<li><em>flux</em>           - pyblaw.flux.Flux</li>
+<li><em>source</em>         - pyblaw.source.Source</li>
+<li><em>evolver</em>        - pyblaw.evolver.Evolver</li>
+<li><em>dumper</em>         - pyblaw.dumper.Dumper</li>
+<li><em>dump_times</em>     - dump times</li>
+<li><em>times</em>          - times</li>
+</ul>
+</blockquote>
+<p>Instance variables:</p>
+<blockquote>
+<ul class="simple">
+<li><em>t</em>             - times</li>
+<li><em>dt</em>            - time steps</li>
+<li><em>t_dump</em>        - dump times</li>
+<li><em>trace</em>         - trace level</li>
+</ul>
+</blockquote>
+<p>Instance variables pulled from elsewhere:</p>
+<blockquote>
+<ul class="simple">
+<li><em>N</em>             - number of cells</li>
+<li><em>x</em>             - cell boundaries</li>
+<li><em>dx</em>            - cell sizes</li>
+<li><em>p</em>             - number of unknowns</li>
+</ul>
+</blockquote>
+<dl class="method">
+<dt id="pyblaw.solver.Solver.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the solver.</p>
+<p>This method runs the solver.  First, it allocates the cell
+averages q and sets the initial condtions defined by
+<em>system.initial_conditions</em>.  Next, it calls the pre run
+hooks <em>pre_run</em> (last minute initialisations).  Finally, it
+cycles throuth the <em>times</em> and evolves the system using the
+<em>evolver</em>, dumping the cell averages at <em>dump_times</em> using
+the <em>dumper</em>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">PyBLAW API</a><ul>
+<li><a class="reference external" href="#base">Base</a></li>
+<li><a class="reference external" href="#system">System</a></li>
+<li><a class="reference external" href="#flux">Flux</a></li>
+<li><a class="reference external" href="#source">Source</a></li>
+<li><a class="reference external" href="#reconstructor">Reconstructor</a></li>
+<li><a class="reference external" href="#evolver">Evolver</a></li>
+<li><a class="reference external" href="#dumper">Dumper</a></li>
+<li><a class="reference external" href="#solver">Solver</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">PyBLAW</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="examples.html"
+                                  title="next chapter">PyBLAW Examples</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="sources/pyblaw.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="PyBLAW Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="PyBLAW"
+             >previous</a> |</li>
+        <li><a href="index.html">PyBLAW v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Matthew Emmett.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.1.
+    </div>
+  </body>
+</html>

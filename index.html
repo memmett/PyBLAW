@@ -1,80 +1,207 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-	<title>memmett/PyBLAW @ GitHub</title>
-	
-	<style type="text/css">
-		body {
-  		margin-top: 1.0em;
-  		background-color: #3e46cf;
-		  font-family: "Helvetica,Arial,FreeSans"; 
-  		color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-		h1 { font-size: 3.8em; color: #c1b930; margin-bottom: 3px; }
-		h1 .small { font-size: 0.4em; }
-		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #c1b930; }
-    h3 { text-align: center; color: #c1b930; }
-    a { color: #c1b930; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-	</style>
-	
-</head>
-
-<body>
-  <a href="http://github.com/memmett/PyBLAW"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-  
-  <div id="container">
-
-    <div class="download">
-      <a href="http://github.com/memmett/PyBLAW/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/memmett/PyBLAW/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
-      
-    <h1><a href="http://github.com/memmett/PyBLAW">PyBLAW</a> 
-      <span class="small">by <a href="http://github.com/memmett">memmett</a></span></h1>
-
-    <div class="description">
-      PyBLAW is a Python framework for solving one-dimensional systems of hyperbolic balance laws.
-    </div>
-
-    <h2>Authors</h2>
-<p>Matthew Emmett (matthew@emmett.ca)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Matthew Emmett (matthew@emmett.ca)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/memmett/PyBLAW/zipball/master">zip</a> or
-      <a href="http://github.com/memmett/PyBLAW/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/memmett/PyBLAW</pre>
-    </p>
-      
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/memmett/PyBLAW">memmett/PyBLAW</a>
-    </div>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-  </div>
+    <title>PyBLAW &mdash; PyBLAW v0.1 documentation</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PyBLAW v0.1 documentation" href="" />
+    <link rel="next" title="PyBLAW API" href="pyblaw.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="pyblaw.html" title="PyBLAW API"
+             accesskey="N">next</a> |</li>
+        <li><a href="">PyBLAW v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
 
-  
-</body>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyblaw">
+<h1>PyBLAW<a class="headerlink" href="#pyblaw" title="Permalink to this headline">¶</a></h1>
+<p>PyBLAW is a python framework for solving one-dimensional system of
+hyperbolic balance laws.</p>
+<p>A one-dimensional system of hyperbolic balance laws is a system of the
+form</p>
+<div class="math">
+<p><img src="images/math/8e437a8c0a5350a2573472251718c40098e47b5b.png" alt="q_t + \bigl( f(q) \bigr)_x = s(q)." />
+</div></p><p>Check out some <a class="reference external" href="examples.html"><em>examples</em></a> to learn more about how to
+use PyBLAW.</p>
+<div class="section" id="using-pyblaw">
+<h2>Using PyBLAW<a class="headerlink" href="#using-pyblaw" title="Permalink to this headline">¶</a></h2>
+<p>To solve a one-dimensional system of hyperbolic balance laws, we
+integrate the system over a grid cell (finite volume) to obtain</p>
+<div class="math">
+<p><img src="images/math/3893ef1d930e275ce7df0cae872c716366ae316c.png" alt="\frac{d}{dt} q_i = \frac{1}{\Delta x_i} \Bigl( f(q_{i-1/2}) - f(q_{i+1/2}) \Bigr) + \frac{1}{\Delta x_i} \int_{x_{i-1/2}}^{x_{i+1/2}} s(q) \;dx." />
+</div></p><p>where <img class="math" src="images/math/6b50b1e2a036e3897de5cd74a367b0a7da70d160.png" alt="q_i"/> is the cell average of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>.  As such, we need
+to approximate</p>
+<blockquote>
+<ol class="arabic simple">
+<li>the flux <img class="math" src="images/math/dd93ae210c3cbc78aa30a398fb007b1397d0ca5f.png" alt="f(q)"/> at the cell boundaries, and</li>
+<li>the integral of the source <img class="math" src="images/math/a328bb79447cae504458958c38fb40f58f8b014e.png" alt="s(q)"/> over the cells;</li>
+</ol>
+</blockquote>
+<p>and evolve the sum these of to obtain the time evolution of the cell
+averages.</p>
+<p>The key to approximating the flux term is being able to approximate
+the solution <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> at the cell boundaries given the cell averages
+of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>.  This is the <em>reconstruction</em> problem.</p>
+<p>To solve a particular system of hyperbolic balance laws, we need to</p>
+<blockquote>
+<ol class="arabic simple">
+<li>reconstruct the solution at various points (cell boundaries and source quadrature points),</li>
+<li>compute the flux and source terms, and</li>
+<li>evolve the system.</li>
+</ol>
+</blockquote>
+<p>This is similar to Godunov&#8217;s REA algorithm.</p>
+<p>The PyBLAW framework defines base classes to handle/define</p>
+<blockquote>
+<ul class="simple">
+<li>the system,</li>
+<li>the flux,</li>
+<li>the source,</li>
+<li>a reconstructor,</li>
+<li>an evolver,</li>
+<li>a dumper,</li>
+<li>and a solver.</li>
+</ul>
+</blockquote>
+<p>Briefly, the base classes are</p>
+<blockquote>
+<ul class="simple">
+<li>pyblaw.system.System - system parameters, initial conditions, etc;</li>
+<li>pyblaw.flux.Flux - compute the flux (given a reconstruction);</li>
+<li>pyblaw.source.Source - compute the source (given a reconstruction);</li>
+<li>pyblaw.evolver.Evolver - evolve the system;</li>
+<li>pyblaw.dumper.Dumper - dump the solution; and</li>
+<li>pyblaw.solver.Solver - run the solver!</li>
+</ul>
+</blockquote>
+<p>Once you have defined your system by inheriting and overriding the
+PyBLAW base classes, you would call the Solver&#8217;s <em>run</em> method to run
+the solver.</p>
+<p>There are a few things to keep in mind:</p>
+<blockquote>
+<ul class="simple">
+<li>each class has an <em>allocate</em> method that gets called by the solver
+during initialisation;</li>
+<li>each class has a <em>pre_run</em> method that gets called after the
+initial conditions are computed; and</li>
+<li>some classes are linked together through various instance
+variables (eg, the Flux class has a <em>system</em> variable that points
+to the System class).</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="pyblaw.html"><em>PyBLAW API</em></a></li>
+</ul>
+</div>
+<div class="section" id="obtaining-pyblaw">
+<h2>Obtaining PyBLAW<a class="headerlink" href="#obtaining-pyblaw" title="Permalink to this headline">¶</a></h2>
+<p>Download, build, and install from source.</p>
+<p>The latest source distribution is available in either <a class="reference external" href="http://github.com/memmett/PyBLAW/zipball/master">zip</a> or <a class="reference external" href="http://github.com/memmett/PyBLAW/tarball/master">tar</a>
+format.  You can also obtain the source code on GitHub through the
+<a class="reference external" href="http://github.com/memmett/PyBLAW">PyBLAW project page</a>.  You can clone the project by running:</p>
+<div class="highlight-python"><pre>$ git clone git://github.com/memmett/PyBLAW</pre>
+</div>
+<p>PyBLAW uses the Python <a class="reference external" href="http://pypi.python.org/pypi/setuptools">setuptools</a> package for installation.</p>
+</div>
+<div class="section" id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<p>Contributions are welcome!  Please send comments, suggestions, and/or
+patches to the primary author (Matthew Emmett).  You will be credited.</p>
+<p>If you plan to extend or modify PyBLAW in a more substantial way,
+please see the <a class="reference external" href="http://github.com/memmett/PyBLAW">PyBLAW project page</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">PyBLAW</a><ul>
+<li><a class="reference external" href="#using-pyblaw">Using PyBLAW</a></li>
+<li><a class="reference external" href="#api">API</a></li>
+<li><a class="reference external" href="#obtaining-pyblaw">Obtaining PyBLAW</a></li>
+<li><a class="reference external" href="#contributing">Contributing</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            <h4>Next topic</h4>
+            <p class="topless"><a href="pyblaw.html"
+                                  title="next chapter">PyBLAW API</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="sources/index.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="pyblaw.html" title="PyBLAW API"
+             >next</a> |</li>
+        <li><a href="">PyBLAW v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Matthew Emmett.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.1.
+    </div>
+  </body>
 </html>
