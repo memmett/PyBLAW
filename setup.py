@@ -16,6 +16,10 @@ setuptools.setup(
         setuptools.Extension('pyblaw.clinearflux',
                              sources = ['src/clinearflux.c'],
                              include_dirs=["/usr/local/lib/python2.5/site-packages/numpy/core/include/numpy/"] # XXX
+                             ),
+        setuptools.Extension('pyblaw.clinearsource',
+                             sources = ['src/clinearsource.c'],
+                             include_dirs=["/usr/local/lib/python2.5/site-packages/numpy/core/include/numpy/"] # XXX
                              )],
 
     author = "Matthew Emmett",
