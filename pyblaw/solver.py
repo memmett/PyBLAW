@@ -156,17 +156,11 @@ class Solver(pyblaw.base.Base):
         self.pre_run(t0=t0, q0=q)
 
         #### giv'r!
-
         for n, t in enumerate(self.t[0:-1]):
 
-            # dump solution if necessary
+            self.system.set_step(n, t)
 
-            if t >= self.t_dump[0]:
-                print "data dump at t = %11.2f, mass = %11.5f" % (t, self.system.mass(q))
-                self.dumper.dump(q)
-                self.t_dump = self.t_dump[1:]
-
-            # evolve
+            # debug: time step header
             if __debug__:
                 if abs(self.trace) > 0:
                     if abs(self.trace) > 1:
@@ -174,15 +168,23 @@ class Solver(pyblaw.base.Base):
 
                     print "n = %d, t = %11.5f, mass = %11.5f" % (n, t, self.system.mass(q))
 
+            # dump solution if necessary
+            if t >= self.t_dump[0]:
+                print "data dump at t = %11.2f, mass = %11.5f" % (t, self.system.mass(q))
+                self.dumper.dump(q)
+                self.t_dump = self.t_dump[1:]
+
+            # evolve
             self.evolver.evolve(q, n, qn)
             q[:,:] = qn[:,:]
 
+            # debug: break?
             if __debug__:
                 if self.trace > 0 and n == self.trace:
                     raise ValueError, 'trace stop'
 
-        #### done
 
+        # last dump if necessary
         if len(self.t_dump) > 0:
             print "data dump at t = %11.2f, mass = %11.5f" % (self.t[-1], self.system.mass(q))
             self.dumper.dump(q)
