@@ -6,9 +6,19 @@ hyperbolic balance laws.
 
 Please see
 
-  http://www.math.ualberta.ca/~memmett/pyblaw/
+  http://memmett.github.com/PyBLAW/
 
 for more information.
+
+
+Installing PyBLAW
+-----------------
+
+PyBLAW uses the 'setuptools' package to automate building and
+installing PyBLAW.  As such, to install PyBLAW, you can follow the
+instructions described in
+
+  http://docs.python.org/install/index.html
 
 
 License

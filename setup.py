@@ -1,7 +1,7 @@
 """PyBLAW setup script."""
 
 import setuptools
-
+import numpy as np
 
 setuptools.setup(
 
@@ -15,11 +15,11 @@ setuptools.setup(
     ext_modules = [
         setuptools.Extension('pyblaw.clinearflux',
                              sources = ['src/clinearflux.c'],
-                             include_dirs=["/usr/local/lib/python2.5/site-packages/numpy/core/include/numpy/"] # XXX
+                             include_dirs=[np.get_include()]
                              ),
         setuptools.Extension('pyblaw.clinearsource',
                              sources = ['src/clinearsource.c'],
-                             include_dirs=["/usr/local/lib/python2.5/site-packages/numpy/core/include/numpy/"] # XXX
+                             include_dirs=[np.get_include()]
                              )],
 
     author = "Matthew Emmett",
