@@ -6,7 +6,6 @@
 *.pyo
 *.so
 
-
 # setuptools
 build
 dist
@@ -15,7 +14,4 @@ PyBLAW*
 # sphinx
 _build
 _doctrees
-
-
-
-
+_ghpages
