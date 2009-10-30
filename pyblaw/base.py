@@ -7,7 +7,8 @@ class Base(object):
 
        Instance variables:
 
-         * *trace*  - trace level
+         * *trace* - trace level
+         * *debug* - debug information (dictionary)
 
        Methods that should be overridden:
 
@@ -17,9 +18,13 @@ class Base(object):
     """
 
     trace = 0                           # trace level
+    debug = {}                          # debug information
 
     def set_trace(self, trace_level):
         self.trace = trace_level
+
+    def set_debug(self, debug):
+        self.debug.update(debug)
 
     def allocate(self):
         pass

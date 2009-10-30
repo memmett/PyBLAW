@@ -158,7 +158,12 @@ class Solver(pyblaw.base.Base):
         #### giv'r!
         for n, t in enumerate(self.t[0:-1]):
 
-            self.system.set_step(n, t)
+            step = {'n': n, 't': t}
+            self.system.set_debug(step)
+            self.reconstructor.set_debug(step)
+            self.flux.set_debug(step)
+            self.source.set_debug(step)
+            self.evolver.set_debug(step)
 
             # debug: time step header
             if __debug__:

@@ -35,10 +35,6 @@ class System(pyblaw.base.Base):
     def __init__(self, parameters={}, **kwargs):
         self.parameters = parameters
 
-    def set_step(self, n, t):
-        self.n = n
-        self.t = t
-
     def set_grid(self, grid):
         self.grid = grid
 
