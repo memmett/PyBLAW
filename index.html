@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PyBLAW &mdash; PyBLAW v0.1 documentation</title>
+    <title>PyBLAW &mdash; PyBLAW v0.5 documentation</title>
     <link rel="stylesheet" href="static/default.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1',
+        VERSION:     '0.5',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="static/jquery.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="PyBLAW v0.1 documentation" href="" />
+    <link rel="top" title="PyBLAW v0.5 documentation" href="" />
     <link rel="next" title="PyBLAW API" href="pyblaw.html" /> 
   </head>
   <body>
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="pyblaw.html" title="PyBLAW API"
              accesskey="N">next</a> |</li>
-        <li><a href="">PyBLAW v0.1 documentation</a> &raquo;</li> 
+        <li><a href="">PyBLAW v0.5 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -43,34 +43,31 @@
             
   <div class="section" id="pyblaw">
 <h1>PyBLAW<a class="headerlink" href="#pyblaw" title="Permalink to this headline">¶</a></h1>
-<p>PyBLAW is a python framework for solving one-dimensional system of
-hyperbolic balance laws.</p>
-<p>A one-dimensional system of hyperbolic balance laws is a system of the
-form</p>
+<p>PyBLAW is a lightweight Python framework for solving one-dimensional
+systems of hyperbolic balance laws of the form</p>
 <div class="math">
 <p><img src="images/math/8e437a8c0a5350a2573472251718c40098e47b5b.png" alt="q_t + \bigl( f(q) \bigr)_x = s(q)." />
-</div></p><p>Check out some <a class="reference external" href="examples.html"><em>examples</em></a> to learn more about how to
-use PyBLAW.</p>
-<div class="section" id="using-pyblaw">
+</div></p><div class="section" id="using-pyblaw">
 <h2>Using PyBLAW<a class="headerlink" href="#using-pyblaw" title="Permalink to this headline">¶</a></h2>
 <p>To solve a one-dimensional system of hyperbolic balance laws, we
-integrate the system over a grid cell (finite volume) to obtain</p>
+integrate the system over a grid cell (finite volume) from
+<img class="math" src="images/math/ea60decd65f501b0c2c19c5489d8eaafc758e2fb.png" alt="x_{i-1/2}"/> to <img class="math" src="images/math/63c004db65fe572a32d3216bcd528faad91e993c.png" alt="x_{i+1/2}"/> and re-arrange to obtain</p>
 <div class="math">
 <p><img src="images/math/3893ef1d930e275ce7df0cae872c716366ae316c.png" alt="\frac{d}{dt} q_i = \frac{1}{\Delta x_i} \Bigl( f(q_{i-1/2}) - f(q_{i+1/2}) \Bigr) + \frac{1}{\Delta x_i} \int_{x_{i-1/2}}^{x_{i+1/2}} s(q) \;dx." />
 </div></p><p>where <img class="math" src="images/math/6b50b1e2a036e3897de5cd74a367b0a7da70d160.png" alt="q_i"/> is the cell average of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>.  As such, we need
 to approximate</p>
 <blockquote>
 <ol class="arabic simple">
-<li>the flux <img class="math" src="images/math/dd93ae210c3cbc78aa30a398fb007b1397d0ca5f.png" alt="f(q)"/> at the cell boundaries, and</li>
+<li>the flux <img class="math" src="images/math/dd93ae210c3cbc78aa30a398fb007b1397d0ca5f.png" alt="f(q)"/> at the cell boundaries <img class="math" src="images/math/2902d7113959eaf9ad7daff60708bcc52e2c4252.png" alt="q_{i \pm 1/2}"/>, and</li>
 <li>the integral of the source <img class="math" src="images/math/a328bb79447cae504458958c38fb40f58f8b014e.png" alt="s(q)"/> over the cells;</li>
 </ol>
 </blockquote>
 <p>and evolve the sum these of to obtain the time evolution of the cell
-averages.</p>
-<p>The key to approximating the flux term is being able to approximate
-the solution <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> at the cell boundaries given the cell averages
-of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>.  This is the <em>reconstruction</em> problem.</p>
-<p>To solve a particular system of hyperbolic balance laws, we need to</p>
+averages.  The key to approximating the flux and source terms is being
+able to approximate the solution <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> at the cell boundaries and
+quadrature points given the cell averages of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>.  This is the
+<em>reconstruction</em> problem.  So, in order to solve a particular system
+of hyperbolic balance laws we need to</p>
 <blockquote>
 <ol class="arabic simple">
 <li>reconstruct the solution at various points (cell boundaries and source quadrature points),</li>
@@ -78,66 +75,94 @@ of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.p
 <li>evolve the system.</li>
 </ol>
 </blockquote>
-<p>This is similar to Godunov&#8217;s REA algorithm.</p>
-<p>The PyBLAW framework defines base classes to handle/define</p>
+<p>As such, the PyBLAW framework defines base classes to handle/define</p>
 <blockquote>
 <ul class="simple">
-<li>the system,</li>
-<li>the flux,</li>
-<li>the source,</li>
-<li>a reconstructor,</li>
-<li>an evolver,</li>
-<li>a dumper,</li>
-<li>and a solver.</li>
+<li>the <em>system</em>,</li>
+<li>the <em>flux</em>,</li>
+<li>the <em>source</em>,</li>
+<li>a <em>reconstructor</em>,</li>
+<li>an <em>evolver</em>,</li>
+<li>a <em>dumper</em>,</li>
+<li>and a <em>solver</em>.</li>
 </ul>
 </blockquote>
-<p>Briefly, the base classes are</p>
+<p>Again, these are only lightweight base classes (although PyBLAW has
+some predefined classes to help, see below).  It is up to you to
+extend these base classes for your particular problem.  Briefly, the</p>
 <blockquote>
 <ul class="simple">
-<li>pyblaw.system.System - system parameters, initial conditions, etc;</li>
-<li>pyblaw.flux.Flux - compute the flux (given a reconstruction);</li>
-<li>pyblaw.source.Source - compute the source (given a reconstruction);</li>
-<li>pyblaw.evolver.Evolver - evolve the system;</li>
-<li>pyblaw.dumper.Dumper - dump the solution; and</li>
-<li>pyblaw.solver.Solver - run the solver!</li>
+<li><em>system</em> class defines system parameters, initial conditions, etc; the</li>
+<li><em>flux</em> class computes the flux at the cell boundaries given a
+reconstruction; the</li>
+<li><em>source</em> class computes the source in each cell given a
+reconstruction; the</li>
+<li><em>reconstructor</em> class reconstructs the solution at the cell
+boundaries and quadrature points given the cell averages of the
+solution; the</li>
+<li><em>evolver</em> class evolves the system from one time step to the next;</li>
+<li><em>dumper</em> class dumps the solution to a file; and the</li>
+<li><em>solver</em> class glues everything together.</li>
 </ul>
 </blockquote>
+<p>PyBLAW has some predefined classes to save you some time:</p>
+<blockquote>
+<ul class="simple">
+<li>a WENO reconstructor,</li>
+<li>a few Runge-Kutta evolvers,</li>
+<li>an HDF5 dumper, and a</li>
+<li>generic solver.</li>
+</ul>
+</blockquote>
+<p>The <a class="reference external" href="http://github.com/memmett/PyWENO">Python WENO</a> package <a class="reference external" href="http://github.com/memmett/PyWENO">PyWENO</a> is a good resource for building
+your reconstructor.</p>
 <p>Once you have defined your system by inheriting and overriding the
-PyBLAW base classes, you would call the Solver&#8217;s <em>run</em> method to run
-the solver.</p>
+PyBLAW base classes, you call the Solver&#8217;s <em>run</em> method to run the
+solver.</p>
+<p>Check out some <a class="reference external" href="examples.html"><em>examples</em></a> to learn more about how to
+use PyBLAW.</p>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <p>There are a few things to keep in mind:</p>
 <blockquote>
 <ul class="simple">
 <li>each class has an <em>allocate</em> method that gets called by the solver
 during initialisation;</li>
 <li>each class has a <em>pre_run</em> method that gets called after the
-initial conditions are computed; and</li>
+initial conditions are computed;</li>
+<li>each class has a <em>debug</em> dictionary and a <em>trace</em> variable to help
+you debug your solver; and</li>
 <li>some classes are linked together through various instance
-variables (eg, the Flux class has a <em>system</em> variable that points
-to the System class).</li>
+variables (eg, the flux class has a <em>system</em> variable that points
+to the system class).</li>
 </ul>
 </blockquote>
+<p>Please see the <a class="reference external" href="pyblaw.html"><em>PyBLAW API</em></a> page for the detailed API
+documentation.  Again, checking out some <a class="reference external" href="examples.html"><em>examples</em></a>
+might be helpful.</p>
 </div>
-<div class="section" id="api">
-<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><a class="reference external" href="pyblaw.html"><em>PyBLAW API</em></a></li>
-</ul>
-</div>
-<div class="section" id="obtaining-pyblaw">
-<h2>Obtaining PyBLAW<a class="headerlink" href="#obtaining-pyblaw" title="Permalink to this headline">¶</a></h2>
-<p>Download, build, and install from source.</p>
+<div class="section" id="obtaining-and-installing-pyblaw">
+<h2>Obtaining and installing PyBLAW<a class="headerlink" href="#obtaining-and-installing-pyblaw" title="Permalink to this headline">¶</a></h2>
+<p>To install PyBLAW, please download, build, and install from source
+(there aren&#8217;t any pre-built packages).</p>
 <p>The latest source distribution is available in either <a class="reference external" href="http://github.com/memmett/PyBLAW/zipball/master">zip</a> or <a class="reference external" href="http://github.com/memmett/PyBLAW/tarball/master">tar</a>
 format.  You can also obtain the source code on GitHub through the
-<a class="reference external" href="http://github.com/memmett/PyBLAW">PyBLAW project page</a>.  You can clone the project by running:</p>
+<a class="reference external" href="http://github.com/memmett/PyBLAW">PyBLAW project page</a>, and you can clone the project by running:</p>
 <div class="highlight-python"><pre>$ git clone git://github.com/memmett/PyBLAW</pre>
 </div>
-<p>PyBLAW uses the Python <a class="reference external" href="http://pypi.python.org/pypi/setuptools">setuptools</a> package for installation.</p>
+<p>Once you have downloaded and unpacked the source package, you can
+install PyBLAW by simply running:</p>
+<div class="highlight-python"><pre>$ python setup.py install</pre>
+</div>
+<p>For more installation options, please see the Python <a class="reference external" href="http://docs.python.org/install/index.html">Installing
+Python Modules</a> document and the <a class="reference external" href="http://pypi.python.org/pypi/setuptools">setuptools</a> documentation.</p>
 </div>
 <div class="section" id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
 <p>Contributions are welcome!  Please send comments, suggestions, and/or
-patches to the primary author (Matthew Emmett).  You will be credited.</p>
+patches to the primary author (<a class="reference external" href="http://www.math.ualberta.ca/~memmett/">Matthew Emmett</a>).  You will be
+credited.</p>
 <p>If you plan to extend or modify PyBLAW in a more substantial way,
 please see the <a class="reference external" href="http://github.com/memmett/PyBLAW">PyBLAW project page</a>.</p>
 </div>
@@ -154,7 +179,7 @@ please see the <a class="reference external" href="http://github.com/memmett/PyB
 <li><a class="reference external" href="">PyBLAW</a><ul>
 <li><a class="reference external" href="#using-pyblaw">Using PyBLAW</a></li>
 <li><a class="reference external" href="#api">API</a></li>
-<li><a class="reference external" href="#obtaining-pyblaw">Obtaining PyBLAW</a></li>
+<li><a class="reference external" href="#obtaining-and-installing-pyblaw">Obtaining and installing PyBLAW</a></li>
 <li><a class="reference external" href="#contributing">Contributing</a><ul>
 </ul>
 </li>
@@ -196,7 +221,7 @@ please see the <a class="reference external" href="http://github.com/memmett/PyB
         <li class="right" >
           <a href="pyblaw.html" title="PyBLAW API"
              >next</a> |</li>
-        <li><a href="">PyBLAW v0.1 documentation</a> &raquo;</li> 
+        <li><a href="">PyBLAW v0.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
