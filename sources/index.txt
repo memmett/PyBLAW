@@ -144,6 +144,6 @@ please see the `PyBLAW project page`_.
 .. _`Installing Python Modules`: http://docs.python.org/install/index.html
 .. _setuptools: http://pypi.python.org/pypi/setuptools
 .. _`PyBLAW project page`: http://github.com/memmett/PyBLAW
-.. _`Python WENO`: http://github.com/memmett/PyWENO
-.. _`PyWENO`: http://github.com/memmett/PyWENO
+.. _`Python WENO`: http://memmett.github.com/PyWENO/
+.. _`PyWENO`: http://memmett.github.com/PyWENO/
 .. _`Matthew Emmett`: http://www.math.ualberta.ca/~memmett/

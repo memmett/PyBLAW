@@ -11,8 +11,8 @@ pyblaw.dumper.Dumper.init_dump method pyblaw.html
 pyblaw.evolver.Evolver.evolve method pyblaw.html
 pyblaw.system.System class pyblaw.html
 pyblaw.source.Source class pyblaw.html
-pyblaw.dumper.Dumper class pyblaw.html
-pyblaw.evolver.ERK2 class pyblaw.html
+pyblaw.dumper.H5PYDumper class pyblaw.html
+pyblaw.flux.Flux.flux method pyblaw.html
 pyblaw.flux.LinearLFFlux class pyblaw.html
 pyblaw.reconstructor.Reconstructor.reconstruct method pyblaw.html
 pyblaw.system.System.mass method pyblaw.html
@@ -22,7 +22,7 @@ pyblaw.base.Base class pyblaw.html
 pyblaw.system.SimpleSystem class pyblaw.html
 pyblaw.dumper.Dumper.dump method pyblaw.html
 pyblaw.system.System.initial_conditions method pyblaw.html
-pyblaw.dumper.H5PYDumper class pyblaw.html
+pyblaw.dumper.Dumper class pyblaw.html
 pyblaw.reconstructor.Reconstructor class pyblaw.html
-pyblaw.flux.Flux.flux method pyblaw.html
+pyblaw.evolver.ERK2 class pyblaw.html
 pyblaw.solver.Solver.run method pyblaw.html
