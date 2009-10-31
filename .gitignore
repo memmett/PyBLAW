@@ -15,3 +15,7 @@ PyBLAW*
 _build
 _doctrees
 _ghpages
+
+# examples
+*.h5
+*.prof

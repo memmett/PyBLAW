@@ -22,5 +22,5 @@ html_theme     = 'default'
 # project information
 project   = 'PyBLAW'
 copyright = '2009, Matthew Emmett'
-version   = '0.1'
-release   = '0.1'
+version   = '0.5'
+release   = '0.5'
