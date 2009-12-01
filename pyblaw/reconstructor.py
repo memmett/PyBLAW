@@ -68,42 +68,29 @@ class WENOReconstructor(Reconstructor):
         #### weno reconstructor for qm, qp
         if not os.access(self.cache, os.F_OK):
             weno = pyweno.weno.WENO(grid=self.grid, order=self.k)
+            weno.precompute_reconstruction('left')
+            weno.precompute_reconstruction('right')
+            if self.n > 0:
+                weno.precompute_reconstruction('gauss_quad%d' % (self.n))
             weno.cache(self.cache)
         else:
             weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
 
         self.weno = weno
 
-        #### centered polynomial for qq
-        N = self.grid.N
-        k = 2*self.k - 1
-        r = self.k
-        n = self.n
-        stencil = pyweno.stencil.Stencil(order=k, shift=r, quad=n, grid=self.grid)
-
-        # build reconstructor matrix
-        QUAD = scipy.sparse.lil_matrix((N*n,N))
-
-        for i in xrange(2*k):
-            for l in xrange(n):
-                QUAD[i+l,i] = 1.0
-
-        for i in xrange(2*k, N-2*k):
-            for l in xrange(n):
-                QUAD[i*n+l,i-r:i-r+k] = stencil.c_q[i,l,:]
-
-        for i in xrange(N-2*k, N):
-            for l in xrange(n):
-                QUAD[i+l,i] = 1.0
-
-        self.QUAD   = QUAD.tocsr()
-
-        # XXX: cache the QUAD matrix...
 
     def reconstruct(self, q, qm, qp, qq):
 
         p = self.system.p
 
         for m in xrange(p):
-            self.weno.reconstruct(q[:,m], qm[:,m], qp[:,m])
-            qq[:,m] = self.QUAD * q[:,m]
+            self.weno.smoothness(q[:,m])
+            self.weno.reconstruct(q[:,m], 'left', qp[:,m])
+            self.weno.reconstruct(q[:,m], 'right', qm[:,m])
+            if self.n > 0:
+                self.weno.reconstruct(q[:,m], 'gauss_quad3', qq[:,:,m])
+
+        qm[1:,:] = qm[:-1,:]            # XXX, this is sick, and will require
+                                        # some niggly changes to
+                                        # PyWENO to fix
+
