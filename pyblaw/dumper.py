@@ -1,8 +1,9 @@
-"""PyBLAW abstract Dumper class and an HDF5 dumper.
+"""PyBLAW abstract Dumper class and MAT dumper.
 
 """
 
-import h5py
+import numpy as np
+import scipy.io as sio
 
 
 class Dumper(object):
@@ -45,18 +46,20 @@ class Dumper(object):
 
 ######################################################################
 
-class H5PYDumper(Dumper):
-    """HDF5 dumper (using the h5py Python package).
+class MATDumper(Dumper):
+    """MAT dumper (using SciPy).
 
-       Dump the cell averages q to an HDF5 file.  The hierarchy
-       created within the HDF5 file is:
+       Dump the cell averages q to a MAT file.  The matrices created
+       within the MAT file are:
 
-         * /dims/xdim - cell centres
-         * /dims/tdim - dump times
-         * /parameters/X - parameters
-         * /data/q - cell averages of solution q
+         * dims.xdim - cell centres
+         * dims.tdim - dump times
+         * parameters.X - parameters
+         * data.q - cell averages of solution q
 
        The parameters are taken from the system (pyblaw.system.System).
+
+       The H5Dumper in pyblaw.h5dumper is more efficient.
 
        Arguments:
 
@@ -64,42 +67,36 @@ class H5PYDumper(Dumper):
 
     """
 
-
-    def __init__(self, output='output.h5'):
+    def __init__(self, output='output.mat'):
 
         self.output = output
 
     def init_dump(self):
 
-        # initialise hdf
-        hdf = h5py.File(self.output, "w")
+        mat = {}
 
         # x and t dimensions
-        sgrp = hdf.create_group("dims")
-        sgrp.create_dataset("xdim", data=self.x)
-        sgrp.create_dataset("tdim", data=self.t)
+        mat['dims.xdim'] = self.x
+        mat['dims.tdim'] = self.t
 
         # parameters
-        sgrp = hdf.create_group("parameters")
-        for key, value in self.system.parameters.iteritems():
-            sgrp.attrs[key] = value
+        for key in self.system.parameters:
+            mat[key] = self.system.parameters[key]
 
-        # data sets (solution q)
-        sgrp = hdf.create_group("data")
-        dset = sgrp.create_dataset("q", (len(self.t), len(self.x), self.system.p))
+        # data
+        mat['data.q'] = np.zeros((len(self.t), len(self.x), self.system.p))
 
         # done
-        hdf.close()
+        sio.savemat(self.output, mat)
 
         self.last = 0
 
 
     def dump(self, q):
-        """Dump solution to HDF5 data file."""
+        """Dump solution to MAT data file."""
 
-        hdf = h5py.File(self.output, "a")
-        dset = hdf["data/q"]
-        dset[self.last,:,:] = q[:,:]
-        hdf.close()
+        mat = sio.loadmat(self.output, struct_as_record=True)
+        mat['data.q'][self.last,:,:] = q[:,:]
+        sio.savemat(self.output, mat)
 
         self.last = self.last + 1
