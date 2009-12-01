@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PyBLAW Examples &mdash; PyBLAW v0.5 documentation</title>
+    <title>PyBLAW Examples &mdash; PyBLAW v0.3.a1.dev documentation</title>
     <link rel="stylesheet" href="static/default.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5',
+        VERSION:     '0.3.a1.dev',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="static/jquery.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="PyBLAW v0.5 documentation" href="index.html" />
+    <link rel="top" title="PyBLAW v0.3.a1.dev documentation" href="index.html" />
     <link rel="prev" title="PyBLAW API" href="pyblaw.html" /> 
   </head>
   <body>
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="pyblaw.html" title="PyBLAW API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.3.a1.dev documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,6 +56,8 @@
 
 <span class="sd">   where A and B are constant (and possibly singular) matrices.</span>
 
+<span class="sd">   XXX: this is busted.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">math</span>
@@ -78,10 +80,7 @@
 <span class="c">#</span>
 
 <span class="k">def</span> <span class="nf">q0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Initial condition.</span>
-
-<span class="sd">       XXX</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Initial condition.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">t</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">t</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
@@ -90,9 +89,7 @@
 
 
 <span class="k">class</span> <span class="nc">LinearSolver</span><span class="p">(</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">Solver</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Solver for a linear system.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Solver for a linear system.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mf">4</span><span class="p">):</span>
 
@@ -100,11 +97,11 @@
 
         <span class="n">grid</span>          <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span><span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">)</span>
         <span class="n">system</span>        <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">SimpleSystem</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;A&#39;</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">:</span> <span class="n">B</span><span class="p">})</span>
-        <span class="n">reconstructor</span> <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">reconstructor</span><span class="o">.</span><span class="n">WENOReconstructor</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="s">&#39;cache.h5&#39;</span><span class="p">)</span>
+        <span class="n">reconstructor</span> <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">reconstructor</span><span class="o">.</span><span class="n">WENOReconstructor</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="s">&#39;cache.mat&#39;</span><span class="p">)</span>
         <span class="n">flux</span>          <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">LinearLFFlux</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
         <span class="n">source</span>        <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">LinearQuad3Source</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
         <span class="n">evolver</span>       <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">evolver</span><span class="o">.</span><span class="n">SSPERK3</span><span class="p">()</span>
-        <span class="n">dumper</span>        <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">dumper</span><span class="o">.</span><span class="n">H5PYDumper</span><span class="p">(</span><span class="s">&#39;output.h5&#39;</span><span class="p">)</span>
+        <span class="n">dumper</span>        <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">dumper</span><span class="o">.</span><span class="n">MATDumper</span><span class="p">(</span><span class="s">&#39;output.mat&#39;</span><span class="p">)</span>
 
         <span class="n">pyblaw</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">Solver</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                       <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
@@ -144,299 +141,22 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="shallow-water-solver">
-<h2>Shallow-water solver<a class="headerlink" href="#shallow-water-solver" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;Shallow-water solver.</span>
-
-<span class="sd">   This shallow-water solver serves as short example of how to use the</span>
-<span class="sd">   PyBLAW framework.</span>
-
-<span class="sd">   It solves the depth-averaged shallow-water equations, which are</span>
-
-<span class="sd">     * height:   h_t + (u h)_x = 0</span>
-<span class="sd">     * momentum: (u h)_t + ( u^2 h + 1/2 h^2 )_x = - drag u^2</span>
-
-<span class="sd">   where h is the height and u is the velocity of the fluid, by using</span>
-<span class="sd">   a high order polynomial reconstruction of q.</span>
-
-<span class="sd">   Throughout, q is:</span>
-
-<span class="sd">     * q[i,0] - average height in cell C_i</span>
-<span class="sd">     * q[i,1] - average momentum in cell C_i</span>
-
-<span class="sd">   NOTE: This is a pure python implementation and is **VERY** slow.</span>
-<span class="sd">   To speed this up, one should</span>
-
-<span class="sd">     * cache the grid and recontruction matrices;</span>
-<span class="sd">     * avoid calculating the same thing twice; and</span>
-<span class="sd">     * use a hybrid approach (ie, write the flux and source functions in C).</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">cProfile</span> <span class="kn">as</span> <span class="nn">profile</span>
-<span class="kn">import</span> <span class="nn">pstats</span>
-
-<span class="kn">import</span> <span class="nn">h5py</span> <span class="kn">as</span> <span class="nn">h5</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.sparse</span>
-
-<span class="kn">import</span> <span class="nn">pyblaw.system</span>
-<span class="kn">import</span> <span class="nn">pyblaw.flux</span>
-<span class="kn">import</span> <span class="nn">pyblaw.source</span>
-<span class="kn">import</span> <span class="nn">pyblaw.reconstructor</span>
-<span class="kn">import</span> <span class="nn">pyblaw.evolver</span>
-<span class="kn">import</span> <span class="nn">pyblaw.dumper</span>
-<span class="kn">import</span> <span class="nn">pyblaw.solver</span>
-<span class="kn">import</span> <span class="nn">pyweno.stencil</span>
-
-<span class="c">######################################################################</span>
-<span class="c"># system</span>
-<span class="c">#</span>
-
-<span class="k">class</span> <span class="nc">ShallowWaterSystem</span><span class="p">(</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
-
-    <span class="n">p</span> <span class="o">=</span> <span class="mf">2</span>                               <span class="c"># number of components</span>
-    <span class="n">drag</span> <span class="o">=</span> <span class="mf">0.0</span>                          <span class="c"># drag coeff</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drag</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">drag</span> <span class="o">=</span> <span class="n">drag</span>
-
-    <span class="k">def</span> <span class="nf">h0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">t</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">t</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">1.0</span>
-
-        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="o">/</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span>
-
-    <span class="k">def</span> <span class="nf">initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
-        <span class="n">q</span><span class="p">[:,</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">h0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
-        <span class="n">q</span><span class="p">[:,</span><span class="mf">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">sizes</span><span class="p">())</span>
-
-
-<span class="c">######################################################################</span>
-<span class="c"># flux</span>
-<span class="c">#</span>
-
-<span class="k">class</span> <span class="nc">ShallowWaterFlux</span><span class="p">(</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">Flux</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">pre_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mf">1</span><span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">f_q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;f&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">q</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">q</span><span class="p">[</span><span class="mf">1</span><span class="p">],</span> <span class="n">q</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="o">/</span><span class="n">q</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="p">])</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">flux_lf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ql</span><span class="p">,</span> <span class="n">qr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Lax-Friedrichs flux.&quot;&quot;&quot;</span>
-
-        <span class="c"># alpha is taken to be 2.0 here...</span>
-        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f_q</span><span class="p">(</span><span class="n">ql</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_q</span><span class="p">(</span><span class="n">qr</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">qr</span> <span class="o">-</span> <span class="n">ql</span><span class="p">)</span> <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ql</span><span class="p">,</span> <span class="n">qr</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Net flux (override base class).&quot;&quot;&quot;</span>
-
-        <span class="n">N</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">N</span>
-        <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">1</span><span class="p">):</span>
-            <span class="n">fl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux_lf</span><span class="p">(</span><span class="n">ql</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>   <span class="n">qr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="n">fr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux_lf</span><span class="p">(</span><span class="n">ql</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mf">1</span><span class="p">],</span> <span class="n">qr</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mf">1</span><span class="p">])</span>
-            <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">fr</span> <span class="o">-</span> <span class="n">fl</span><span class="p">)</span> <span class="o">/</span> <span class="n">dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-
-<span class="c">######################################################################</span>
-<span class="c"># source</span>
-<span class="c">#</span>
-
-<span class="k">class</span> <span class="nc">ShallowWaterSource</span><span class="p">(</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">Source</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qq</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-        <span class="c"># XXX: add drag</span>
-        <span class="k">pass</span>
-
-
-<span class="c">######################################################################</span>
-<span class="c"># reconstructor</span>
-<span class="c">#</span>
-
-<span class="k">class</span> <span class="nc">ShallowWaterReconstructor</span><span class="p">(</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">reconstructor</span><span class="o">.</span><span class="n">Reconstructor</span><span class="p">):</span>
-
-    <span class="n">n</span> <span class="o">=</span> <span class="mf">3</span>                               <span class="c"># number of quadrature points</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">order</span>
-
-
-    <span class="k">def</span> <span class="nf">allocate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">N</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">p</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
-
-        <span class="k">print</span> <span class="s">&quot;building reconstructors...&quot;</span>
-
-        <span class="c"># compute reconstruction coeffs</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">/</span> <span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">%</span> <span class="mf">2</span><span class="p">)</span>
-        <span class="n">stencil</span> <span class="o">=</span> <span class="n">pyweno</span><span class="o">.</span><span class="n">stencil</span><span class="o">.</span><span class="n">Stencil</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">quad</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
-
-        <span class="c"># build reconstructor matrix</span>
-        <span class="n">BNDRYL</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">))</span>
-        <span class="n">BNDRYR</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">))</span>
-        <span class="n">QUAD</span>   <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">N</span><span class="o">*</span><span class="n">n</span><span class="p">,</span><span class="n">N</span><span class="p">))</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">):</span>
-            <span class="n">BNDRYL</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="n">BNDRYR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-                <span class="n">QUAD</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">l</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">):</span>
-            <span class="n">BNDRYL</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">-</span><span class="mf">1</span><span class="o">-</span><span class="n">r</span><span class="p">:</span><span class="n">i</span><span class="o">-</span><span class="mf">1</span><span class="o">-</span><span class="n">r</span><span class="o">+</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">stencil</span><span class="o">.</span><span class="n">c_p</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mf">1</span><span class="p">,:]</span>
-            <span class="n">BNDRYR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">-</span><span class="n">r</span><span class="p">:</span><span class="n">i</span><span class="o">-</span><span class="n">r</span><span class="o">+</span><span class="n">k</span><span class="p">]</span>     <span class="o">=</span> <span class="n">stencil</span><span class="o">.</span><span class="n">c_m</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span>
-            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-                <span class="n">QUAD</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="n">l</span><span class="p">,</span><span class="n">i</span><span class="o">-</span><span class="n">r</span><span class="p">:</span><span class="n">i</span><span class="o">-</span><span class="n">r</span><span class="o">+</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">stencil</span><span class="o">.</span><span class="n">c_q</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">l</span><span class="p">,:]</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
-            <span class="n">BNDRYL</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="n">BNDRYR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-                <span class="n">QUAD</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">l</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">BNDRYL</span> <span class="o">=</span> <span class="n">BNDRYL</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">BNDRYR</span> <span class="o">=</span> <span class="n">BNDRYR</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">QUAD</span>   <span class="o">=</span> <span class="n">QUAD</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
-
-        <span class="k">print</span> <span class="s">&quot;building reconstructors... done.&quot;</span>
-
-
-    <span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">ql</span><span class="p">,</span> <span class="n">qr</span><span class="p">,</span> <span class="n">qq</span><span class="p">):</span>
-
-        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">p</span>
-
-        <span class="c"># XXX: use weno instead of central polynomial...</span>
-
-        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-            <span class="n">ql</span><span class="p">[:,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BNDRYL</span> <span class="o">*</span> <span class="n">q</span><span class="p">[:,</span><span class="n">m</span><span class="p">]</span>
-            <span class="n">qr</span><span class="p">[:,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BNDRYR</span> <span class="o">*</span> <span class="n">q</span><span class="p">[:,</span><span class="n">m</span><span class="p">]</span>
-            <span class="n">qq</span><span class="p">[:,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">QUAD</span> <span class="o">*</span> <span class="n">q</span><span class="p">[:,</span><span class="n">m</span><span class="p">]</span>
-
-
-<span class="c">######################################################################</span>
-<span class="c"># dumper</span>
-<span class="c">#</span>
-
-<span class="k">class</span> <span class="nc">ShallowWaterDumper</span><span class="p">(</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">dumper</span><span class="o">.</span><span class="n">Dumper</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s">&#39;output.hdf5&#39;</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
-
-    <span class="k">def</span> <span class="nf">init_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="c"># initialise hdf</span>
-        <span class="n">hdf</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
-
-        <span class="c"># x and t dimensions</span>
-        <span class="n">sgrp</span> <span class="o">=</span> <span class="n">hdf</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s">&quot;dims&quot;</span><span class="p">)</span>
-        <span class="n">sgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&quot;xdim&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">sgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&quot;tdim&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
-
-        <span class="c"># parameters</span>
-        <span class="n">sgrp</span> <span class="o">=</span> <span class="n">hdf</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s">&quot;parameters&quot;</span><span class="p">)</span>
-        <span class="n">sgrp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;drag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">drag</span>
-
-        <span class="c"># data sets (solution q)</span>
-        <span class="n">sgrp</span> <span class="o">=</span> <span class="n">hdf</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">)</span>
-        <span class="n">dset</span> <span class="o">=</span> <span class="n">sgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&quot;q&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">p</span><span class="p">))</span>
-
-        <span class="c"># done</span>
-        <span class="n">hdf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="mf">0</span>
-
-    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
-
-        <span class="n">hdf</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s">&quot;a&quot;</span><span class="p">)</span>
-        <span class="n">dset</span> <span class="o">=</span> <span class="n">hdf</span><span class="p">[</span><span class="s">&quot;data/q&quot;</span><span class="p">]</span>
-        <span class="n">dset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">q</span><span class="p">[:,:]</span>
-        <span class="n">hdf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">+</span> <span class="mf">1</span>
-
-<span class="c">######################################################################</span>
-<span class="c"># solver</span>
-<span class="c">#</span>
-
-<span class="k">class</span> <span class="nc">ShallowWaterSolver</span><span class="p">(</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">Solver</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drag</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mf">8</span><span class="p">,</span> <span class="n">cell_boundaries</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">times</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-
-        <span class="n">grid</span>          <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span><span class="n">boundaries</span><span class="o">=</span><span class="n">cell_boundaries</span><span class="p">)</span>
-        <span class="n">system</span>        <span class="o">=</span> <span class="n">ShallowWaterSystem</span><span class="p">(</span><span class="n">drag</span><span class="p">)</span>
-        <span class="n">reconstructor</span> <span class="o">=</span> <span class="n">ShallowWaterReconstructor</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
-        <span class="n">flux</span>          <span class="o">=</span> <span class="n">ShallowWaterFlux</span><span class="p">()</span>
-        <span class="n">source</span>        <span class="o">=</span> <span class="n">ShallowWaterSource</span><span class="p">()</span>
-        <span class="n">evolver</span>       <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">evolver</span><span class="o">.</span><span class="n">SSPERK3</span><span class="p">()</span>
-        <span class="n">dumper</span>        <span class="o">=</span> <span class="n">ShallowWaterDumper</span><span class="p">()</span>
-
-        <span class="n">pyblaw</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">Solver</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                      <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
-                                      <span class="n">system</span><span class="o">=</span><span class="n">system</span><span class="p">,</span>
-                                      <span class="n">reconstructor</span><span class="o">=</span><span class="n">reconstructor</span><span class="p">,</span>
-                                      <span class="n">flux</span><span class="o">=</span><span class="n">flux</span><span class="p">,</span>
-                                      <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
-                                      <span class="n">evolver</span><span class="o">=</span><span class="n">evolver</span><span class="p">,</span>
-                                      <span class="n">dumper</span><span class="o">=</span><span class="n">dumper</span><span class="p">,</span>
-                                      <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
-
-        <span class="c"># check cfl condition (max eigenvalue is taken to be 2...)</span>
-        <span class="k">if</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">):</span>
-            <span class="k">print</span> <span class="p">(</span><span class="s">&#39;WARNING: cfl condition not satisfied (2 dt = </span><span class="si">%.4e</span><span class="s"> &gt;= </span><span class="si">%.4e</span><span class="s"> = 0.5 dx)&#39;</span>
-                   <span class="o">%</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">),</span> <span class="mf">0.5</span><span class="o">*</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)))</span>
-
-
-<span class="c">######################################################################</span>
-<span class="c"># giv&#39;r!</span>
-<span class="c">#</span>
-
-<span class="n">k</span> <span class="o">=</span> <span class="mf">8</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">400.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">,</span> <span class="mf">1600</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">100.0</span><span class="p">,</span>  <span class="mf">110.0</span><span class="p">,</span> <span class="mf">100</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
-
-<span class="n">solver</span> <span class="o">=</span> <span class="n">ShallowWaterSolver</span><span class="p">(</span><span class="n">drag</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-                            <span class="n">order</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
-                            <span class="n">cell_boundaries</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-                            <span class="n">times</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
-
-<span class="n">profile</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s">&quot;solver.run()&quot;</span><span class="p">,</span> <span class="s">&#39;shallow_water.prof&#39;</span><span class="p">)</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="s">&#39;shallow_water.prof&#39;</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">strip_dirs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s">&#39;time&#39;</span><span class="p">,</span> <span class="s">&#39;cum&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 <div class="section" id="plotting-the-output">
 <h2>Plotting the output<a class="headerlink" href="#plotting-the-output" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;Plot the first component of the solutions contained in</span>
-<span class="sd">   &#39;output.hdf5&#39; for all dump times.&quot;&quot;&quot;</span>
+<span class="sd">   &#39;output.mat&#39; for all dump times.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">h5py</span> <span class="kn">as</span> <span class="nn">h5</span>
+<span class="kn">import</span> <span class="nn">scipy.io</span> <span class="kn">as</span> <span class="nn">sio</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
-<span class="n">hdf</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s">&#39;output.h5&#39;</span><span class="p">)</span>
-<span class="n">q</span>   <span class="o">=</span> <span class="n">hdf</span><span class="p">[</span><span class="s">&#39;data/q&#39;</span><span class="p">]</span>
+<span class="n">mat</span> <span class="o">=</span> <span class="n">sio</span><span class="o">.</span><span class="n">loadmat</span><span class="p">(</span><span class="s">&#39;output.mat&#39;</span><span class="p">)</span>
+<span class="n">q</span>   <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="s">&#39;data.q&#39;</span><span class="p">]</span>
 <span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">,:,</span><span class="mf">0</span><span class="p">],</span> <span class="s">&#39;o-&#39;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">hdf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -452,7 +172,6 @@
             <ul>
 <li><a class="reference external" href="">PyBLAW Examples</a><ul>
 <li><a class="reference external" href="#linear-system">Linear system</a></li>
-<li><a class="reference external" href="#shallow-water-solver">Shallow-water solver</a></li>
 <li><a class="reference external" href="#plotting-the-output">Plotting the output</a></li>
 </ul>
 </li>
@@ -492,7 +211,7 @@
         <li class="right" >
           <a href="pyblaw.html" title="PyBLAW API"
              >previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.3.a1.dev documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

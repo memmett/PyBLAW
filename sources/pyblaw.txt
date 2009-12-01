@@ -23,7 +23,7 @@ Flux
 .. autoclass:: pyblaw.flux.Flux
    :members:
 
-.. autoclass:: pyblaw.flux.LinearLFFlux
+.. autoclass:: pyblaw.flux.LFFlux
 
 Source
 ------
@@ -60,7 +60,9 @@ Dumper
 .. autoclass:: pyblaw.dumper.Dumper
    :members:
 
-.. autoclass:: pyblaw.dumper.H5PYDumper
+.. autoclass:: pyblaw.dumper.MATDumper
+
+.. autoclass:: pyblaw.h5dumper.H5PYDumper
 
 
 Solver

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PyBLAW API &mdash; PyBLAW v0.5 documentation</title>
+    <title>PyBLAW API &mdash; PyBLAW v0.3.a1.dev documentation</title>
     <link rel="stylesheet" href="static/default.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5',
+        VERSION:     '0.3.a1.dev',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="static/jquery.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="PyBLAW v0.5 documentation" href="index.html" />
+    <link rel="top" title="PyBLAW v0.3.a1.dev documentation" href="index.html" />
     <link rel="next" title="PyBLAW Examples" href="examples.html" />
     <link rel="prev" title="PyBLAW" href="index.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="index.html" title="PyBLAW"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.3.a1.dev documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -115,22 +115,20 @@ class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">Sys
 <dl class="class">
 <dt id="pyblaw.system.SimpleSystem">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">SimpleSystem</tt><big>(</big><em>p</em>, <em>q0</em>, <em>mass=1</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.system.SimpleSystem" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">SimpleSystem</tt><big>(</big><em>q0</em>, <em>parameters={}</em><big>)</big><a class="headerlink" href="#pyblaw.system.SimpleSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple system.</p>
-<p>Define a simple system without any parameters.</p>
+<p>XXX</p>
 <p>Arguments:</p>
 <blockquote>
 <ul class="simple">
-<li><em>p</em> - number of components</li>
 <li><em>q0</em> - initial condition (callable)</li>
-<li><em>m</em> - &#8216;mass&#8217; component</li>
 <li><em>parameters</em> - parameters (dictionary)</li>
 </ul>
 </blockquote>
 <p>The initial condition function is called as q0(x, t), and
 should return a vector.</p>
-<p>The <em>mass</em> component (indexed starting at 1) is taken to be the
-mass.</p>
+<p>The first component of the solution is taken to be the &#8216;mass&#8217;
+of the system.</p>
 </dd></dl>
 
 </div>
@@ -167,18 +165,22 @@ in f.</dd></dl>
 </dd></dl>
 
 <dl class="class">
-<dt id="pyblaw.flux.LinearLFFlux">
+<dt id="pyblaw.flux.LFFlux">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">LinearLFFlux</tt><big>(</big><em>A</em><big>)</big><a class="headerlink" href="#pyblaw.flux.LinearLFFlux" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linear Lax-Friedrichs flux.</p>
+class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">LFFlux</tt><big>(</big><em>f</em>, <em>alpha</em><big>)</big><a class="headerlink" href="#pyblaw.flux.LFFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lax-Friedrichs flux.</p>
 <p>This flux uses the Lax-Friedrichs numerical flux associated
-with the linear flux A, and is implemented in C (clinearflux).</p>
+with the flux <em>f</em>, and is implemented in C (clfflux).</p>
 <p>Arguments:</p>
 <blockquote>
 <ul class="simple">
-<li><em>A</em> - linear flux matrix</li>
+<li><em>f</em> - flux function (callable)</li>
+<li><em>alpha</em> - XXX</li>
 </ul>
 </blockquote>
+<p>The flux function <em>f</em> is called as <tt class="docutils literal"><span class="pre">f(q,</span> <span class="pre">f)</span></tt> where <tt class="docutils literal"><span class="pre">q</span></tt> is a
+NumPy XXX</p>
+<p>Implementing the flux <em>f</em> in Cython is strongly recommended.</p>
 </dd></dl>
 
 </div>
@@ -300,6 +302,11 @@ class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">Ev
 <dd>Evolve q and store the result in qn.</dd></dl>
 
 <dl class="method">
+<dt id="pyblaw.evolver.Evolver.evolve_homogeneous">
+<tt class="descname">evolve_homogeneous</tt><big>(</big><em>q</em>, <em>qn</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.evolve_homogeneous" title="Permalink to this definition">¶</a></dt>
+<dd>Evolve q (no source) and store the result in qn.</dd></dl>
+
+<dl class="method">
 <dt id="pyblaw.evolver.Evolver.set_times">
 <tt class="descname">set_times</tt><big>(</big><em>times</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.set_times" title="Permalink to this definition">¶</a></dt>
 <dd>Set times at which the solution is computed to <em>times</em> and
@@ -361,9 +368,34 @@ class </em><tt class="descclassname">pyblaw.dumper.</tt><tt class="descname">Dum
 </dd></dl>
 
 <dl class="class">
-<dt id="pyblaw.dumper.H5PYDumper">
+<dt id="pyblaw.dumper.MATDumper">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.dumper.</tt><tt class="descname">H5PYDumper</tt><big>(</big><em>output='output.h5'</em><big>)</big><a class="headerlink" href="#pyblaw.dumper.H5PYDumper" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.dumper.</tt><tt class="descname">MATDumper</tt><big>(</big><em>output='output.mat'</em><big>)</big><a class="headerlink" href="#pyblaw.dumper.MATDumper" title="Permalink to this definition">¶</a></dt>
+<dd><p>MAT dumper (using SciPy).</p>
+<p>Dump the cell averages q to a MAT file.  The matrices created
+within the MAT file are:</p>
+<blockquote>
+<ul class="simple">
+<li>dims.xdim - cell centres</li>
+<li>dims.tdim - dump times</li>
+<li>parameters.X - parameters</li>
+<li>data.q - cell averages of solution q</li>
+</ul>
+</blockquote>
+<p>The parameters are taken from the system (pyblaw.system.System).</p>
+<p>The H5Dumper in pyblaw.h5dumper is more efficient.</p>
+<p>Arguments:</p>
+<blockquote>
+<ul class="simple">
+<li><em>output</em> - output file name</li>
+</ul>
+</blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.h5dumper.H5PYDumper">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.h5dumper.</tt><tt class="descname">H5PYDumper</tt><big>(</big><em>output='output.h5'</em><big>)</big><a class="headerlink" href="#pyblaw.h5dumper.H5PYDumper" title="Permalink to this definition">¶</a></dt>
 <dd><p>HDF5 dumper (using the h5py Python package).</p>
 <p>Dump the cell averages q to an HDF5 file.  The hierarchy
 created within the HDF5 file is:</p>
@@ -434,6 +466,22 @@ and calling their <em>allocate</em> methods.</p>
 <li><em>p</em>             - number of unknowns</li>
 </ul>
 </blockquote>
+<dl class="method">
+<dt id="pyblaw.solver.Solver.build_cache">
+<tt class="descname">build_cache</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.build_cache" title="Permalink to this definition">¶</a></dt>
+<dd><ol class="upperroman simple" start="30">
+<li>must set self.grid</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.solver.Solver.load_cache">
+<tt class="descname">load_cache</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.load_cache" title="Permalink to this definition">¶</a></dt>
+<dd><ol class="upperroman simple" start="30">
+<li>must set self.grid</li>
+</ol>
+</dd></dl>
+
 <dl class="method">
 <dt id="pyblaw.solver.Solver.run">
 <tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.run" title="Permalink to this definition">¶</a></dt>
@@ -513,7 +561,7 @@ the <em>dumper</em>.</p>
         <li class="right" >
           <a href="index.html" title="PyBLAW"
              >previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.3.a1.dev documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
