@@ -22,5 +22,7 @@ html_theme     = 'default'
 # project information
 project   = 'PyBLAW'
 copyright = '2009, Matthew Emmett'
-version   = '0.5'
-release   = '0.5'
+
+execfile('../version.py')               # this sets 'version'
+release = version
+
