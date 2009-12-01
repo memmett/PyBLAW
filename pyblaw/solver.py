@@ -2,6 +2,7 @@
 
 """
 
+import os
 import numpy as np
 
 import pyblaw.base
@@ -74,11 +75,6 @@ class Solver(pyblaw.base.Base):
         self.t  = times
         self.dt = times[1:] - times[:-1]
 
-        self.x  = grid.boundaries()
-        self.dx = grid.sizes()
-        self.N  = grid.size
-        self.p  = system.p
-
         if dump_times is None:
             self.t_dump = np.linspace(self.t[0], self.t[-1], 10+1)
         else:
@@ -92,15 +88,30 @@ class Solver(pyblaw.base.Base):
         self.source         = source
         self.dumper         = dumper
 
+        self.initialised = False
+
+
+    ####################################################################
+    # init
+    #
+
+    def _init(self):
+
+        self.x  = self.grid.boundaries()
+        self.dx = self.grid.sizes()
+        self.N  = self.grid.size
+        self.p  = self.system.p
+
         self.system.set_grid(self.grid)
         self.reconstructor.set_grid(self.grid)
         self.reconstructor.set_system(self.system)
         self.flux.set_grid(self.grid)
         self.flux.set_system(self.system)
         self.flux.set_reconstructor(self.reconstructor)
-        self.source.set_grid(self.grid)
-        self.source.set_system(self.system)
-        self.source.set_reconstructor(self.reconstructor)
+        if self.source is not None:
+            self.source.set_grid(self.grid)
+            self.source.set_system(self.system)
+            self.source.set_reconstructor(self.reconstructor)
         self.evolver.set_grid(self.grid)
         self.evolver.set_system(self.system)
         self.evolver.set_reconstructor(self.reconstructor)
@@ -113,9 +124,25 @@ class Solver(pyblaw.base.Base):
         self.system.allocate()
         self.reconstructor.allocate()
         self.flux.allocate()
-        self.source.allocate()
+        if self.source is not None:
+            self.source.allocate()
         self.evolver.allocate()
         self.allocate()
+
+        self.initialised = True
+
+
+    ####################################################################
+    # cache related
+    #
+
+    def load_cache(self, **kwargs):
+        """XXX.  must set self.grid"""
+        raise NotImplementedError, 'load_cache not implemented'
+
+    def build_cache(self, **kwargs):
+        """XXX.  must set self.grid"""
+        raise NotImplementedError, 'build_cache not implemented'
 
 
     ####################################################################
@@ -137,6 +164,9 @@ class Solver(pyblaw.base.Base):
 
         #### allocate and init
 
+        if not self.initialised:
+            self._init()
+
         N = self.grid.N
         p = self.system.p
         q  = np.zeros((N, p))
@@ -147,11 +177,11 @@ class Solver(pyblaw.base.Base):
         t0 = self.t[0]
         self.system.initial_conditions(t0, q)
 
-        self.grid.pre_run(t0=t0, q0=q)
         self.system.pre_run(t0=t0, q0=q)
         self.reconstructor.pre_run(t0=t0, q0=q)
         self.flux.pre_run(t0=t0, q0=q)
-        self.source.pre_run(t0=t0, q0=q)
+        if self.source is not None:
+            self.source.pre_run(t0=t0, q0=q)
         self.evolver.pre_run(t0=t0, q0=q)
         self.pre_run(t0=t0, q0=q)
 
@@ -162,7 +192,8 @@ class Solver(pyblaw.base.Base):
             self.system.set_debug(step)
             self.reconstructor.set_debug(step)
             self.flux.set_debug(step)
-            self.source.set_debug(step)
+            if self.source is not None:
+                self.source.set_debug(step)
             self.evolver.set_debug(step)
 
             # debug: time step header
@@ -180,7 +211,10 @@ class Solver(pyblaw.base.Base):
                 self.t_dump = self.t_dump[1:]
 
             # evolve
-            self.evolver.evolve(q, n, qn)
+            if self.source is not None:
+                self.evolver.evolve(q, n, qn)
+            else:
+                self.evolver.evolve_homogeneous(q, n, qn)
             q[:,:] = qn[:,:]
 
             # debug: break?

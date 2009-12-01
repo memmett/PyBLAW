@@ -63,6 +63,11 @@ class Evolver(pyblaw.base.Base):
 
         raise NotImplementedError
 
+    def evolve_homogeneous(self, q, qn, **kwargs):
+        """Evolve q (no source) and store the result in qn."""
+
+        raise NotImplementedError
+
 
 ######################################################################
 
@@ -75,10 +80,12 @@ class FE(Evolver):
         N = self.grid.N
         p = self.system.p
 
+        # XXX: this is busted
+
         self.f  = np.zeros((N,p))
         self.ql = np.zeros((N,p))
         self.qr = np.zeros((N,p))
-        self.qq = np.zeros((N*n,p))
+        self.qq = np.zeros((N,n,p))
         self.s  = np.zeros((N,p))
 
 
@@ -98,6 +105,21 @@ class FE(Evolver):
         self.source.source(qq, s)
         qn[:,:] = q[:,:] + dt * (f[:,:] + s[:,:])
 
+    def evolve_homogeneous(self, q, n, qn):
+
+        t  = self.t[n]
+        dt = self.dt[n]
+
+        f  = self.f
+        ql = self.ql
+        qr = self.qr
+        qq = self.qq
+        s  = self.s
+
+        self.reconstructor.reconstruct(q, ql, qr, qq)
+        self.flux.flux(ql, qr, f)
+        qn[:,:] = q[:,:] + dt * f[:,:]
+
 
 ######################################################################
 
@@ -110,10 +132,12 @@ class ERK2(Evolver):
         N = self.grid.N
         p = self.system.p
 
+        # XXX: this is busted
+
         self.f  = np.zeros((N,p))
         self.ql = np.zeros((N,p))
         self.qr = np.zeros((N,p))
-        self.qq = np.zeros((N*n,p))
+        self.qq = np.zeros((N,n,p))
         self.s  = np.zeros((N,p))
 
         self.qk = np.zeros((N, p))
@@ -166,7 +190,7 @@ class SSPERK3(Evolver):
         self.f  = np.zeros((N,p))
         self.ql = np.zeros((N,p))
         self.qr = np.zeros((N,p))
-        self.qq = np.zeros((N*n,p))
+        self.qq = np.zeros((N,n,p))
         self.s  = np.zeros((N,p))
 
         self.q1 = np.zeros((N, p))
@@ -204,6 +228,35 @@ class SSPERK3(Evolver):
         self.flux.flux(ql, qr, f)
         self.source.source(qq, s)
         qn[:,:] = 1.0/3.0 * q[:,:] + 2.0/3.0 * q2[:,:] + 2.0/3.0 * dt * (f[:,:] + s[:,:])
+
+    def evolve_homogeneous(self, q, n, qn):
+
+        q1 = self.q1
+        q2 = self.q2
+
+        t  = self.t[n]
+        dt = self.dt[n]
+
+        f  = self.f
+        ql = self.ql
+        qr = self.qr
+        qq = self.qq
+        s  = self.s
+
+        # q1
+        self.reconstructor.reconstruct(q, ql, qr, qq)
+        self.flux.flux(ql, qr, f)
+        q1[:,:] = q[:,:] + dt * f[:,:]
+
+        # q2
+        self.reconstructor.reconstruct(q1, ql, qr, qq)
+        self.flux.flux(ql, qr, f)
+        q2[:,:] = 3.0/4.0 * q[:,:] + 1.0/4.0 * q1[:,:] + 1.0/4.0 * dt * f[:,:]
+
+        # qn
+        self.reconstructor.reconstruct(q2, ql, qr, qq)
+        self.flux.flux(ql, qr, f)
+        qn[:,:] = 1.0/3.0 * q[:,:] + 2.0/3.0 * q2[:,:] + 2.0/3.0 * dt * f[:,:]
 
 
 
