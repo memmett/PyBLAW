@@ -52,36 +52,30 @@ class System(pyblaw.base.Base):
 class SimpleSystem(System):
     """Simple system.
 
-       Define a simple system without any parameters.
+       XXX
 
        Arguments:
 
-         * *p* - number of components
          * *q0* - initial condition (callable)
-         * *m* - 'mass' component
          * *parameters* - parameters (dictionary)
 
        The initial condition function is called as q0(x, t), and
        should return a vector.
 
-       The *mass* component (indexed starting at 1) is taken to be the
-       mass.
+       The first component of the solution is taken to be the 'mass'
+       of the system.
 
     """
 
-    def __init__(self, p, q0, mass=1, **kwargs):
+    def __init__(self, q0, parameters={}):
+        pyblaw.system.System(parameters)
 
-        pyblaw.system.System(kwargs)
-
-        self.p = p
         self.q0 = q0
-        self.m = mass - 1
+        self.p = len(q0(0.0, 0.0))
 
     def initial_conditions(self, t, q):
-
         for m in xrange(self.p):
             q[:,m] = self.grid.average(lambda x: self.q0(x, t)[m])
 
     def mass(self, q):
-
-        return np.dot(q[:,self.m], self.grid.sizes())
+        return np.dot(q[:,0], self.grid.sizes())
