@@ -9,6 +9,8 @@
 
    where A and B are constant (and possibly singular) matrices.
 
+   XXX: this is busted.
+
 """
 
 import math
@@ -31,10 +33,7 @@ import pyweno.stencil
 #
 
 def q0(x, t):
-    """Initial condition.
-
-       XXX
-    """
+    """Initial condition."""
 
     if x < -t or x > t:
         return np.zeros(3)
@@ -43,9 +42,7 @@ def q0(x, t):
 
 
 class LinearSolver(pyblaw.solver.Solver):
-    """Solver for a linear system.
-
-    """
+    """Solver for a linear system."""
 
     def __init__(self, A, B, boundaries, times, order=4):
 
@@ -53,11 +50,11 @@ class LinearSolver(pyblaw.solver.Solver):
 
         grid          = pyblaw.grid.Grid(boundaries=boundaries)
         system        = pyblaw.system.SimpleSystem(p, q0, parameters={'A': A, 'B': B})
-        reconstructor = pyblaw.reconstructor.WENOReconstructor(order, 3, 'cache.h5')
+        reconstructor = pyblaw.reconstructor.WENOReconstructor(order, 3, 'cache.mat')
         flux          = pyblaw.flux.LinearLFFlux(A)
         source        = pyblaw.source.LinearQuad3Source(B)
         evolver       = pyblaw.evolver.SSPERK3()
-        dumper        = pyblaw.dumper.H5PYDumper('output.h5')
+        dumper        = pyblaw.dumper.MATDumper('output.mat')
 
         pyblaw.solver.Solver.__init__(self,
                                       grid=grid,

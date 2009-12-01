@@ -6,22 +6,20 @@
    It solves the depth-averaged shallow-water equations, which are
 
      * height:   h_t + (u h)_x = 0
-     * momentum: (u h)_t + ( u^2 h + 1/2 h^2 )_x = - drag u^2
+     * momentum: (u h)_t + ( u^2 h + 1/2 h^2 )_x = - drag u^2 - h b_x
 
-   where h is the height and u is the velocity of the fluid, by using
-   a high order polynomial reconstruction of q.
+   where h is the depth of the fluid, u is the velocity of the fluid,
+   and b is the height of the bed.
 
    Throughout, q is:
 
-     * q[i,0] - average height in cell C_i
+     * q[i,0] - average depth in cell C_i
      * q[i,1] - average momentum in cell C_i
+     * q[i,2] - average bed height in cell C_i (remains fixed)
 
-   NOTE: This is a pure python implementation and is **VERY** slow.
-   To speed this up, one should
+   NOTE: XXX
 
-     * cache the grid and recontruction matrices;
-     * avoid calculating the same thing twice; and
-     * use a hybrid approach (ie, write the flux and source functions in C).
+   XXX: this is very outdated.
 
 """
 
@@ -55,6 +53,12 @@ class ShallowWaterSystem(pyblaw.system.System):
         self.drag = drag
 
     def h0(self, x, t):
+        if x < -t or x > t:
+            return 1.0
+
+        return math.cos(math.pi/2.0 * x/t) + 1.0 - self.b0(x, t)
+
+    def b0(self, x, t):
         if x < -t or x > t:
             return 1.0
 

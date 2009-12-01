@@ -6,6 +6,10 @@
 *.pyo
 *.so
 
+# examples
+*.mat
+*.prof
+
 # setuptools
 build
 dist

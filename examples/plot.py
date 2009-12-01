@@ -1,15 +1,14 @@
 """Plot the first component of the solutions contained in
-   'output.hdf5' for all dump times."""
+   'output.mat' for all dump times."""
 
-import h5py as h5
+import scipy.io as sio
 import matplotlib.pyplot as plt
 
-hdf = h5.File('output.h5')
-q   = hdf['data/q']
+mat = sio.loadmat('output.mat')
+q   = mat['data.q']
 (M, N, p) = q.shape
 
 for i in range(M):
     plt.plot(q[i,:,0], 'o-')
 
 plt.show()
-hdf.close()
