@@ -12,7 +12,7 @@
 
 /*********************************************************************/
 
-int N, p;
+int virtual, N, p;
 double alpha, *fl, *fr, *dx;
 
 /*********************************************************************/
@@ -25,7 +25,7 @@ init_lf_flux(PyObject *self, PyObject *args)
   /*
    * parse options
    */
-  if (! PyArg_ParseTuple(args, "dOOO", &alpha, &dx_py, &fl_py, &fr_py))
+  if (! PyArg_ParseTuple(args, "diOOO", &alpha, &virtual, &dx_py, &fl_py, &fr_py))
     return NULL;
 
   if ((PyArray_FLAGS(dx_py) & NPY_IN_ARRAY) != NPY_IN_ARRAY) {
@@ -126,9 +126,13 @@ lf_flux(PyObject *self, PyObject *args)
   N = PyArray_DIM(f_py, 0);
   p = PyArray_DIM(f_py, 1);
 
-  nflux_lf(qm, qp, fm, fp, fr);
+  for (i=0; i<virtual; i++) {
+    for (j=0; j<p; j++)
+      f[i*p+j] = 0.0;
+  }
 
-  for (i=1; i<N; i++) {
+  nflux_lf(qm+virtual*p, qp+virtual*p, fm+virtual*p, fp+virtual*p, fr);
+  for (i=virtual; i<N-virtual; i++) {
     for (j=0; j<p; j++)
       fl[j] = fr[j];
 
@@ -138,6 +142,11 @@ lf_flux(PyObject *self, PyObject *args)
 
     for (j=0; j<p; j++)
       f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
+  }
+
+  for (i=N-virtual; i<N; i++) {
+    for (j=0; j<p; j++)
+      f[i*p+j] = 0.0;
   }
 
   /*
