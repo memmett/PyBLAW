@@ -7,9 +7,9 @@ import numpy as np
 import pyblaw.wenosolver
 import pyblaw.system
 
-# use a cython based flux function (see traffic_flux.pyx)
+# import cython flux function
 import pyximport; pyximport.install()
-import traffic_flux
+import ctraffic
 
 # initial condition
 def q0(x, t):

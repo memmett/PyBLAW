@@ -3,273 +3,150 @@
    This shallow-water solver serves as short example of how to use the
    PyBLAW framework.
 
-   It solves the depth-averaged shallow-water equations, which are
+   It solves the depth-averaged shallow-water equations, over a
+   non-flat bed, which are
 
      * height:   h_t + (u h)_x = 0
-     * momentum: (u h)_t + ( u^2 h + 1/2 h^2 )_x = - drag u^2 - h b_x
+     * momentum: (h u)_t + ( h u^2 + 1/2 h^2 )_x = - h b_x
 
    where h is the depth of the fluid, u is the velocity of the fluid,
-   and b is the height of the bed.
+   and b is the bed topography.
 
    Throughout, q is:
 
      * q[i,0] - average depth in cell C_i
      * q[i,1] - average momentum in cell C_i
-     * q[i,2] - average bed height in cell C_i (remains fixed)
-
-   NOTE: XXX
-
-   XXX: this is very outdated.
+     * q[i,2] - average bed height in cell C_i (fixed)
+     * q[i,3] - average bed height squared in cell C_i (fixed)
 
 """
 
 import math
-import cProfile as profile
-import pstats
+import os
 
-import h5py as h5
 import numpy as np
-import scipy.sparse
-
+import pyweno.grid
+import pyweno.weno
+import pyblaw.wenosolver
 import pyblaw.system
-import pyblaw.flux
-import pyblaw.source
-import pyblaw.reconstructor
-import pyblaw.evolver
-import pyblaw.dumper
-import pyblaw.solver
-import pyweno.stencil
 
-######################################################################
-# system
-#
+# import cython flux and source functions
+import pyximport; pyximport.install()
+import cshallowwater
 
-class ShallowWaterSystem(pyblaw.system.System):
+# initial conditions (slightly perturbed still water from LeVeque)
+epsilon = 0.2
+def h0(x, t):
+    if abs(x - 1.15) < 0.05:
+        return 1.0 + epsilon  - b0(x,t)
 
-    p = 2                               # number of components
-    drag = 0.0                          # drag coeff
+    return 1.0 - b0(x,t)
 
-    def __init__(self, drag):
-        self.drag = drag
+def b0(x,t):
+    if abs(x - 1.5) < 0.1:
+        return 0.25 * ( math.cos( math.pi*(x - 1.5)/0.1 ) + 1.0 )
 
-    def h0(self, x, t):
-        if x < -t or x > t:
-            return 1.0
+    return 0.0
 
-        return math.cos(math.pi/2.0 * x/t) + 1.0 - self.b0(x, t)
+def q0(x, t):
+    return np.array([h0(x,t), 0.0, b0(x,t), b0(x,t)**2])
 
-    def b0(self, x, t):
-        if x < -t or x > t:
-            return 1.0
-
-        return math.cos(math.pi/2.0 * x/t) + 1.0
-
-    def initial_conditions(self, t, q):
-        q[:,0] = self.grid.average(lambda x: self.h0(x, t))
-        q[:,1] = self.grid.average(lambda x: 0.0)
-
-    def mass(self, q):
-        return np.dot(q[:,0], self.grid.sizes())
-
-
-######################################################################
-# flux
-#
-
-class ShallowWaterFlux(pyblaw.flux.Flux):
-
-    def pre_run(self, **kwargs):
-        self.dx = self.grid.x[1:] - self.grid.x[:-1]
-
-    def f_q(self, q):
-        """f"""
-        if q[0] > 0.0:
-            return np.array([ q[1], q[1]*q[1]/q[0] + 0.5 * q[0]*q[0] ])
-
-        return np.zeros(self.system.p)
-
-    def flux_lf(self, ql, qr):
-        """Lax-Friedrichs flux."""
-
-        # alpha is taken to be 2.0 here...
-        return 0.5 * (self.f_q(ql) + self.f_q(qr) - 2.0 * (qr - ql) )
-
-    def flux(self, ql, qr, f):
-        """Net flux (override base class)."""
-
-        N  = self.grid.N
-        dx = self.dx
-
-        for i in xrange(N-1):
-            fl = self.flux_lf(ql[i],   qr[i])
-            fr = self.flux_lf(ql[i+1], qr[i+1])
-            f[i] = - (fr - fl) / dx[i]
-
-
-######################################################################
-# source
-#
-
-class ShallowWaterSource(pyblaw.source.Source):
-
-    def source(self, qq, s):
-        # XXX: add drag
-        pass
-
-
-######################################################################
-# reconstructor
-#
-
+# well-balanced reconstructor
 class ShallowWaterReconstructor(pyblaw.reconstructor.Reconstructor):
 
-    n = 3                               # number of quadrature points
-
-    def __init__(self, order):
+    def __init__(self, order, cache):
         self.k = order
+        self.cache = cache
+
+    def pre_run(self, **kwargs):
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
+
+    def reconstruct(self, q, qm, qp, qq):
+        weno = self.weno
+
+        # flux and source reconstructions at boundaries
+        weno.smoothness(q[:,0])
+
+        weno.weights('left')
+        for m in (0, 1, 2, 3):
+            weno.reconstruct(q[:,m], 'left', qp[:,m], False)
+
+        weno.weights('right')
+        for m in (0, 1, 2, 3):
+            weno.reconstruct(q[:,m], 'right', qm[:,m], False)
+
+        # source reconstructions at quadrature points (see cshallowwater.pyx)
+        weno.weights('gauss_quad3')
+        weno.reconstruct(q[:,0], 'gauss_quad3', qq[:,:,0], False)
+        weno.reconstruct(q[:,2], 'gauss_quad3', qq[:,:,1], False)
+
+        weno.weights('d|gauss_quad3')
+        weno.reconstruct(q[:,2], 'd|gauss_quad3', qq[:,:,2], False)
+        weno.reconstruct(q[:,3], 'd|gauss_quad3', qq[:,:,3], False)
+
+        qm[1:,:] = qm[:-1,:]            # XXX, tweak PyWENO so we don't have to do this
 
 
-    def allocate(self):
-
-        N = self.grid.N
-        p = self.system.p
-        k = self.k
-        n = self.n
-
-        print "building reconstructors..."
-
-        # compute reconstruction coeffs
-        r = (k / 2) + (k % 2)
-        stencil = pyweno.stencil.Stencil(order=k, shift=r, quad=n, grid=self.grid)
-
-        # build reconstructor matrix
-        BNDRYL = scipy.sparse.lil_matrix((N,N))
-        BNDRYR = scipy.sparse.lil_matrix((N,N))
-        QUAD   = scipy.sparse.lil_matrix((N*n,N))
-
-        for i in xrange(2*k):
-            BNDRYL[i,i] = 1.0
-            BNDRYR[i,i] = 1.0
-            for l in xrange(n):
-                QUAD[i+l,i] = 1.0
-
-        for i in xrange(2*k, N-2*k):
-            BNDRYL[i,i-1-r:i-1-r+k] = stencil.c_p[i-1,:]
-            BNDRYR[i,i-r:i-r+k]     = stencil.c_m[i,:]
-            for l in xrange(n):
-                QUAD[i*n+l,i-r:i-r+k] = stencil.c_q[i,l,:]
-
-        for i in xrange(N-2*k, N):
-            BNDRYL[i,i] = 1.0
-            BNDRYR[i,i] = 1.0
-            for l in xrange(n):
-                QUAD[i+l,i] = 1.0
-
-        self.BNDRYL = BNDRYL.tocsr()
-        self.BNDRYR = BNDRYR.tocsr()
-        self.QUAD   = QUAD.tocsr()
-
-        print "building reconstructors... done."
-
-
-    def reconstruct(self, q, ql, qr, qq):
-
-        p = self.system.p
-
-        # XXX: use weno instead of central polynomial...
-
-        for m in xrange(p):
-            ql[:,m] = self.BNDRYL * q[:,m]
-            qr[:,m] = self.BNDRYR * q[:,m]
-            qq[:,m] = self.QUAD * q[:,m]
-
-
-######################################################################
-# dumper
-#
-
-class ShallowWaterDumper(pyblaw.dumper.Dumper):
-
-    def __init__(self, output='output.hdf5'):
-        self.output = output
-
-    def init_dump(self):
-
-        # initialise hdf
-        hdf = h5.File(self.output, "w")
-
-        # x and t dimensions
-        sgrp = hdf.create_group("dims")
-        sgrp.create_dataset("xdim", data=self.x)
-        sgrp.create_dataset("tdim", data=self.t)
-
-        # parameters
-        sgrp = hdf.create_group("parameters")
-        sgrp.attrs['drag'] = self.system.drag
-
-        # data sets (solution q)
-        sgrp = hdf.create_group("data")
-        dset = sgrp.create_dataset("q", (len(self.t), len(self.x), self.system.p))
-
-        # done
-        hdf.close()
-
-        self.last = 0
-
-    def dump(self, q):
-
-        hdf = h5.File(self.output, "a")
-        dset = hdf["data/q"]
-        dset[self.last,:,:] = q[:,:]
-        hdf.close()
-
-        self.last = self.last + 1
-
-######################################################################
-# solver
-#
-
+# define a solver to use our reconstructor and build/load a cache
 class ShallowWaterSolver(pyblaw.solver.Solver):
 
-    def __init__(self, drag=0.001, order=8, cell_boundaries=None, times=None):
+    def __init__(self,
+                 times=None,
+                 dump_times=None,
+                 cache='shallow_water_cache.mat', output='shallow_water.mat'):
 
-        grid          = pyblaw.grid.Grid(boundaries=cell_boundaries)
-        system        = ShallowWaterSystem(drag)
-        reconstructor = ShallowWaterReconstructor(order)
-        flux          = ShallowWaterFlux()
-        source        = ShallowWaterSource()
+        self.k      = 3
+        self.cache  = cache
+        self.output = output
+
+        system        = pyblaw.system.SimpleSystem(q0)
+        flux          = pyblaw.flux.SimpleFlux(cshallowwater.f)
+        source        = pyblaw.source.SimpleSource(cshallowwater.s)
+        reconstructor = ShallowWaterReconstructor(self.k, self.cache)
         evolver       = pyblaw.evolver.SSPERK3()
-        dumper        = ShallowWaterDumper()
+        dumper        = pyblaw.dumper.MATDumper(output)
 
         pyblaw.solver.Solver.__init__(self,
-                                      grid=grid,
                                       system=system,
                                       reconstructor=reconstructor,
                                       flux=flux,
                                       source=source,
                                       evolver=evolver,
                                       dumper=dumper,
-                                      times=times)
+                                      times=times,
+                                      dump_times=dump_times)
 
-        # check cfl condition (max eigenvalue is taken to be 2...)
-        if 2.0 * max(self.dt) >= 0.5 * min(self.dx):
-            print ('WARNING: cfl condition not satisfied (2 dt = %.4e >= %.4e = 0.5 dx)'
-                   % (2.0*max(self.dt), 0.5*min(self.dx)))
+    def load_cache(self):
+        if not os.access(self.cache, os.F_OK):
+            return False
 
+        self.grid = pyweno.grid.Grid(cache=self.cache, format='mat')
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format='mat')
 
-######################################################################
+        return True
+
+    def build_cache(self, x=None):
+        grid = pyweno.grid.Grid(x)
+
+        weno = pyweno.weno.WENO(grid=grid, order=self.k)
+        weno.precompute_reconstruction('left')
+        weno.precompute_reconstruction('right')
+        weno.precompute_reconstruction('gauss_quad3')
+        weno.precompute_reconstruction('d|gauss_quad3')
+        weno.cache(self.cache)
+
+        self.grid = grid
+        self.weno = weno
+
+# the solver
+solver = ShallowWaterSolver(
+    times=np.linspace(0.0, 1.0, 300+1),
+    dump_times=np.linspace(0.0, 1.0, 150+1)
+    )
+
+# build/load grid and cache
+if not solver.load_cache():
+    solver.build_cache(np.linspace(0.0, 3.0, 300+1))
+
 # giv'r!
-#
-
-k = 8
-x = np.linspace(-400.0, 400.0, 1600+1)
-t = np.linspace(100.0,  110.0, 100+1)
-
-solver = ShallowWaterSolver(drag=0.001,
-                            order=k,
-                            cell_boundaries=x,
-                            times=t)
-
-profile.run("solver.run()", 'shallow_water.prof')
-p = pstats.Stats('shallow_water.prof')
-p.strip_dirs().sort_stats('time', 'cum').print_stats(10)
+solver.run()
