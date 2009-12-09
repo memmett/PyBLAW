@@ -95,13 +95,14 @@ class Solver(pyblaw.base.Base):
     # init
     #
 
-    def _init(self):
+    def initialise_and_allocate(self):
 
         self.x  = self.grid.boundaries()
         self.dx = self.grid.sizes()
         self.N  = self.grid.size
         self.p  = self.system.p
 
+        # link everything up
         self.system.set_grid(self.grid)
         self.reconstructor.set_grid(self.grid)
         self.reconstructor.set_system(self.system)
@@ -121,6 +122,7 @@ class Solver(pyblaw.base.Base):
         self.dumper.set_dims(self.grid.centers(), self.t_dump)
         self.dumper.set_system(self.system)
 
+        # allocate
         self.system.allocate()
         self.reconstructor.allocate()
         self.flux.allocate()
@@ -129,6 +131,26 @@ class Solver(pyblaw.base.Base):
         self.evolver.allocate()
         self.allocate()
 
+        self.q  = np.zeros((self.N, self.p))
+        self.qn = np.zeros((self.N, self.p))
+
+        # apply initial conditions
+        self.system.initial_conditions(self.t[0], self.q)
+
+        # run pre-run hooks
+        pre_run_args = {'t0': self.t[0], 'q0': self.q}
+        self.system.pre_run(**pre_run_args)
+        self.reconstructor.pre_run(**pre_run_args)
+        self.flux.pre_run(**pre_run_args)
+        if self.source is not None:
+            self.source.pre_run(**pre_run_args)
+        self.evolver.pre_run(**pre_run_args)
+        self.pre_run(**pre_run_args)
+
+        # init the dumper
+        self.dumper.init_dump()
+
+        # done
         self.initialised = True
 
 
@@ -165,25 +187,10 @@ class Solver(pyblaw.base.Base):
         #### allocate and init
 
         if not self.initialised:
-            self._init()
+            self.initialise_and_allocate()
 
-        N = self.grid.N
-        p = self.system.p
-        q  = np.zeros((N, p))
-        qn = np.zeros((N, p))
-
-        self.dumper.init_dump()
-
-        t0 = self.t[0]
-        self.system.initial_conditions(t0, q)
-
-        self.system.pre_run(t0=t0, q0=q)
-        self.reconstructor.pre_run(t0=t0, q0=q)
-        self.flux.pre_run(t0=t0, q0=q)
-        if self.source is not None:
-            self.source.pre_run(t0=t0, q0=q)
-        self.evolver.pre_run(t0=t0, q0=q)
-        self.pre_run(t0=t0, q0=q)
+        q = self.q
+        qn = self.qn
 
         #### giv'r!
         for n, t in enumerate(self.t[0:-1]):
