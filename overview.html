@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyBLAW Overview &mdash; PyBLAW v0.3.a1.dev documentation</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.a1.dev',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PyBLAW v0.3.a1.dev documentation" href="index.html" />
+    <link rel="next" title="PyBLAW Examples" href="examples.html" />
+    <link rel="prev" title="PyBLAW" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="PyBLAW Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="PyBLAW"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PyBLAW v0.3.a1.dev documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyblaw-overview">
+<h1>PyBLAW Overview<a class="headerlink" href="#pyblaw-overview" title="Permalink to this headline">¶</a></h1>
+<p>To solve a one-dimensional system of hyperbolic balance laws, we
+integrate the system over a grid cell (finite volume) from
+<img class="math" src="images/math/ea60decd65f501b0c2c19c5489d8eaafc758e2fb.png" alt="x_{i-1/2}"/> to <img class="math" src="images/math/63c004db65fe572a32d3216bcd528faad91e993c.png" alt="x_{i+1/2}"/> and re-arrange to obtain</p>
+<div class="math">
+<p><img src="images/math/3893ef1d930e275ce7df0cae872c716366ae316c.png" alt="\frac{d}{dt} q_i = \frac{1}{\Delta x_i} \Bigl( f(q_{i-1/2}) - f(q_{i+1/2}) \Bigr) + \frac{1}{\Delta x_i} \int_{x_{i-1/2}}^{x_{i+1/2}} s(q) \;dx." />
+</div></p><p>where <img class="math" src="images/math/6b50b1e2a036e3897de5cd74a367b0a7da70d160.png" alt="q_i"/> is the cell average of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>.  As such, we need
+to approximate</p>
+<blockquote>
+<ol class="arabic simple">
+<li>the flux <img class="math" src="images/math/dd93ae210c3cbc78aa30a398fb007b1397d0ca5f.png" alt="f(q)"/> at the cell boundaries <img class="math" src="images/math/2902d7113959eaf9ad7daff60708bcc52e2c4252.png" alt="q_{i \pm 1/2}"/>, and</li>
+<li>the integral of the source <img class="math" src="images/math/a328bb79447cae504458958c38fb40f58f8b014e.png" alt="s(q)"/> over the cells;</li>
+</ol>
+</blockquote>
+<p>and evolve the sum these of to obtain the time evolution of the cell
+averages.  The key to approximating the flux and source terms is being
+able to approximate the solution <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> at the cell boundaries and
+quadrature points given the cell averages of <img class="math" src="images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>.  This is the
+<em>reconstruction</em> problem.  So, in order to solve a particular system
+of hyperbolic balance laws we need to</p>
+<blockquote>
+<ol class="arabic simple">
+<li>reconstruct the solution at various points (cell boundaries and source quadrature points),</li>
+<li>compute the flux and source terms, and</li>
+<li>evolve the system.</li>
+</ol>
+</blockquote>
+<p>As such, the PyBLAW framework consists of base classes that define</p>
+<blockquote>
+<ul class="simple">
+<li>the <em>system</em>,</li>
+<li>the <em>flux</em>,</li>
+<li>the <em>source</em>,</li>
+<li>a <em>reconstructor</em>,</li>
+<li>an <em>evolver</em>,</li>
+<li>a <em>dumper</em>,</li>
+<li>and a <em>solver</em>.</li>
+</ul>
+</blockquote>
+<p>Again, these are only lightweight base classes (although PyBLAW has
+some predefined classes to help, see below).  It is up to you to
+extend these base classes for your particular problem.  Briefly, the</p>
+<blockquote>
+<ul class="simple">
+<li><em>system</em> class defines system parameters, initial conditions, etc; the</li>
+<li><em>flux</em> class computes the net flux into each cell given a
+reconstruction; the</li>
+<li><em>source</em> class computes the source in each cell given a
+reconstruction; the</li>
+<li><em>reconstructor</em> class reconstructs the solution at the cell
+boundaries and quadrature points given the cell averages of the
+solution; the</li>
+<li><em>evolver</em> class evolves the system from one time step to the next; the</li>
+<li><em>dumper</em> class dumps the solution to a file; and the</li>
+<li><em>solver</em> class glues everything together.</li>
+</ul>
+</blockquote>
+<p>PyBLAW has some predefined classes to save you some time:</p>
+<blockquote>
+<ul class="simple">
+<li>a WENO reconstructor and WENO conservation law solver,</li>
+<li>a few Runge-Kutta evolvers,</li>
+<li>an HDF5 and MAT dumper, and a</li>
+<li>generic solver.</li>
+</ul>
+</blockquote>
+<p>The <a class="reference external" href="http://memmett.github.com/PyWENO/">Python WENO</a> package <a class="reference external" href="http://memmett.github.com/PyWENO/">PyWENO</a> is a good resource for building
+your reconstructor.</p>
+<p>Once you have defined your system by inheriting and overriding the
+PyBLAW base classes, you call the Solver&#8217;s <em>run</em> method to run the
+solver.</p>
+<p>Check out some <a class="reference external" href="examples.html"><em>examples</em></a> to learn more about how to
+use PyBLAW.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">PyBLAW</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="examples.html"
+                                  title="next chapter">PyBLAW Examples</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="sources/overview.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="PyBLAW Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="PyBLAW"
+             >previous</a> |</li>
+        <li><a href="index.html">PyBLAW v0.3.a1.dev documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Matthew Emmett.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.1.
+    </div>
+  </body>
+</html>
