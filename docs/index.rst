@@ -49,6 +49,7 @@ patches to the primary author (`Matthew Emmett`_).  You will be credited.
    overview
    examples
    reference
+   download
 
 .. _`PyBLAW project page`: http://github.com/memmett/PyBLAW
 .. _`Matthew Emmett`: http://www.math.ualberta.ca/~memmett/
