@@ -1,21 +1,41 @@
 PyBLAW Examples
 ===============
 
-Linear system
--------------
+Dambreak flow into tail water
+-----------------------------
 
-.. literalinclude:: ../examples/linear.py
+**Python code**
+
+.. literalinclude:: ../examples/flat_shallow_water.py
+
+**Cython flux code**
+
+.. literalinclude:: ../examples/cflatshallowwater.pyx
+
+**Plot**
+
+XXX: include plot
+
+
+Well-balanced shallow-water solver
+----------------------------------
+
+**Python code**
+
+.. literalinclude:: ../examples/shallow_water.py
+
+**Cython flux and source code**
+
+.. literalinclude:: ../examples/cshallowwater.pyx
+
+**Plot**
+
+XXX: include plot
 
 
 .. :
 
-  Shallow-water solver
-  --------------------
+  Plotting the output
+  -------------------
 
-  .. literalinclude:: ../examples/shallow_water.py
-
-
-Plotting the output
--------------------
-
-.. literalinclude:: ../examples/plot.py
+  .. literalinclude:: ../examples/plot.py
