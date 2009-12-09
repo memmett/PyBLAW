@@ -214,19 +214,19 @@ class SSPERK3(Evolver):
         # q1
         self.reconstructor.reconstruct(q, ql, qr, qq)
         self.flux.flux(ql, qr, f)
-        self.source.source(qq, s)
+        self.source.source(ql, qr, qq, s)
         q1[:,:] = q[:,:] + dt * (f[:,:] + s[:,:])
 
         # q2
         self.reconstructor.reconstruct(q1, ql, qr, qq)
         self.flux.flux(ql, qr, f)
-        self.source.source(qq, s)
+        self.source.source(ql, qr, qq, s)
         q2[:,:] = 3.0/4.0 * q[:,:] + 1.0/4.0 * q1[:,:] + 1.0/4.0 * dt * (f[:,:] + s[:,:])
 
         # qn
         self.reconstructor.reconstruct(q2, ql, qr, qq)
         self.flux.flux(ql, qr, f)
-        self.source.source(qq, s)
+        self.source.source(ql, qr, qq, s)
         qn[:,:] = 1.0/3.0 * q[:,:] + 2.0/3.0 * q2[:,:] + 2.0/3.0 * dt * (f[:,:] + s[:,:])
 
     def evolve_homogeneous(self, q, n, qn):

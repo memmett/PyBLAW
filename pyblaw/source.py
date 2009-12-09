@@ -2,11 +2,13 @@
 
 """
 
+import numpy as np
+
 import pyblaw.base
 import pyblaw.grid
 import pyblaw.system
 
-import pyblaw.clinearsource
+import pyblaw.cquad3source
 
 
 class Source(pyblaw.base.Base):
@@ -40,34 +42,76 @@ class Source(pyblaw.base.Base):
     def set_reconstructor(self, reconstructor):
         self.reconstructor = reconstructor
 
-    def source(self, qq, s):
-        """Return source for each cell at given the reconstruction qq,
-           and store the result in s."""
+    def source(self, qm, qp, qq, s):
+        """Return next source for each cell given the left (-), right
+           (+), and quadrature reconstructions *qm*, *qp* and *qq*;
+           and store the result in *s*."""
 
         raise NotImplementedError
 
+
 ######################################################################
 
-class LinearQuad3Source(Source):
-    """Linear 3-point quadrature source.
+class SimpleSource(Source):
+    """Simple numerical source.
 
-       This source uses a 3-point Gaussian quadrature to evaluate the
-       linear source B, and is implemented in C (clinearsource).
+       This source uses a user supplied numerical source.
 
        Arguments:
 
-         * *B* - linear source matrix
+         * *source* - source function (callable)
+
+       The source function is called as ``source(qm, qp, qq, dx, s)``.
+
+       Implementing the source function in Cython (or similar) is
+       strongly recommended.
 
     """
 
-    def __init__(self, B):
-        self.B = B
+    def __init__(self, source):
+        self.s = source
 
     def pre_run(self, **kwargs):
-        if self.reconstructor.n != 3:
-            raise ValueError, "reconstructor must reconstruct at 3 quadrature points"
+        self.dx = self.grid.x[1:] - self.grid.x[:-1]
 
-        pyblaw.clinearsource.init_linear_q3_source(self.B)
+    def source(self, qm, qp, qq, s):
+        self.s(qm, qp, qq, self.dx, s)
 
-    def source(self, qq, s):
-        pyblaw.clinearsource.linear_q3_source(qq, s)
+
+######################################################################
+
+# class GaussianQuad3Source(Source):
+#     """Gaussian 3-point quadrature source.
+
+#        This source uses a 3-point Gaussian quadrature to evaluate the
+#        source *s*, and is implemented in C (cquad3source).
+
+#        Arguments:
+
+#          * *s* - source function (callable)
+
+#        The source function *s* is called as ``s(q, f)`` where ``q`` is
+#        a NumPy XXX
+
+#        Implementing the source *s* in Cython is strongly recommended.
+
+#        XXX: this is crap.
+
+#     """
+
+#     def __init__(self, s):
+#         self.s = s
+
+#     def allocate(self):
+#         self.sq = np.zeros((self.grid.N, self.reconstructor.n, self.system.p))
+
+# #    def pre_run(self, **kwargs):
+#         #if self.reconstructor.n != 3:
+#         #    raise ValueError, "reconstructor must reconstruct at 3 quadrature points"
+
+#         #pyblaw.cquad3source.init_quad3_source()
+
+#     def source(self, qq, s):
+#         self.s(qq, self.sq)
+
+#         pyblaw.cquad3source.quad3_source(self.sq, s)
