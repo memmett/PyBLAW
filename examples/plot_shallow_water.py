@@ -1,4 +1,8 @@
 import scipy.io as sio
+import matplotlib
+matplotlib.use('Agg')
+matplotlib.rc('legend', fontsize='small')
+
 import matplotlib.pyplot as plt
 
 mat = sio.loadmat('shallow_water.mat')
@@ -10,11 +14,12 @@ x = mat['dims.xdim']
 plt.plot(x, q[0,:,0]+q[0,:,2], '-.k')     # initial height
 plt.plot(x, q[0,:,2], '-b')               # bed
 
-plt.plot(x, q[M-1,:,0]+q[M-1,:,2], '-k')  # final height
-plt.plot(x, q[M-1,:,1], '-r')             # final momentum
+plt.plot(x, q[M-2,:,0]+q[M-1,:,2], '-k')  # second last height
+plt.plot(x, q[M-2,:,1], '-r')             # second last momentum
 
-plt.title('Shallow-water')
+plt.title('shallow-water')
 plt.xlabel('x')
 plt.ylabel('height/momentum')
 plt.legend(['initial height', 'bed', 'height', 'momentum'])
-plt.show()
+
+plt.savefig('shallow_water.png', format='png')

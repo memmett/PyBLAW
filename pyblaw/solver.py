@@ -159,11 +159,17 @@ class Solver(pyblaw.base.Base):
     #
 
     def load_cache(self, **kwargs):
-        """XXX.  must set self.grid"""
+        """Load grid etc from a cache.
+
+           This method must set self.grid at least.
+        """
         raise NotImplementedError, 'load_cache not implemented'
 
     def build_cache(self, **kwargs):
-        """XXX.  must set self.grid"""
+        """Pre-compute grid etc and cache.
+
+           This method must set self.grid at least.
+        """
         raise NotImplementedError, 'build_cache not implemented'
 
 

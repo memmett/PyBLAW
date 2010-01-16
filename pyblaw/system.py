@@ -52,7 +52,8 @@ class System(pyblaw.base.Base):
 class SimpleSystem(System):
     """Simple system.
 
-       XXX
+       The class implements a simple system that holds a dictionary of
+       parameters and a callable *q0* for the initial conditions.
 
        Arguments:
 

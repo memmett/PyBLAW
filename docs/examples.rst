@@ -14,7 +14,7 @@ Dambreak flow into tail water
 
 **Plot**
 
-XXX: include plot
+.. image:: images/flat_shallow_water.png
 
 
 Well-balanced shallow-water solver
@@ -30,7 +30,7 @@ Well-balanced shallow-water solver
 
 **Plot**
 
-XXX: include plot
+.. image:: images/shallow_water.png
 
 
 .. :

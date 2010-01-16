@@ -92,11 +92,11 @@ class LFFlux(Flux):
        Arguments:
 
          * *flux* - flux function (callable)
-         * *alpha* - XXX
+         * *alpha* - maximum wave speed
          * *virtual* - number of virtual cells on each side of the domain
 
-       The flux function *f* is called as ``f(q, f)`` where ``q`` is a
-       NumPy XXX
+       The flux function *f* is called as ``f(q, f)`` where ``q`` is
+       the state vector and ``f`` is the resulting flux.
 
        Implementing the flux *f* in Cython is strongly recommended.
 

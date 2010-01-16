@@ -1,5 +1,5 @@
 /*
- * XXX
+ * clfflux - Lax-Friedrichs flux extension module
  */
 
 #define PY_ARRAY_UNIQUE_SYMBOL PYBLAW_CLFFLUX_ARRAY_API

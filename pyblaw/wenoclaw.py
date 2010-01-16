@@ -19,12 +19,15 @@ import pyweno.weno
 class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
     """WENO CLAW Reconstructor.
 
-       XXX: WENO is loaded from a cache
+       **Arguments:**
 
-       The *flux* tuple contains the components that should be
-       reconstructed at the left and right side of each cell.
+       * *order* - WENO reconstruction order k
+       * *cache* - MAT cache file name
 
-       The *source* tuple contains the XXX
+       The pyweno.weno.WENO object is loaded from the cache, which
+       must be pre-built.
+
+       The smoothness is based on the first component only.
 
     """
 
@@ -34,14 +37,13 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 
     def pre_run(self, **kwargs):
 
-        # XXX: note re: loading from cache
         self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
 
     def reconstruct(self, q, qm, qp, qq):
 
         p = q.shape[1]
 
-        self.weno.smoothness(q[:,0])    # XXX: smoothness only based on first component
+        self.weno.smoothness(q[:,0])
 
         self.weno.weights('left')
         for m in range(p):
@@ -51,9 +53,7 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
         for m in range(p):
             self.weno.reconstruct(q[:,m], 'right', qm[:,m], False)
 
-        qm[1:,:] = qm[:-1,:]            # XXX, this is sick, and will require
-                                        # some niggly changes to
-                                        # PyWENO to fix
+        qm[1:,:] = qm[:-1,:]            # XXX: tweak PyWENO so this isn't necessary
 
 
 ######################################################################
@@ -61,7 +61,23 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 class WENOCLAWLFSolver(pyblaw.solver.Solver):
     """WENO conservation law solver using a Lax-Friedrichs flux.
 
-       XXX
+       **Arguments:**
+
+       * *flux* - a dictionary containing two entries: *f* and *alpha* (see below)
+       * *order* - WENO reconstruction order k
+       * *system* - a PyBLAW system
+       * *evolver* - a PyBLAW evolver or None (defaults to pyblaw.evolver.SSPERK3)
+       * *dumper* - a PyBLAW dumper or None (defaults to pyblaw.dumper.MATDumper)
+       * *times* - NumPy array of times
+       * *cache* - MAT cache file name (defaults to 'cache.mat')
+       * *output* - MAT output file name (defaults to 'output.mat')
+
+       The entries of the *flux* dictionary are:
+
+       * *f* - a callable ``f(q, f)`` that compute the flux given the
+          state ``q`` and stores the result in ``f``
+       * *alpha* - maximum wave speed for the Lax-Friedrichs flux
+
     """
 
     def __init__(self,
