@@ -15,9 +15,10 @@ pyblaw.evolver.Evolver.evolve_homogeneous method reference.html
 pyblaw.dumper.MATDumper class reference.html
 pyblaw.source.Source class reference.html
 pyblaw.wenoclaw.WENOCLAWReconstructor class reference.html
-pyblaw.flux.Flux.flux method reference.html
+pyblaw.source.SimpleSource class reference.html
 pyblaw.reconstructor.Reconstructor.reconstruct method reference.html
 pyblaw.system.System.mass method reference.html
+pyblaw.h5dumper.H5PYDumper class reference.html
 pyblaw.evolver.Evolver class reference.html
 pyblaw.base.Base class reference.html
 pyblaw.flux.LFFlux class reference.html
@@ -28,5 +29,5 @@ pyblaw.dumper.Dumper.dump method reference.html
 pyblaw.system.System.initial_conditions method reference.html
 pyblaw.dumper.Dumper class reference.html
 pyblaw.reconstructor.Reconstructor class reference.html
-pyblaw.source.SimpleSource class reference.html
+pyblaw.flux.Flux.flux method reference.html
 pyblaw.solver.Solver.run method reference.html

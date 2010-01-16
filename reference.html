@@ -6,8 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>PyBLAW Reference &mdash; PyBLAW v0.3.a1.dev documentation</title>
-    <link rel="stylesheet" href="static/default.css" type="text/css" />
-    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -17,9 +17,10 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="static/jquery.js"></script>
-    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="PyBLAW v0.3.a1.dev documentation" href="index.html" />
+    <link rel="next" title="Downloading and installing" href="download.html" />
     <link rel="prev" title="PyBLAW Examples" href="examples.html" /> 
   </head>
   <body>
@@ -29,6 +30,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="download.html" title="Downloading and installing"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="examples.html" title="PyBLAW Examples"
              accesskey="P">previous</a> |</li>
@@ -128,7 +132,8 @@ class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">Sys
 <em class="property">
 class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">SimpleSystem</tt><big>(</big><em>q0</em>, <em>parameters={}</em><big>)</big><a class="headerlink" href="#pyblaw.system.SimpleSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple system.</p>
-<p>XXX</p>
+<p>The class implements a simple system that holds a dictionary of
+parameters and a callable <em>q0</em> for the initial conditions.</p>
 <p>Arguments:</p>
 <blockquote>
 <ul class="simple">
@@ -203,12 +208,12 @@ with the flux <em>f</em>, and is implemented in C (clfflux).</p>
 <blockquote>
 <ul class="simple">
 <li><em>flux</em> - flux function (callable)</li>
-<li><em>alpha</em> - XXX</li>
+<li><em>alpha</em> - maximum wave speed</li>
 <li><em>virtual</em> - number of virtual cells on each side of the domain</li>
 </ul>
 </blockquote>
-<p>The flux function <em>f</em> is called as <tt class="docutils literal"><span class="pre">f(q,</span> <span class="pre">f)</span></tt> where <tt class="docutils literal"><span class="pre">q</span></tt> is a
-NumPy XXX</p>
+<p>The flux function <em>f</em> is called as <tt class="docutils literal"><span class="pre">f(q,</span> <span class="pre">f)</span></tt> where <tt class="docutils literal"><span class="pre">q</span></tt> is
+the state vector and <tt class="docutils literal"><span class="pre">f</span></tt> is the resulting flux.</p>
 <p>Implementing the flux <em>f</em> in Cython is strongly recommended.</p>
 </dd></dl>
 
@@ -305,10 +310,14 @@ qq (quadrature).</dd></dl>
 <em class="property">
 class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWReconstructor</tt><big>(</big><em>order=3</em>, <em>cache='cache.mat'</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWReconstructor" title="Permalink to this definition">¶</a></dt>
 <dd><p>WENO CLAW Reconstructor.</p>
-<p>XXX: WENO is loaded from a cache</p>
-<p>The <em>flux</em> tuple contains the components that should be
-reconstructed at the left and right side of each cell.</p>
-<p>The <em>source</em> tuple contains the XXX</p>
+<p><strong>Arguments:</strong></p>
+<ul class="simple">
+<li><em>order</em> - WENO reconstruction order k</li>
+<li><em>cache</em> - MAT cache file name</li>
+</ul>
+<p>The pyweno.weno.WENO object is loaded from the cache, which
+must be pre-built.</p>
+<p>The smoothness is based on the first component only.</p>
 </dd></dl>
 
 </div>
@@ -423,6 +432,30 @@ within the MAT file are:</p>
 </blockquote>
 </dd></dl>
 
+<dl class="class">
+<dt id="pyblaw.h5dumper.H5PYDumper">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.h5dumper.</tt><tt class="descname">H5PYDumper</tt><big>(</big><em>output='output.h5'</em><big>)</big><a class="headerlink" href="#pyblaw.h5dumper.H5PYDumper" title="Permalink to this definition">¶</a></dt>
+<dd><p>HDF5 dumper (using the h5py Python package).</p>
+<p>Dump the cell averages q to an HDF5 file.  The hierarchy
+created within the HDF5 file is:</p>
+<blockquote>
+<ul class="simple">
+<li>/dims/xdim - cell centres</li>
+<li>/dims/tdim - dump times</li>
+<li>/parameters/X - parameters</li>
+<li>/data/q - cell averages of solution q</li>
+</ul>
+</blockquote>
+<p>The parameters are taken from the system (pyblaw.system.System).</p>
+<p>Arguments:</p>
+<blockquote>
+<ul class="simple">
+<li><em>output</em> - output file name</li>
+</ul>
+</blockquote>
+</dd></dl>
+
 </div>
 <div class="section" id="solver">
 <h2>Solver<a class="headerlink" href="#solver" title="Permalink to this headline">¶</a></h2>
@@ -434,7 +467,7 @@ class </em><tt class="descclassname">pyblaw.solver.</tt><tt class="descname">Sol
 <p>Numerically approximates the solution of a system of hyperbolic
 balances laws of the form</p>
 <blockquote>
-<img class="math" src="images/math/f4d77f4eeeae8de498a13f8578f50c203a495a3b.png" alt="q_t + f(q)_x = s"/>.</blockquote>
+<img class="math" src="_images/math/f4d77f4eeeae8de498a13f8578f50c203a495a3b.png" alt="q_t + f(q)_x = s"/>.</blockquote>
 <p>The PyBLAW System, Flux, Source, and Evolver classes should be
 extended to define the system, compute the flux, compute the
 source terms, and evolve the system.</p>
@@ -476,17 +509,15 @@ and calling their <em>allocate</em> methods.</p>
 <dl class="method">
 <dt id="pyblaw.solver.Solver.build_cache">
 <tt class="descname">build_cache</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.build_cache" title="Permalink to this definition">¶</a></dt>
-<dd><ol class="upperroman simple" start="30">
-<li>must set self.grid</li>
-</ol>
+<dd><p>Pre-compute grid etc and cache.</p>
+<p>This method must set self.grid at least.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyblaw.solver.Solver.load_cache">
 <tt class="descname">load_cache</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.load_cache" title="Permalink to this definition">¶</a></dt>
-<dd><ol class="upperroman simple" start="30">
-<li>must set self.grid</li>
-</ol>
+<dd><p>Load grid etc from a cache.</p>
+<p>This method must set self.grid at least.</p>
 </dd></dl>
 
 <dl class="method">
@@ -509,7 +540,28 @@ the <em>dumper</em>.</p>
 <em class="property">
 class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWLFSolver</tt><big>(</big><em>flux={}</em>, <em>order=3</em>, <em>system=None</em>, <em>evolver=None</em>, <em>dumper=None</em>, <em>times=None</em>, <em>cache='cache.mat'</em>, <em>output='output.mat'</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWLFSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>WENO conservation law solver using a Lax-Friedrichs flux.</p>
-<p>XXX</p>
+<p><strong>Arguments:</strong></p>
+<ul class="simple">
+<li><em>flux</em> - a dictionary containing two entries: <em>f</em> and <em>alpha</em> (see below)</li>
+<li><em>order</em> - WENO reconstruction order k</li>
+<li><em>system</em> - a PyBLAW system</li>
+<li><em>evolver</em> - a PyBLAW evolver or None (defaults to pyblaw.evolver.SSPERK3)</li>
+<li><em>dumper</em> - a PyBLAW dumper or None (defaults to pyblaw.dumper.MATDumper)</li>
+<li><em>times</em> - NumPy array of times</li>
+<li><em>cache</em> - MAT cache file name (defaults to &#8216;cache.mat&#8217;)</li>
+<li><em>output</em> - MAT output file name (defaults to &#8216;output.mat&#8217;)</li>
+</ul>
+<p>The entries of the <em>flux</em> dictionary are:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><em>f</em> - a callable <tt class="docutils literal"><span class="pre">f(q,</span> <span class="pre">f)</span></tt> that compute the flux given the</dt>
+<dd><p class="first last">state <tt class="docutils literal"><span class="pre">q</span></tt> and stores the result in <tt class="docutils literal"><span class="pre">f</span></tt></p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>alpha</em> - maximum wave speed for the Lax-Friedrichs flux</p>
+</li>
+</ul>
 </dd></dl>
 
 </div>
@@ -539,9 +591,12 @@ class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">W
             <h4>Previous topic</h4>
             <p class="topless"><a href="examples.html"
                                   title="previous chapter">PyBLAW Examples</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="download.html"
+                                  title="next chapter">Downloading and installing</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="sources/reference.txt"
+              <li><a href="_sources/reference.txt"
                      rel="nofollow">Show Source</a></li>
             </ul>
           <div id="searchbox" style="display: none">
@@ -567,6 +622,9 @@ class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">W
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="download.html" title="Downloading and installing"
+             >next</a> |</li>
         <li class="right" >
           <a href="examples.html" title="PyBLAW Examples"
              >previous</a> |</li>
