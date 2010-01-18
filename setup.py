@@ -63,10 +63,6 @@ setuptools.setup(
         setuptools.Extension('pyblaw.clfflux',
                              sources = ['src/clfflux.c'],
                              include_dirs=[np.get_include()]
-                             ),
-        setuptools.Extension('pyblaw.cquad3source',
-                             sources = ['src/cquad3source.c'],
-                             include_dirs=[np.get_include()]
                              )],
 
     package_data = {'': ['__version__.py', '__git_version__.py']},
