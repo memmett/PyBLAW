@@ -8,8 +8,6 @@ import pyblaw.base
 import pyblaw.grid
 import pyblaw.system
 
-import pyblaw.cquad3source
-
 
 class Source(pyblaw.base.Base):
     """Abstract source.
