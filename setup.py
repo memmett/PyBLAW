@@ -55,7 +55,7 @@ setuptools.setup(
     name = "PyBLAW",
     version = version,
     packages = ['pyblaw'],
-    zip_safe = True,
+    zip_safe = False,
 
     install_requires = [ "numpy >= 1.0.3", "scipy >= 0.7.0", "pyweno >= 0.1" ],
 
