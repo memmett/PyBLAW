@@ -40,7 +40,7 @@ class Source(pyblaw.base.Base):
     def set_reconstructor(self, reconstructor):
         self.reconstructor = reconstructor
 
-    def source(self, qm, qp, qq, s):
+    def source(self, qm, qp, qq, t, s):
         """Return next source for each cell given the left (-), right
            (+), and quadrature reconstructions *qm*, *qp* and *qq*;
            and store the result in *s*."""
@@ -59,7 +59,7 @@ class SimpleSource(Source):
 
          * *source* - source function (callable)
 
-       The source function is called as ``source(qm, qp, qq, dx, s)``.
+       The source function is called as ``source(qm, qp, qq, t, dx, s)``.
 
        Implementing the source function in Cython (or similar) is
        strongly recommended.
@@ -72,5 +72,5 @@ class SimpleSource(Source):
     def pre_run(self, **kwargs):
         self.dx = self.grid.x[1:] - self.grid.x[:-1]
 
-    def source(self, qm, qp, qq, s):
-        self.s(qm, qp, qq, self.dx, s)
+    def source(self, qm, qp, qq, t, s):
+        self.s(qm, qp, qq, t, self.dx, s)

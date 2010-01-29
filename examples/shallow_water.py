@@ -64,7 +64,7 @@ class ShallowWaterReconstructor(pyblaw.reconstructor.Reconstructor):
     def reconstruct(self, q, qm, qp, qq):
         weno = self.weno
 
-        # flux and source reconstructions at boundaries
+        # flux and source reconstructions at cell boundaries
         weno.smoothness(q[:,0])
 
         weno.weights('left')
@@ -77,11 +77,11 @@ class ShallowWaterReconstructor(pyblaw.reconstructor.Reconstructor):
 
         # source reconstructions at quadrature points (see cshallowwater.pyx)
         weno.weights('gauss_quad3')
-        weno.reconstruct(q[:,0], 'gauss_quad3', qq[:,:,0], False)
-        weno.reconstruct(q[:,2], 'gauss_quad3', qq[:,:,1], False)
+        weno.reconstruct(q[:,0], 'gauss_quad3', qq[:,:,0], compute_weights=False)
+        weno.reconstruct(q[:,2], 'gauss_quad3', qq[:,:,1], compute_weights=False)
 
         weno.weights('d|gauss_quad3')
-        weno.reconstruct(q[:,2], 'd|gauss_quad3', qq[:,:,2], False)
+        weno.reconstruct(q[:,2], 'd|gauss_quad3', qq[:,:,2], compute_weights=False)
 
         qm[1:,:] = qm[:-1,:]            # XXX, tweak PyWENO so we don't have to do this
 

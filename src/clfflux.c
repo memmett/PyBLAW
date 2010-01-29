@@ -123,30 +123,69 @@ lf_flux(PyObject *self, PyObject *args)
    * compute net flux
    */
 
+  // XXX: working here: flux at left and right boundary
+
   N = PyArray_DIM(f_py, 0);
   p = PyArray_DIM(f_py, 1);
 
-  for (i=0; i<virtual; i++) {
-    for (j=0; j<p; j++)
-      f[i*p+j] = 0.0;
-  }
+  if (virtual == 0) {
+    /*
+     * no virtual cells, need to handle left and right boundaries
+     */
 
-  nflux_lf(qm+virtual*p, qp+virtual*p, fm+virtual*p, fp+virtual*p, fr);
-  for (i=virtual; i<N-virtual; i++) {
+    /* copy left boundary flux into right flux */
     for (j=0; j<p; j++)
-      fl[j] = fr[j];
+      fr[j] = fp[j];
 
-    nflux_lf(qm + (i+1)*p, qp + (i+1)*p,
-             fm + (i+1)*p, fp + (i+1)*p,
-             fr);
+    /* compute net flux in all but last cell */
+    for (i=0; i<N-1; i++) {
+      for (j=0; j<p; j++)
+        fl[j] = fr[j];
 
+      nflux_lf(qm + (i+1)*p, qp + (i+1)*p,
+               fm + (i+1)*p, fp + (i+1)*p,
+               fr);
+
+      for (j=0; j<p; j++)
+        f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
+    }
+
+    /* compute flux in the last cell */
     for (j=0; j<p; j++)
-      f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
-  }
+      f[(N-1)*p+j] = - ( fp[N*p+j] - fr[j] ) / dx[i];
 
-  for (i=N-virtual; i<N; i++) {
-    for (j=0; j<p; j++)
-      f[i*p+j] = 0.0;
+  } else {
+    /*
+     * skip virtual cells
+     */
+
+    /* zero the flux in virtual cells */
+    for (i=0; i<virtual; i++) {
+      for (j=0; j<p; j++)
+        f[i*p+j] = 0.0;
+    }
+
+    for (i=N-virtual; i<N; i++) {
+      for (j=0; j<p; j++)
+        f[i*p+j] = 0.0;
+    }
+
+    /* compute right flux of first cell */
+    nflux_lf(qm+virtual*p, qp+virtual*p, fm+virtual*p, fp+virtual*p, fr);
+
+    /* compute net flux in each cell */
+    for (i=virtual; i<N-virtual; i++) {
+      for (j=0; j<p; j++)
+        fl[j] = fr[j];
+
+      nflux_lf(qm + (i+1)*p, qp + (i+1)*p,
+               fm + (i+1)*p, fp + (i+1)*p,
+               fr);
+
+      for (j=0; j<p; j++)
+        f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
+    }
+
   }
 
   /*

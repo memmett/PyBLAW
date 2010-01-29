@@ -53,7 +53,11 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
         for m in range(p):
             self.weno.reconstruct(q[:,m], 'right', qm[:,m], False)
 
-        qm[1:,:] = qm[:-1,:]            # XXX: tweak PyWENO so this isn't necessary
+        qp[-1,:] = qm[-1,:]
+
+        qm[1:,:] = qm[:-1,:]
+
+        qm[0,:]  = qp[0,:]
 
 
 ######################################################################
@@ -74,10 +78,13 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
 
        The entries of the *flux* dictionary are:
 
-       * *f* - a callable ``f(q, f)`` that compute the flux given the
-          state ``q`` and stores the result in ``f``
+       * *f* - a callable ``f(q, t, f)`` that computes the flux given the
+         vector of states *q* and stores the results in the vector *f*
        * *alpha* - maximum wave speed for the Lax-Friedrichs flux
-
+       * *virtual* - number of cells on each side of domain to zero
+          during the LF process
+       * *bc* - XXX: a callable ``bc(t, f)`` that, if defined, optionally
+          updates/overwrites the net flux *f*
     """
 
     def __init__(self,
@@ -98,9 +105,20 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
         if dumper is None:
             dumper = pyblaw.dumper.MATDumper(output)
 
-        reconstructor = WENOCLAWReconstructor(order=self.k,
-                                              cache=self.cache)
-        flux          = pyblaw.flux.LFFlux(self.f['f'], self.f['alpha'], 2*self.k)
+        reconstructor = WENOCLAWReconstructor(order=self.k, cache=self.cache)
+
+        if 'bc' in flux:
+            bc = flux['bc']
+        else:
+            bc = None
+
+        if 'virtual' in flux:
+            virtual = flux['virtual']
+        else:
+            virtual = 0
+
+        flux = pyblaw.flux.LFFlux(self.f['f'], self.f['alpha'], virtual, bc)
+
 
         pyblaw.solver.Solver.__init__(self,
                                       system=system,

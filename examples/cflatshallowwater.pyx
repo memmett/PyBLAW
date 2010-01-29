@@ -5,7 +5,7 @@ cimport numpy as np
 cimport cython
 
 @cython.boundscheck(False)
-def f(np.ndarray[np.double_t, ndim=2] q, np.ndarray[np.double_t, ndim=2] flux):
+def f(np.ndarray[np.double_t, ndim=2] q, double t, np.ndarray[np.double_t, ndim=2] flux):
     cdef int N = q.shape[0]
     cdef unsigned int i
 

@@ -40,7 +40,7 @@ def q0(x, t):
 solver = pyblaw.wenoclaw.WENOCLAWLFSolver(
     order=3,
     times=np.linspace(0.0, 15.0, 15*10*4+1),
-    flux={ 'f': cflatshallowwater.f, 'alpha': 2.0 },
+    flux={ 'f': cflatshallowwater.f, 'alpha': 2.0, 'virtual': 6},
     system=pyblaw.system.SimpleSystem(q0),
     cache='flat_shallow_water_cache.mat',
     output='flat_shallow_water.mat'

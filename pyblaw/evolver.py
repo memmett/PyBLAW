@@ -81,8 +81,8 @@ class FE(Evolver):
         n = self.reconstructor.n
 
         self.f  = np.zeros((N,p))
-        self.ql = np.zeros((N,p))
-        self.qr = np.zeros((N,p))
+        self.ql = np.zeros((N+1,p))
+        self.qr = np.zeros((N+1,p))
         self.qq = np.zeros((N,n,p))
         self.s  = np.zeros((N,p))
 
@@ -99,8 +99,8 @@ class FE(Evolver):
         s  = self.s
 
         self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
-        self.source.source(ql, qr, qq, s)
+        self.flux.flux(ql, qr, t, f)
+        self.source.source(ql, qr, qq, t, s)
         qn[:,:] = q[:,:] + dt * (f[:,:] + s[:,:])
 
     def evolve_homogeneous(self, q, n, qn):
@@ -115,7 +115,7 @@ class FE(Evolver):
         s  = self.s
 
         self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
+        self.flux.flux(ql, qr, t, f)
         qn[:,:] = q[:,:] + dt * f[:,:]
 
 
@@ -131,8 +131,8 @@ class SSPERK3(Evolver):
         n = self.reconstructor.n
 
         self.f  = np.zeros((N,p))
-        self.ql = np.zeros((N,p))
-        self.qr = np.zeros((N,p))
+        self.ql = np.zeros((N+1,p))
+        self.qr = np.zeros((N+1,p))
         self.qq = np.zeros((N,n,p))
         self.s  = np.zeros((N,p))
 
@@ -156,20 +156,20 @@ class SSPERK3(Evolver):
 
         # q1
         self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
-        self.source.source(ql, qr, qq, s)
+        self.flux.flux(ql, qr, t, f)
+        self.source.source(ql, qr, qq, t, s)
         q1[:,:] = q[:,:] + dt * (f[:,:] + s[:,:])
 
         # q2
         self.reconstructor.reconstruct(q1, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
-        self.source.source(ql, qr, qq, s)
+        self.flux.flux(ql, qr, t, f)
+        self.source.source(ql, qr, qq, t, s)
         q2[:,:] = 3.0/4.0 * q[:,:] + 1.0/4.0 * q1[:,:] + 1.0/4.0 * dt * (f[:,:] + s[:,:])
 
         # qn
         self.reconstructor.reconstruct(q2, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
-        self.source.source(ql, qr, qq, s)
+        self.flux.flux(ql, qr, t, f)
+        self.source.source(ql, qr, qq, t, s)
         qn[:,:] = 1.0/3.0 * q[:,:] + 2.0/3.0 * q2[:,:] + 2.0/3.0 * dt * (f[:,:] + s[:,:])
 
     def evolve_homogeneous(self, q, n, qn):
@@ -188,15 +188,15 @@ class SSPERK3(Evolver):
 
         # q1
         self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
+        self.flux.flux(ql, qr, t, f)
         q1[:,:] = q[:,:] + dt * f[:,:]
 
         # q2
         self.reconstructor.reconstruct(q1, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
+        self.flux.flux(ql, qr, t, f)
         q2[:,:] = 3.0/4.0 * q[:,:] + 1.0/4.0 * q1[:,:] + 1.0/4.0 * dt * f[:,:]
 
         # qn
         self.reconstructor.reconstruct(q2, ql, qr, qq)
-        self.flux.flux(ql, qr, f)
+        self.flux.flux(ql, qr, t, f)
         qn[:,:] = 1.0/3.0 * q[:,:] + 2.0/3.0 * q2[:,:] + 2.0/3.0 * dt * f[:,:]
