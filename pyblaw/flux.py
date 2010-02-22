@@ -21,14 +21,14 @@ class Flux(pyblaw.base.Base):
 
        Instance variables pulled from elsewhere:
 
-         * *grid*   - pyblaw.grid.Grid
-         * *system* - pyblaw.system.System
-         * *reconstructor* - pyblaw.system.Reconstructor
+       * *grid*   - pyblaw.grid.Grid
+       * *system* - pyblaw.system.System
+       * *reconstructor* - pyblaw.system.Reconstructor
 
        Methods that should be overridden:
 
-         * *allocate* - allocate memory etc
-         * *flux*     - compute net fluxes
+       * *allocate* - allocate memory etc
+       * *flux*     - compute net fluxes
 
     """
 
@@ -62,7 +62,7 @@ class SimpleFlux(Flux):
 
        Arguments:
 
-         * *flux* - flux function (callable)
+       * *flux* - flux function (callable)
 
        The flux function is called as ``flux(qm, qp, t, dx, f)``.
 
@@ -91,10 +91,10 @@ class LFFlux(Flux):
 
        Arguments:
 
-         * *flux* - flux function (callable)
-         * *alpha* - maximum wave speed
-         * *virtual* - number of virtual cells on each side of the domain
-         * *boundary* - boundary function (callable)
+       * *flux* - flux function (callable)
+       * *alpha* - maximum wave speed
+       * *virtual* - number of virtual cells on each side of the domain
+       * *boundary* - boundary function (callable)
 
        The flux function *f* is called as ``f(q, t, f)`` where ``q``
        is the state vector and ``f`` is the resulting flux.
@@ -141,4 +141,3 @@ class LFFlux(Flux):
             self.fp[-1,:] = self.right[:]
 
         pyblaw.clfflux.lf_flux(qm, qp, self.fm, self.fp, f)
-

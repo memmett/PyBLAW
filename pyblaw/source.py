@@ -16,14 +16,14 @@ class Source(pyblaw.base.Base):
 
        Instance variables pulled from elsewhere:
 
-         * *grid*   - pyblaw.grid.Grid
-         * *system* - pyblaw.system.System
-         * *reconstructor* - pyblaw.reconstructor.Reconstructor
+       * *grid*   - pyblaw.grid.Grid
+       * *system* - pyblaw.system.System
+       * *reconstructor* - pyblaw.reconstructor.Reconstructor
 
        Methods that should be overridden:
 
-         * *allocate* - allocate memory etc
-         * *source*   - compute sources
+       * *allocate* - allocate memory etc
+       * *source*   - compute sources
 
     """
 
@@ -57,7 +57,7 @@ class SimpleSource(Source):
 
        Arguments:
 
-         * *source* - source function (callable)
+       * *source* - source function (callable)
 
        The source function is called as ``source(qm, qp, qq, t, dx, s)``.
 

@@ -14,19 +14,19 @@ class Evolver(pyblaw.base.Base):
 
        Instance variables:
 
-         * *t*             - times (time grid)
-         * *dt*            - time step sizes
+       * *t*             - times (time grid)
+       * *dt*            - time step sizes
 
-         * *grid*          - pyblaw.grid.Grid
-         * *system*        - pyblaw.system.System
-         * *reconstructor* - pyblaw.reconstructor.Reconstructor
-         * *flux*          - pyblaw.flux.Flux
-         * *source*        - pyblaw.grid.Source
+       * *grid*          - pyblaw.grid.Grid
+       * *system*        - pyblaw.system.System
+       * *reconstructor* - pyblaw.reconstructor.Reconstructor
+       * *flux*          - pyblaw.flux.Flux
+       * *source*        - pyblaw.grid.Source
 
        Methods that should be overridden:
 
-         * *allocate* - allocates memory etc
-         * *evolve*   - evolve q
+       * *allocate* - allocates memory etc
+       * *evolve*   - evolve q
 
     """
 

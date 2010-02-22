@@ -14,18 +14,18 @@ class System(pyblaw.base.Base):
 
        Instance variables:
 
-         * *p*          - number of unknowns
-         * *parameters* - parameters (dictionary)
+       * *p*          - number of unknowns
+       * *parameters* - parameters (dictionary)
 
        Instrance variables pulled from elsewhere:
 
-         * *grid* - pyblaw.grid.Grid
+       * *grid* - pyblaw.grid.Grid
 
        Methods that should be overridden:
 
-         * *allocate*           - allocate memory
-         * *initial_conditions* - set initial condtions at time t
-         * *mass*               - compute 'mass' of system
+       * *allocate*           - allocate memory
+       * *initial_conditions* - set initial condtions at time t
+       * *mass*               - compute 'mass' of system
 
     """
 
@@ -57,8 +57,8 @@ class SimpleSystem(System):
 
        Arguments:
 
-         * *q0* - initial condition (callable)
-         * *parameters* - parameters (dictionary)
+       * *q0* - initial condition (callable)
+       * *parameters* - parameters (dictionary)
 
        The initial condition function is called as q0(x, t), and
        should return a vector.

@@ -7,13 +7,13 @@ class Base(object):
 
        Instance variables:
 
-         * *trace* - trace level
-         * *debug* - debug information (dictionary)
+       * *trace* - trace level
+       * *debug* - debug information (dictionary)
 
        Methods that should be overridden:
 
-         * *allocate* - allocate memory etc
-         * *pre_run*  - pre run initialisation
+       * *allocate* - allocate memory etc
+       * *pre_run*  - pre run initialisation
 
     """
 

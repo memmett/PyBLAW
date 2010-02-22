@@ -35,9 +35,11 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
         self.k = order
         self.cache = cache
 
+
     def pre_run(self, **kwargs):
 
         self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
+
 
     def reconstruct(self, q, qm, qp, qq):
 
@@ -54,9 +56,7 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
             self.weno.reconstruct(q[:,m], 'right', qm[:,m], False)
 
         qp[-1,:] = qm[-1,:]
-
         qm[1:,:] = qm[:-1,:]
-
         qm[0,:]  = qp[0,:]
 
 
@@ -91,8 +91,8 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
                  flux={},
                  order=3,
                  system=None, evolver=None, dumper=None,
-                 times=None,
-                 cache='cache.mat', output='output.mat'):
+                 cache='cache.mat', output='output.mat',
+                 **kwargs):
 
         self.f       = flux
         self.k       = order
@@ -119,14 +119,13 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
 
         flux = pyblaw.flux.LFFlux(self.f['f'], self.f['alpha'], virtual, bc)
 
-
         pyblaw.solver.Solver.__init__(self,
                                       system=system,
                                       reconstructor=reconstructor,
                                       flux=flux,
                                       evolver=evolver,
                                       dumper=dumper,
-                                      times=times)
+                                      **kwargs)
 
 
     ####################################################################

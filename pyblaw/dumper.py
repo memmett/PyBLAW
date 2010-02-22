@@ -13,13 +13,13 @@ class Dumper(object):
 
        Instance variables:
 
-         * *x* - cell centers
-         * *t* - times
+       * *x* - cell centers
+       * *t* - times
 
        Methods that should be overridden:
 
-         * *init_dump* - init and create dump file etc
-         * *dump*      - dump solution q
+       * *init_dump* - init and create dump file etc
+       * *dump*      - dump solution q
 
     """
 
@@ -52,10 +52,10 @@ class MATDumper(Dumper):
        Dump the cell averages q to a MAT file.  The matrices created
        within the MAT file are:
 
-         * dims.xdim - cell centres
-         * dims.tdim - dump times
-         * parameters.X - parameters
-         * data.q - cell averages of solution q
+       * dims.xdim - cell centres
+       * dims.tdim - dump times
+       * parameters.X - parameters
+       * data.q - cell averages of solution q
 
        The parameters are taken from the system (pyblaw.system.System).
 
@@ -63,7 +63,9 @@ class MATDumper(Dumper):
 
        Arguments:
 
-         * *output* - output file name
+       * *output* - output file name
+
+       XXX: this is inefficient
 
     """
 

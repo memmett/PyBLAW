@@ -3,18 +3,18 @@ PyBLAW Reference
 
 There are a few things to keep in mind:
 
-  * each class has an *allocate* method that gets called by the solver
-    during initialisation;
+* each class has an *allocate* method that gets called by the solver
+  during initialisation;
 
-  * each class has a *pre_run* method that gets called after the
-    initial conditions are computed;
+* each class has a *pre_run* method that gets called after the
+  initial conditions are computed;
 
-  * each class has a *debug* dictionary and a *trace* variable to help
-    you debug your solver; and
+* each class has a *debug* dictionary and a *trace* variable to help
+  you debug your solver; and
 
-  * some classes are linked together through various instance
-    variables (eg, the flux class has a *system* variable that points
-    to the system class).
+* some classes are linked together through various instance
+  variables (eg, the flux class has a *system* variable that points
+  to the system class).
 
 Again, checking out some :doc:`examples <examples>` might be helpful.
 

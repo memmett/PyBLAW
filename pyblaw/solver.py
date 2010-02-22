@@ -28,29 +28,29 @@ class Solver(pyblaw.base.Base):
 
        Keyword arguments:
 
-         * *grid*           - pyblaw.grid.Grid
-         * *system*         - pyblaw.system.System
-         * *reconstructor*  - pyblaw.system.Reconstructor
-         * *flux*           - pyblaw.flux.Flux
-         * *source*         - pyblaw.source.Source
-         * *evolver*        - pyblaw.evolver.Evolver
-         * *dumper*         - pyblaw.dumper.Dumper
-         * *dump_times*     - dump times
-         * *times*          - times
+       * *grid*           - pyblaw.grid.Grid
+       * *system*         - pyblaw.system.System
+       * *reconstructor*  - pyblaw.system.Reconstructor
+       * *flux*           - pyblaw.flux.Flux
+       * *source*         - pyblaw.source.Source
+       * *evolver*        - pyblaw.evolver.Evolver
+       * *dumper*         - pyblaw.dumper.Dumper
+       * *dump_times*     - dump times
+       * *times*          - times
 
        Instance variables:
 
-         * *t*             - times
-         * *dt*            - time steps
-         * *t_dump*        - dump times
-         * *trace*         - trace level
+       * *t*             - times
+       * *dt*            - time steps
+       * *t_dump*        - dump times
+       * *trace*         - trace level
 
        Instance variables pulled from elsewhere:
 
-         * *N*             - number of cells
-         * *x*             - cell boundaries
-         * *dx*            - cell sizes
-         * *p*             - number of unknowns
+       * *N*             - number of cells
+       * *x*             - cell boundaries
+       * *dx*            - cell sizes
+       * *p*             - number of unknowns
 
     """
 

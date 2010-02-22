@@ -15,17 +15,17 @@ class Reconstructor(pyblaw.base.Base):
 
        Instance variables:
 
-         * *n*          - number of quadrature points per cell (for source)
+       * *n*          - number of quadrature points per cell (for source)
 
        Instance variables pulled from elsewhere:
 
-         * *grid*   - pyblaw.grid.Grid
-         * *system* - pyblaw.system.System
+       * *grid*   - pyblaw.grid.Grid
+       * *system* - pyblaw.system.System
 
        Methods that should be overridden:
 
-         * *allocate*    - allocate memory etc
-         * *reconstruct* - reconstruct
+       * *allocate*    - allocate memory etc
+       * *reconstruct* - reconstruct
 
     """
 
