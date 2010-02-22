@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: PyBLAW
-# Version: 0.3.a1.dev
+# Version: 0.5.1.dev
 pyblaw.flux.Flux class reference.html
 pyblaw.evolver.Evolver.set_times method reference.html
 pyblaw.flux.SimpleFlux class reference.html

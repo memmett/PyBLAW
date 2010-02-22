@@ -8,8 +8,12 @@ systems of hyperbolic balance laws of the form
 
 **News**
 
+* February 22 2010: `PyBLAW 0.5.0`_ released.
 * Fall 2009: PyBLAW is in early development, and is a bit rough around
   the edges.
+
+Please check out the documentation (below) or the `PyBLAW project
+page`_ for more infomation about using and contributing to PyBLAW.
 
 
 Documentation
@@ -53,3 +57,4 @@ patches to the primary author (`Matthew Emmett`_).  You will be credited.
 
 .. _`PyBLAW project page`: http://github.com/memmett/PyBLAW
 .. _`Matthew Emmett`: http://www.math.ualberta.ca/~memmett/
+.. _`PyBLAW 0.5.0`: http://cloud.github.com/downloads/memmett/PyBLAW/PyBLAW-0.5.0.tar.gz
