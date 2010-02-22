@@ -1,4 +1,4 @@
-"""PyBLAW WENOCLAW reconstructor and solver class.
+"""PyBLAW WENOCLAW reconstructor and solver classes.
 
 """
 
@@ -21,43 +21,45 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 
        **Arguments:**
 
-       * *order* - WENO reconstruction order k
-       * *cache* - MAT cache file name
+       * *order*  - WENO reconstruction order
+       * *cache*  - cache file name
+       * *format* - cache file format (defaults to 'mat')
 
        The pyweno.weno.WENO object is loaded from the cache, which
        must be pre-built.
 
-       The smoothness is based on the first component only.
+       The WENO smoothness indicators and weights are computed for
+       each component.
 
     """
 
-    def __init__(self, order=3, cache='cache.mat'):
+    def __init__(self, order=3, cache='cache.mat', format='mat'):
         self.k = order
         self.cache = cache
+        self.format = format
 
 
     def pre_run(self, **kwargs):
 
-        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format=self.format)
 
 
-    def reconstruct(self, q, qm, qp, qq):
+    def reconstruct(self, q, qm, qp, qq, **kwargs):
 
         p = q.shape[1]
 
-        self.weno.smoothness(q[:,0])
-
-        self.weno.weights('left')
         for m in range(p):
-            self.weno.reconstruct(q[:,m], 'left', qp[:,m], False)
+            self.weno.reconstruct(q[:,m], 'left', qp[:,m], compute_weights=True)
 
-        self.weno.weights('right')
         for m in range(p):
-            self.weno.reconstruct(q[:,m], 'right', qm[:,m], False)
+            self.weno.reconstruct(q[:,m], 'right', qm[:,m], compute_weights=True)
 
         qp[-1,:] = qm[-1,:]
         qm[1:,:] = qm[:-1,:]
         qm[0,:]  = qp[0,:]
+
+        if __debug__:
+            self.debug()
 
 
 ######################################################################
@@ -67,31 +69,29 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
 
        **Arguments:**
 
-       * *flux* - a dictionary containing two entries: *f* and *alpha* (see below)
-       * *order* - WENO reconstruction order k
-       * *system* - a PyBLAW system
-       * *evolver* - a PyBLAW evolver or None (defaults to pyblaw.evolver.SSPERK3)
-       * *dumper* - a PyBLAW dumper or None (defaults to pyblaw.dumper.MATDumper)
-       * *times* - NumPy array of times
-       * *cache* - MAT cache file name (defaults to 'cache.mat')
-       * *output* - MAT output file name (defaults to 'output.mat')
+       * *flux*    - flux dictionary (see below)
+       * *order*   - WENO reconstruction order
+       * *system*  - system
+       * *evolver* - evolver or None (defaults to pyblaw.evolver.SSPERK3)
+       * *dumper*  - dumper or None (defaults to pyblaw.dumper.MATDumper)
+       * *times*   - times
+       * *cache*   - cache file name (defaults to 'cache.mat')
+       * *format*  - cache file format (defaults to 'mat')
+       * *output*  - output file name (defaults to 'output.mat')
 
        The entries of the *flux* dictionary are:
 
-       * *f* - a callable ``f(q, t, f)`` that computes the flux given the
-         vector of states *q* and stores the results in the vector *f*
-       * *alpha* - maximum wave speed for the Lax-Friedrichs flux
-       * *virtual* - number of cells on each side of domain to zero
-          during the LF process
-       * *bc* - XXX: a callable ``bc(t, f)`` that, if defined, optionally
-          updates/overwrites the net flux *f*
+       * *flux*    - a callable (see pyblaw.flux.LFFlux)
+       * *alpha*   - maximum wave speed for the LF flux
+
     """
 
     def __init__(self,
                  flux={},
                  order=3,
                  system=None, evolver=None, dumper=None,
-                 cache='cache.mat', output='output.mat',
+                 cache='cache.mat', format='mat',
+                 output='output.mat',
                  **kwargs):
 
         self.f       = flux
@@ -107,17 +107,7 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
 
         reconstructor = WENOCLAWReconstructor(order=self.k, cache=self.cache)
 
-        if 'bc' in flux:
-            bc = flux['bc']
-        else:
-            bc = None
-
-        if 'virtual' in flux:
-            virtual = flux['virtual']
-        else:
-            virtual = 0
-
-        flux = pyblaw.flux.LFFlux(self.f['f'], self.f['alpha'], virtual, bc)
+        flux = pyblaw.flux.LFFlux(self.f['flux'], self.f['alpha'])
 
         pyblaw.solver.Solver.__init__(self,
                                       system=system,
