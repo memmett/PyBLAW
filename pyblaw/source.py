@@ -83,4 +83,4 @@ class SimpleSource(Source):
         self.s(qm, qp, qq, self.dx, s, **kwargs)
 
         if __debug__:
-            self.debug()
+            self.debug(qm=qm, qp=qp, qq=qq, s=s, **kwargs)

@@ -147,7 +147,7 @@ class FE(Evolver):
 
         # done
         if __debug__:
-            self.debug()
+            self.debug(q=q, qn=qn, **kwargs)
 
         return kwargs
 
@@ -162,7 +162,7 @@ class FE(Evolver):
 
         # done
         if __debug__:
-            self.debug()
+            self.debug(q=q, qn=qn, **kwargs)
 
         return kwargs
 
@@ -205,7 +205,7 @@ class SSPERK3(Evolver):
 
         # done
         if __debug__:
-            self.debug()
+            self.debug(q=q, qn=qn, **kwargs)
 
         return kwargs
 
@@ -231,6 +231,6 @@ class SSPERK3(Evolver):
 
         # done
         if __debug__:
-            self.debug()
+            self.debug(q=q, qn=qn, **kwargs)
 
         return kwargs

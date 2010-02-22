@@ -95,10 +95,10 @@ class SimpleFlux(Flux):
         self.dx = self.grid.x[1:] - self.grid.x[:-1]
 
     def flux(self, qm, qp, f, **kwargs):
-        self.f(qm, qp, self.dx, f, kwargs)
+        self.f(qm, qp, self.dx, f, **kwargs)
 
         if __debug__:
-            self.debug()
+            self.debug(qm=qm, qp=qp, f=f, **kwargs)
 
 
 ######################################################################
@@ -158,6 +158,6 @@ class LFFlux(Flux):
         pyblaw.clfflux.lf_flux(qm, qp, self.fm, self.fp, f)
 
         if __debug__:
-            self.debug()
+            self.debug(qm=qm, qp=qp, f=f, **kwargs)
 
         return kwargs

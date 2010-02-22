@@ -25,7 +25,7 @@ class Base(object):
     def set_trace(self, trace_level):
         self.trace = trace_level
 
-    def debug(self):
+    def debug(self, **kwargs):
         """Perform any debugging checks (assertions) or display
         debugging information (this is called by the various PyBLAW
         classes after, eg, computing the flux)."""
