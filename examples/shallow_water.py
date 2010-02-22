@@ -61,7 +61,7 @@ class ShallowWaterReconstructor(pyblaw.reconstructor.Reconstructor):
     def pre_run(self, **kwargs):
         self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
 
-    def reconstruct(self, q, qm, qp, qq):
+    def reconstruct(self, q, qm, qp, qq, **kwargs):
         weno = self.weno
 
         # flux and source reconstructions at cell boundaries

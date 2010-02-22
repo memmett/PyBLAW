@@ -36,9 +36,9 @@ cdef void swflux(double qm[4], double qp[4], double f[4]):
 @cython.boundscheck(False)
 def f(np.ndarray[np.double_t, ndim=2] qm,
       np.ndarray[np.double_t, ndim=2] qp,
-      double t,
       np.ndarray[np.double_t, ndim=1] dx,
-      np.ndarray[np.double_t, ndim=2] flux):
+      np.ndarray[np.double_t, ndim=2] flux,
+      **kwargs):
 
     # components are: 0: height, 1: momentum
 
@@ -71,9 +71,9 @@ w3[2] = 0.5*5.0/9.0
 def s(np.ndarray[np.double_t, ndim=2] qm,
       np.ndarray[np.double_t, ndim=2] qp,
       np.ndarray[np.double_t, ndim=3] qq,
-      double t,
       np.ndarray[np.double_t, ndim=1] dx,
-      np.ndarray[np.double_t, ndim=2] source):
+      np.ndarray[np.double_t, ndim=2] source,
+      **kwargs):
 
     # qm, qp components are: 0: height, 1: momentum, 2: bed
     # qq components are: 0: height, 1: bed, 2: d/dx bed
