@@ -12,7 +12,7 @@
 
 /*********************************************************************/
 
-int virtual, N, p;
+int N, p;
 double alpha, *fl, *fr, *dx;
 
 /*********************************************************************/
@@ -25,7 +25,7 @@ init_lf_flux(PyObject *self, PyObject *args)
   /*
    * parse options
    */
-  if (! PyArg_ParseTuple(args, "diOOO", &alpha, &virtual, &dx_py, &fl_py, &fr_py))
+  if (! PyArg_ParseTuple(args, "dOOO", &alpha, &dx_py, &fl_py, &fr_py))
     return NULL;
 
   if ((PyArray_FLAGS(dx_py) & NPY_IN_ARRAY) != NPY_IN_ARRAY) {
@@ -123,70 +123,29 @@ lf_flux(PyObject *self, PyObject *args)
    * compute net flux
    */
 
-  // XXX: working here: flux at left and right boundary
-
   N = PyArray_DIM(f_py, 0);
   p = PyArray_DIM(f_py, 1);
 
-  if (virtual == 0) {
-    /*
-     * no virtual cells, need to handle left and right boundaries
-     */
+  /* init right flux */
+  for (j=0; j<p; j++)
+    fr[j] = fp[j];
 
-    /* copy left boundary flux into right flux */
+  /* compute net flux in all but last cell */
+  for (i=0; i<N-1; i++) {
     for (j=0; j<p; j++)
-      fr[j] = fp[j];
+      fl[j] = fr[j];
 
-    /* compute net flux in all but last cell */
-    for (i=0; i<N-1; i++) {
-      for (j=0; j<p; j++)
-        fl[j] = fr[j];
+    nflux_lf(qm + (i+1)*p, qp + (i+1)*p,
+             fm + (i+1)*p, fp + (i+1)*p,
+             fr);
 
-      nflux_lf(qm + (i+1)*p, qp + (i+1)*p,
-               fm + (i+1)*p, fp + (i+1)*p,
-               fr);
-
-      for (j=0; j<p; j++)
-        f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
-    }
-
-    /* compute flux in the last cell */
     for (j=0; j<p; j++)
-      f[(N-1)*p+j] = - ( fp[N*p+j] - fr[j] ) / dx[i];
-
-  } else {
-    /*
-     * skip virtual cells
-     */
-
-    /* zero the flux in virtual cells */
-    for (i=0; i<virtual; i++) {
-      for (j=0; j<p; j++)
-        f[i*p+j] = 0.0;
-    }
-
-    for (i=N-virtual; i<N; i++) {
-      for (j=0; j<p; j++)
-        f[i*p+j] = 0.0;
-    }
-
-    /* compute right flux of first cell */
-    nflux_lf(qm+virtual*p, qp+virtual*p, fm+virtual*p, fp+virtual*p, fr);
-
-    /* compute net flux in each cell */
-    for (i=virtual; i<N-virtual; i++) {
-      for (j=0; j<p; j++)
-        fl[j] = fr[j];
-
-      nflux_lf(qm + (i+1)*p, qp + (i+1)*p,
-               fm + (i+1)*p, fp + (i+1)*p,
-               fr);
-
-      for (j=0; j<p; j++)
-        f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
-    }
-
+      f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
   }
+
+  /* compute flux in the last cell */
+  for (j=0; j<p; j++)
+    f[(N-1)*p+j] = - ( fp[N*p+j] - fr[j] ) / dx[i];
 
   /*
    * done
