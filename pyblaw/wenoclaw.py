@@ -49,9 +49,8 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
         p = q.shape[1]
 
         for m in range(p):
+            self.weno.smoothness(q[:,m])
             self.weno.reconstruct(q[:,m], 'left', qp[:,m], compute_weights=True)
-
-        for m in range(p):
             self.weno.reconstruct(q[:,m], 'right', qm[:,m], compute_weights=True)
 
         qp[-1,:] = qm[-1,:]
@@ -59,7 +58,7 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
         qm[0,:]  = qp[0,:]
 
         if __debug__:
-            self.debug()
+            self.debug(q=q, qp=qp, qm=qm, qq=qq, **kwargs)
 
 
 ######################################################################
