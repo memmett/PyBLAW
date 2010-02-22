@@ -2,10 +2,10 @@
 
 """
 
-import os
-
 import pyblaw.base
 
+
+######################################################################
 
 class Reconstructor(pyblaw.base.Base):
     """Abstract reconstructor.
@@ -40,7 +40,7 @@ class Reconstructor(pyblaw.base.Base):
     def set_system(self, system):
         self.system = system
 
-    def reconstruct(self, q, qm, qp, qq):
+    def reconstruct(self, q, qm, qp, qq, **kwargs):
         """Reconstruct q and store the result in qm (-), qp (+), and
         qq (quadrature)."""
 

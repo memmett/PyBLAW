@@ -6,6 +6,8 @@ import numpy as np
 import scipy.io as sio
 
 
+######################################################################
+
 class Dumper(object):
     """Abstract dumper.
 
@@ -59,13 +61,11 @@ class MATDumper(Dumper):
 
        The parameters are taken from the system (pyblaw.system.System).
 
-       The H5Dumper in pyblaw.h5dumper is more efficient.
+       NOTE: The H5Dumper in pyblaw.h5dumper is much more efficient.
 
        Arguments:
 
        * *output* - output file name
-
-       XXX: this is inefficient
 
     """
 

@@ -3,9 +3,10 @@
 """
 
 import numpy as np
-
 import pyblaw.base
 
+
+######################################################################
 
 class Evolver(pyblaw.base.Base):
     """Abstract evolver (time-stepper).
@@ -69,12 +70,8 @@ class Evolver(pyblaw.base.Base):
         raise NotImplementedError
 
 
-######################################################################
-
-class FE(Evolver):
-    """Forward-Euler evolver."""
-
     def allocate(self):
+        """Allocate storate space for reconstruction, flux, and source."""
 
         N = self.grid.N
         p = self.system.p
@@ -86,11 +83,8 @@ class FE(Evolver):
         self.qq = np.zeros((N,n,p))
         self.s  = np.zeros((N,p))
 
-
-    def evolve(self, q, n, qn):
-
-        t  = self.t[n]
-        dt = self.dt[n]
+    def reconstruct_and_compute_flux_and_source(self, q, **kwargs):
+        """Reconstruct and compute flux and source."""
 
         f  = self.f
         ql = self.ql
@@ -98,25 +92,75 @@ class FE(Evolver):
         qq = self.qq
         s  = self.s
 
-        self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
-        self.source.source(ql, qr, qq, t, s)
+        r = self.reconstructor.reconstruct(q, ql, qr, qq, **kwargs)
+        if isinstance(r, dict):
+            kwargs.update(r)
+
+        r = self.flux.flux(ql, qr, f, **kwargs)
+        if isinstance(r, dict):
+            kwargs.update(r)
+
+        r = self.source.source(ql, qr, qq, s, **kwargs)
+        if isinstance(r, dict):
+            kwargs.update(r)
+
+        return kwargs
+
+
+    def reconstruct_and_compute_flux(self, q, **kwargs):
+        """Reconstruct and compute flux."""
+
+        f  = self.f
+        ql = self.ql
+        qr = self.qr
+        qq = self.qq
+
+        r = self.reconstructor.reconstruct(q, ql, qr, qq, **kwargs)
+        if isinstance(r, dict):
+            kwargs.update(r)
+
+        r = self.flux.flux(ql, qr, f, **kwargs)
+        if isinstance(r, dict):
+            kwargs.update(r)
+
+        return kwargs
+
+
+######################################################################
+
+class FE(Evolver):
+    """Forward-Euler evolver."""
+
+    def evolve(self, q, qn, **kwargs):
+
+        f  = self.f
+        s  = self.s
+        dt = self.dt[kwargs['n']]
+
+        # qn
+        kwargs = self.reconstruct_and_compute_flux_and_source(q, **kwargs)
         qn[:,:] = q[:,:] + dt * (f[:,:] + s[:,:])
 
-    def evolve_homogeneous(self, q, n, qn):
+        # done
+        if __debug__:
+            self.debug()
 
-        t  = self.t[n]
-        dt = self.dt[n]
+        return kwargs
+
+    def evolve_homogeneous(self, q, qn, **kwargs):
 
         f  = self.f
-        ql = self.ql
-        qr = self.qr
-        qq = self.qq
-        s  = self.s
+        dt = self.dt[kwargs['n']]
 
-        self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
+        # qn
+        kwargs = self.reconstruct_and_compute_flux(q, **kwargs)
         qn[:,:] = q[:,:] + dt * f[:,:]
+
+        # done
+        if __debug__:
+            self.debug()
+
+        return kwargs
 
 
 ######################################################################
@@ -126,77 +170,63 @@ class SSPERK3(Evolver):
 
     def allocate(self):
 
+        Evolver.allocate(self)
+
         N = self.grid.N
         p = self.system.p
-        n = self.reconstructor.n
-
-        self.f  = np.zeros((N,p))
-        self.ql = np.zeros((N+1,p))
-        self.qr = np.zeros((N+1,p))
-        self.qq = np.zeros((N,n,p))
-        self.s  = np.zeros((N,p))
 
         self.q1 = np.zeros((N, p))
         self.q2 = np.zeros((N, p))
 
 
-    def evolve(self, q, n, qn):
-
-        q1 = self.q1
-        q2 = self.q2
-
-        t  = self.t[n]
-        dt = self.dt[n]
+    def evolve(self, q, qn, **kwargs):
 
         f  = self.f
-        ql = self.ql
-        qr = self.qr
-        qq = self.qq
         s  = self.s
+        q1 = self.q1
+        q2 = self.q2
+        dt = self.dt[kwargs['n']]
 
         # q1
-        self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
-        self.source.source(ql, qr, qq, t, s)
+        kwargs = self.reconstruct_and_compute_flux_and_source(q, **kwargs)
         q1[:,:] = q[:,:] + dt * (f[:,:] + s[:,:])
 
         # q2
-        self.reconstructor.reconstruct(q1, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
-        self.source.source(ql, qr, qq, t, s)
+        kwargs = self.reconstruct_and_compute_flux_and_source(q1, **kwargs)
         q2[:,:] = 3.0/4.0 * q[:,:] + 1.0/4.0 * q1[:,:] + 1.0/4.0 * dt * (f[:,:] + s[:,:])
 
         # qn
-        self.reconstructor.reconstruct(q2, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
-        self.source.source(ql, qr, qq, t, s)
+        kwargs = self.reconstruct_and_compute_flux_and_source(q2, **kwargs)
         qn[:,:] = 1.0/3.0 * q[:,:] + 2.0/3.0 * q2[:,:] + 2.0/3.0 * dt * (f[:,:] + s[:,:])
 
-    def evolve_homogeneous(self, q, n, qn):
+        # done
+        if __debug__:
+            self.debug()
 
-        q1 = self.q1
-        q2 = self.q2
+        return kwargs
 
-        t  = self.t[n]
-        dt = self.dt[n]
+    def evolve_homogeneous(self, q, qn, **kwargs):
 
         f  = self.f
-        ql = self.ql
-        qr = self.qr
-        qq = self.qq
         s  = self.s
+        q1 = self.q1
+        q2 = self.q2
+        dt = self.dt[kwargs['n']]
 
         # q1
-        self.reconstructor.reconstruct(q, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
+        kwargs = self.reconstruct_and_compute_flux(q, **kwargs)
         q1[:,:] = q[:,:] + dt * f[:,:]
 
         # q2
-        self.reconstructor.reconstruct(q1, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
+        kwargs = self.reconstruct_and_compute_flux(q1, **kwargs)
         q2[:,:] = 3.0/4.0 * q[:,:] + 1.0/4.0 * q1[:,:] + 1.0/4.0 * dt * f[:,:]
 
         # qn
-        self.reconstructor.reconstruct(q2, ql, qr, qq)
-        self.flux.flux(ql, qr, t, f)
+        kwargs = self.reconstruct_and_compute_flux(q2, **kwargs)
         qn[:,:] = 1.0/3.0 * q[:,:] + 2.0/3.0 * q2[:,:] + 2.0/3.0 * dt * f[:,:]
+
+        # done
+        if __debug__:
+            self.debug()
+
+        return kwargs

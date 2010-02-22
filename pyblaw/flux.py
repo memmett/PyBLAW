@@ -45,7 +45,7 @@ class Flux(pyblaw.base.Base):
     def set_reconstructor(self, reconstructor):
         self.reconstructor = reconstructor
 
-    def flux(self, qm, qp, t, f):
+    def flux(self, qm, qp, f, **kwargs):
         """Return net flux for each cell given the left (-) and right
            (+) reconstructions *qm* and *qp*, and store the result in
            *f*."""
@@ -60,25 +60,42 @@ class SimpleFlux(Flux):
 
        This flux uses a user supplied numerical flux.
 
-       Arguments:
-
-       * *flux* - flux function (callable)
-
-       The flux function is called as ``flux(qm, qp, t, dx, f)``.
-
        Implementing the flux function in Cython (or similar) is
        strongly recommended.
 
+       **Arguments:**
+
+       * *flux* - flux function (callable)
+
+       The numerical flux function is called as ``flux(qm, qp, dx, f,
+       **kwargs)`` where:
+
+       * ``qm[i,:]`` and ``qp[i,:]`` are the reconstructions of q at
+         the cell boundaries from the left (-) and right (+)
+         respectively;
+
+       * ``dx`` are the cell sizes;
+
+       * ``f`` is the resulting flux; and
+
+       * ``kwargs`` contains:
+         * ``n``: the current step,
+         * ``t``: the current time, and
+         * any entries passed to the solver or set by the reconstructor.
+
     """
 
-    def __init__(self, flux, init=None, **kwargs):
+    def __init__(self, flux, **kwargs):
         self.f = flux
 
     def pre_run(self, **kwargs):
         self.dx = self.grid.x[1:] - self.grid.x[:-1]
 
-    def flux(self, qm, qp, t, f):
-        self.f(qm, qp, t, self.dx, f)
+    def flux(self, qm, qp, f, **kwargs):
+        self.f(qm, qp, self.dx, f, kwargs)
+
+        if __debug__:
+            self.debug()
 
 
 ######################################################################
@@ -87,27 +104,31 @@ class LFFlux(Flux):
     """Lax-Friedrichs flux.
 
        This flux uses the Lax-Friedrichs numerical flux associated
-       with the flux *f*, and is implemented in C (clfflux).
+       with a given flux and is implemented in C (clfflux).
 
-       Arguments:
+       Implementing the flux in Cython is strongly recommended.
 
-       * *flux* - flux function (callable)
-       * *alpha* - maximum wave speed
-       * *virtual* - number of virtual cells on each side of the domain
-       * *boundary* - boundary function (callable)
+       **Arguments:**
 
-       The flux function *f* is called as ``f(q, t, f)`` where ``q``
-       is the state vector and ``f`` is the resulting flux.
+       * *flux*     - flux function (callable)
+       * *alpha*    - maximum wave speed
 
-       Implementing the flux *f* in Cython is strongly recommended.
+       The (non-numerical) flux function *f* is called as ``f(q, f,
+       **kwargs)`` where:
+
+       * ``q[i,:]`` is the state vector of q at the cell boundaries;
+       * ``f`` is the resulting flux; and
+       * ``kwargs`` contains:
+         * ``n``: the current step,
+         * ``t``: the current time, and
+         * any entries passed to the solver or set by the reconstructor.
 
     """
 
-    def __init__(self, flux, alpha, virtual, boundary):
+    def __init__(self, flux, alpha):
         self.f = flux
         self.alpha = alpha
-        self.virtual = virtual
-        self.boundary = boundary
+
 
     def allocate(self):
         N = self.grid.size
@@ -118,26 +139,21 @@ class LFFlux(Flux):
         self.fm = np.zeros((N+1,p))
         self.fp = np.zeros((N+1,p))
 
-        self.left = np.zeros(p)
-        self.right = np.zeros(p)
 
     def pre_run(self, **kwargs):
         self.dx = self.grid.x[1:] - self.grid.x[:-1]
 
-        pyblaw.clfflux.init_lf_flux(self.alpha, self.virtual, self.dx, self.fl, self.fr)
+        pyblaw.clfflux.init_lf_flux(self.alpha, 0, self.dx, self.fl, self.fr)
 
-    def flux(self, qm, qp, t, f):
 
-        self.f(qm, t, self.fm)
-        self.f(qp, t, self.fp)
+    def flux(self, qm, qp, f, **kwargs):
 
-        if self.boundary is not None:
-            self.boundary(t, qp[0,:], self.left, qm[-1,:], self.right)
-
-            self.fm[0,:] = self.left[:]
-            self.fp[0,:] = self.left[:]
-
-            self.fp[-1,:] = self.right[:]
-            self.fp[-1,:] = self.right[:]
+        self.f(qm, self.fm, **kwargs)
+        self.f(qp, self.fp, **kwargs)
 
         pyblaw.clfflux.lf_flux(qm, qp, self.fm, self.fp, f)
+
+        if __debug__:
+            self.debug()
+
+        return kwargs

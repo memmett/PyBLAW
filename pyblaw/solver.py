@@ -10,11 +10,13 @@ import pyblaw.dumper
 import pyblaw.evolver
 
 
+######################################################################
+
 class Solver(pyblaw.base.Base):
     """Solver for 1D systems of balance laws.
 
        Numerically approximates the solution of a system of hyperbolic
-       balances laws of the form
+       balance laws of the form
 
          :math:`q_t + f(q)_x = s`.
 
@@ -24,7 +26,7 @@ class Solver(pyblaw.base.Base):
 
        The constructor takes care of connecting the PyBLAW classes
        that you have extended (as mentioned in the previous paragraph)
-       and calling their *allocate* methods.
+       and calling their *allocate* and *pre_run* methods.
 
        Keyword arguments:
 
@@ -43,7 +45,6 @@ class Solver(pyblaw.base.Base):
        * *t*             - times
        * *dt*            - time steps
        * *t_dump*        - dump times
-       * *trace*         - trace level
 
        Instance variables pulled from elsewhere:
 
@@ -96,10 +97,17 @@ class Solver(pyblaw.base.Base):
     #
 
     def initialise_and_allocate(self):
+        """Initialise the solver.
 
+           Call all allocate methods, set the initial condtions
+           (defined by *system.initial_conditions*), call pre-run
+           hooks.
+
+        """
+
+        self.N  = self.grid.size
         self.x  = self.grid.boundaries()
         self.dx = self.grid.sizes()
-        self.N  = self.grid.size
         self.p  = self.system.p
 
         # link everything up
@@ -177,16 +185,13 @@ class Solver(pyblaw.base.Base):
     # run
     #
 
-    def run(self):
+    def run(self, **kwargs):
         """Run the solver.
 
-           This method runs the solver.  First, it allocates the cell
-           averages q and sets the initial condtions defined by
-           *system.initial_conditions*.  Next, it calls the pre run
-           hooks *pre_run* (last minute initialisations).  Finally, it
-           cycles throuth the *times* and evolves the system using the
-           *evolver*, dumping the cell averages at *dump_times* using
-           the *dumper*.
+           If we are in debugging mode then:
+
+           1. If the trace level is non-zero, XXX
+           2. If the trace level is positive, XXX
 
         """
 
@@ -198,22 +203,17 @@ class Solver(pyblaw.base.Base):
         q = self.q
         qn = self.qn
 
+        if kwargs is None:
+            kwargs = {}
+
         #### giv'r!
         for n, t in enumerate(self.t[0:-1]):
-
-            step = {'n': n, 't': t}
-            self.system.set_debug(step)
-            self.reconstructor.set_debug(step)
-            self.flux.set_debug(step)
-            if self.source is not None:
-                self.source.set_debug(step)
-            self.evolver.set_debug(step)
 
             # debug: time step header
             if __debug__:
                 if abs(self.trace) > 0:
                     if abs(self.trace) > 1:
-                        print "="*150
+                        print "="*69
 
                     print "n = %d, t = %11.5f, mass = %11.5f" % (n, t, self.system.mass(q))
 
@@ -224,10 +224,12 @@ class Solver(pyblaw.base.Base):
                 self.t_dump = self.t_dump[1:]
 
             # evolve
+            kwargs.update({'n': n, 't': t})
+
             if self.source is not None:
-                self.evolver.evolve(q, n, qn)
+                self.evolver.evolve(q, qn, **kwargs)
             else:
-                self.evolver.evolve_homogeneous(q, n, qn)
+                self.evolver.evolve_homogeneous(q, qn, **kwargs)
             q[:,:] = qn[:,:]
 
             # debug: break?

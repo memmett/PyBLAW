@@ -9,6 +9,8 @@ import pyblaw.grid
 import pyblaw.system
 
 
+######################################################################
+
 class Source(pyblaw.base.Base):
     """Abstract source.
 
@@ -40,7 +42,7 @@ class Source(pyblaw.base.Base):
     def set_reconstructor(self, reconstructor):
         self.reconstructor = reconstructor
 
-    def source(self, qm, qp, qq, t, s):
+    def source(self, qm, qp, qq, s, **kwargs):
         """Return next source for each cell given the left (-), right
            (+), and quadrature reconstructions *qm*, *qp* and *qq*;
            and store the result in *s*."""
@@ -72,5 +74,8 @@ class SimpleSource(Source):
     def pre_run(self, **kwargs):
         self.dx = self.grid.x[1:] - self.grid.x[:-1]
 
-    def source(self, qm, qp, qq, t, s):
-        self.s(qm, qp, qq, t, self.dx, s)
+    def source(self, qm, qp, qq, s, **kwargs):
+        self.s(qm, qp, qq, self.dx, s, **kwargs)
+
+        if __debug__:
+            self.debug()

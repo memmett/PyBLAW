@@ -8,12 +8,12 @@ class Base(object):
        Instance variables:
 
        * *trace* - trace level
-       * *debug* - debug information (dictionary)
 
-       Methods that should be overridden:
+       Methods that can be overridden:
 
        * *allocate* - allocate memory etc
        * *pre_run*  - pre run initialisation
+       * *debug*    - debug
 
     """
 
@@ -23,8 +23,8 @@ class Base(object):
     def set_trace(self, trace_level):
         self.trace = trace_level
 
-    def set_debug(self, debug):
-        self.debug.update(debug)
+    def debug(self):
+        pass
 
     def allocate(self):
         pass

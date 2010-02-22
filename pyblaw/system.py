@@ -3,9 +3,10 @@
 """
 
 import numpy as np
-
 import pyblaw.base
 
+
+######################################################################
 
 class System(pyblaw.base.Base):
     """Abstract system.
