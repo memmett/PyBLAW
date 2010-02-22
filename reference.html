@@ -48,19 +48,18 @@
   <div class="section" id="pyblaw-reference">
 <h1>PyBLAW Reference<a class="headerlink" href="#pyblaw-reference" title="Permalink to this headline">¶</a></h1>
 <p>There are a few things to keep in mind:</p>
-<blockquote>
 <ul class="simple">
 <li>each class has an <em>allocate</em> method that gets called by the solver
 during initialisation;</li>
 <li>each class has a <em>pre_run</em> method that gets called after the
 initial conditions are computed;</li>
-<li>each class has a <em>debug</em> dictionary and a <em>trace</em> variable to help
-you debug your solver; and</li>
+<li>each class has a <em>debug</em> method that may be used for debugging
+purposes (if running with <tt class="docutils literal"><span class="pre">-O</span></tt>)</li>
+<li>each class has <em>trace</em> variable to help you debug your solver; and</li>
 <li>some classes are linked together through various instance
 variables (eg, the flux class has a <em>system</em> variable that points
 to the system class).</li>
 </ul>
-</blockquote>
 <p>Again, checking out some <a class="reference external" href="examples.html"><em>examples</em></a> might be helpful.</p>
 <div class="section" id="base">
 <h2>Base<a class="headerlink" href="#base" title="Permalink to this headline">¶</a></h2>
@@ -69,20 +68,35 @@ to the system class).</li>
 <em class="property">
 class </em><tt class="descclassname">pyblaw.base.</tt><tt class="descname">Base</tt><a class="headerlink" href="#pyblaw.base.Base" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class.</p>
-<p>Instance variables:</p>
-<blockquote>
+<p><strong>Instance variables</strong></p>
 <ul class="simple">
 <li><em>trace</em> - trace level</li>
-<li><em>debug</em> - debug information (dictionary)</li>
 </ul>
-</blockquote>
-<p>Methods that should be overridden:</p>
-<blockquote>
+<p><strong>Methods that can be overridden</strong></p>
 <ul class="simple">
 <li><em>allocate</em> - allocate memory etc</li>
 <li><em>pre_run</em>  - pre run initialisation</li>
+<li><em>debug</em>    - debug</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
+<dl class="method">
+<dt id="pyblaw.base.Base.allocate">
+<tt class="descname">allocate</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblaw.base.Base.allocate" title="Permalink to this definition">¶</a></dt>
+<dd>Allocate storage space etc.</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.base.Base.debug">
+<tt class="descname">debug</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.base.Base.debug" title="Permalink to this definition">¶</a></dt>
+<dd>Perform any debugging checks (assertions) or display
+debugging information (this is called by the various PyBLAW
+classes after, eg, computing the flux).</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.base.Base.pre_run">
+<tt class="descname">pre_run</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.base.Base.pre_run" title="Permalink to this definition">¶</a></dt>
+<dd>Perform any last minute initialisations (this is called by
+the solver after the initial condtions have been set).</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -94,27 +108,22 @@ class </em><tt class="descclassname">pyblaw.base.</tt><tt class="descname">Base<
 class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">System</tt><big>(</big><em>parameters={}</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.system.System" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract system.</p>
 <p>Define initial conditions, abstract mass, and other parameters.</p>
-<p>Instance variables:</p>
-<blockquote>
+<p><strong>Instance variables</strong></p>
 <ul class="simple">
 <li><em>p</em>          - number of unknowns</li>
 <li><em>parameters</em> - parameters (dictionary)</li>
 </ul>
-</blockquote>
-<p>Instrance variables pulled from elsewhere:</p>
-<blockquote>
+<p><strong>Instrance variables pulled from elsewhere</strong></p>
 <ul class="simple">
 <li><em>grid</em> - pyblaw.grid.Grid</li>
 </ul>
-</blockquote>
-<p>Methods that should be overridden:</p>
-<blockquote>
+<p><strong>Methods that should be overridden</strong></p>
 <ul class="simple">
 <li><em>allocate</em>           - allocate memory</li>
 <li><em>initial_conditions</em> - set initial condtions at time t</li>
 <li><em>mass</em>               - compute &#8216;mass&#8217; of system</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
 <dl class="method">
 <dt id="pyblaw.system.System.initial_conditions">
 <tt class="descname">initial_conditions</tt><big>(</big><em>t</em>, <em>q</em><big>)</big><a class="headerlink" href="#pyblaw.system.System.initial_conditions" title="Permalink to this definition">¶</a></dt>
@@ -134,15 +143,14 @@ class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">Sim
 <dd><p>Simple system.</p>
 <p>The class implements a simple system that holds a dictionary of
 parameters and a callable <em>q0</em> for the initial conditions.</p>
-<p>Arguments:</p>
-<blockquote>
+<p><strong>Arguments</strong></p>
 <ul class="simple">
 <li><em>q0</em> - initial condition (callable)</li>
 <li><em>parameters</em> - parameters (dictionary)</li>
 </ul>
-</blockquote>
-<p>The initial condition function is called as q0(x, t), and
-should return a vector.</p>
+<p>The initial condition function is called as <tt class="docutils literal"><span class="pre">q0(x,</span> <span class="pre">t)</span></tt> where
+<em>x</em> and <em>t</em> are real numbers, and should return a vector.  The
+number of components <em>p</em> is determined by calling <em>q0</em>.</p>
 <p>The first component of the solution is taken to be the &#8216;mass&#8217;
 of the system.</p>
 </dd></dl>
@@ -156,24 +164,21 @@ of the system.</p>
 class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">Flux</tt><a class="headerlink" href="#pyblaw.flux.Flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract flux.</p>
 <p>Compute the net flux for each cell given the cell averages q.</p>
-<p>Instance variables pulled from elsewhere:</p>
-<blockquote>
+<p><strong>Instance variables pulled from elsewhere</strong></p>
 <ul class="simple">
 <li><em>grid</em>   - pyblaw.grid.Grid</li>
 <li><em>system</em> - pyblaw.system.System</li>
 <li><em>reconstructor</em> - pyblaw.system.Reconstructor</li>
 </ul>
-</blockquote>
-<p>Methods that should be overridden:</p>
-<blockquote>
+<p><strong>Methods that should be overridden</strong></p>
 <ul class="simple">
 <li><em>allocate</em> - allocate memory etc</li>
 <li><em>flux</em>     - compute net fluxes</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
 <dl class="method">
 <dt id="pyblaw.flux.Flux.flux">
-<tt class="descname">flux</tt><big>(</big><em>qm</em>, <em>qp</em>, <em>f</em><big>)</big><a class="headerlink" href="#pyblaw.flux.Flux.flux" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">flux</tt><big>(</big><em>qm</em>, <em>qp</em>, <em>f</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.flux.Flux.flux" title="Permalink to this definition">¶</a></dt>
 <dd>Return net flux for each cell given the left (-) and right
 (+) reconstructions <em>qm</em> and <em>qp</em>, and store the result in
 <em>f</em>.</dd></dl>
@@ -183,38 +188,57 @@ class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">Flux<
 <dl class="class">
 <dt id="pyblaw.flux.SimpleFlux">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">SimpleFlux</tt><big>(</big><em>flux</em>, <em>init=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.flux.SimpleFlux" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">SimpleFlux</tt><big>(</big><em>flux</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.flux.SimpleFlux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple numerical flux.</p>
 <p>This flux uses a user supplied numerical flux.</p>
-<p>Arguments:</p>
-<blockquote>
+<p>Implementing the flux function in Cython (or similar) is
+strongly recommended.</p>
+<p><strong>Arguments:</strong></p>
 <ul class="simple">
 <li><em>flux</em> - flux function (callable)</li>
 </ul>
-</blockquote>
-<p>The flux function is called as <tt class="docutils literal"><span class="pre">flux(qm,</span> <span class="pre">qp,</span> <span class="pre">dx,</span> <span class="pre">f)</span></tt>.</p>
-<p>Implementing the flux function in Cython (or similar) is
-strongly recommended.</p>
+<p>The numerical flux function is called as <tt class="docutils literal"><span class="pre">flux(qm,</span> <span class="pre">qp,</span> <span class="pre">dx,</span> <span class="pre">f,</span>
+<span class="pre">**kwargs)</span></tt> where:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">qm[i,:]</span></tt> and <tt class="docutils literal"><span class="pre">qp[i,:]</span></tt> are the reconstructions of q at
+the cell boundaries from the left (-) and right (+)
+respectively;</li>
+<li><tt class="docutils literal"><span class="pre">dx</span></tt> are the cell sizes;</li>
+<li><tt class="docutils literal"><span class="pre">f</span></tt> is the resulting flux; and</li>
+<li><tt class="docutils literal"><span class="pre">kwargs</span></tt> contains:<ul>
+<li><tt class="docutils literal"><span class="pre">n</span></tt>: the current step,</li>
+<li><tt class="docutils literal"><span class="pre">t</span></tt>: the current time, and</li>
+<li>any entries passed to the solver or set by the reconstructor.</li>
+</ul>
+</li>
+</ul>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyblaw.flux.LFFlux">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">LFFlux</tt><big>(</big><em>flux</em>, <em>alpha</em>, <em>virtual</em><big>)</big><a class="headerlink" href="#pyblaw.flux.LFFlux" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.flux.</tt><tt class="descname">LFFlux</tt><big>(</big><em>flux</em>, <em>alpha</em><big>)</big><a class="headerlink" href="#pyblaw.flux.LFFlux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lax-Friedrichs flux.</p>
 <p>This flux uses the Lax-Friedrichs numerical flux associated
-with the flux <em>f</em>, and is implemented in C (clfflux).</p>
-<p>Arguments:</p>
-<blockquote>
+with a given flux and is implemented in C (clfflux).</p>
+<p>Implementing the flux in Cython is strongly recommended.</p>
+<p><strong>Arguments:</strong></p>
 <ul class="simple">
-<li><em>flux</em> - flux function (callable)</li>
-<li><em>alpha</em> - maximum wave speed</li>
-<li><em>virtual</em> - number of virtual cells on each side of the domain</li>
+<li><em>flux</em>     - flux function (callable)</li>
+<li><em>alpha</em>    - maximum wave speed</li>
 </ul>
-</blockquote>
-<p>The flux function <em>f</em> is called as <tt class="docutils literal"><span class="pre">f(q,</span> <span class="pre">f)</span></tt> where <tt class="docutils literal"><span class="pre">q</span></tt> is
-the state vector and <tt class="docutils literal"><span class="pre">f</span></tt> is the resulting flux.</p>
-<p>Implementing the flux <em>f</em> in Cython is strongly recommended.</p>
+<p>The (non-numerical) flux function <em>flux</em> is called as <tt class="docutils literal"><span class="pre">flux(q,</span>
+<span class="pre">f,</span> <span class="pre">**kwargs)</span></tt> where:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">q[i,:]</span></tt> is the state vector of q at the cell boundaries;</li>
+<li><tt class="docutils literal"><span class="pre">f</span></tt> is the resulting flux; and</li>
+<li><tt class="docutils literal"><span class="pre">kwargs</span></tt> contains:<ul>
+<li><tt class="docutils literal"><span class="pre">n</span></tt>: the current step,</li>
+<li><tt class="docutils literal"><span class="pre">t</span></tt>: the current time, and</li>
+<li>any entries passed to the solver or set by the reconstructor.</li>
+</ul>
+</li>
+</ul>
 </dd></dl>
 
 </div>
@@ -226,27 +250,24 @@ the state vector and <tt class="docutils literal"><span class="pre">f</span></tt
 class </em><tt class="descclassname">pyblaw.source.</tt><tt class="descname">Source</tt><a class="headerlink" href="#pyblaw.source.Source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract source.</p>
 <p>Compute the source for each cell given the cell averages q.</p>
-<p>Instance variables pulled from elsewhere:</p>
-<blockquote>
+<p><strong>Instance variables pulled from elsewhere</strong></p>
 <ul class="simple">
 <li><em>grid</em>   - pyblaw.grid.Grid</li>
 <li><em>system</em> - pyblaw.system.System</li>
 <li><em>reconstructor</em> - pyblaw.reconstructor.Reconstructor</li>
 </ul>
-</blockquote>
-<p>Methods that should be overridden:</p>
-<blockquote>
+<p><strong>Methods that should be overridden</strong></p>
 <ul class="simple">
 <li><em>allocate</em> - allocate memory etc</li>
 <li><em>source</em>   - compute sources</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
 <dl class="method">
 <dt id="pyblaw.source.Source.source">
-<tt class="descname">source</tt><big>(</big><em>qm</em>, <em>qp</em>, <em>qq</em>, <em>s</em><big>)</big><a class="headerlink" href="#pyblaw.source.Source.source" title="Permalink to this definition">¶</a></dt>
-<dd>Return next source for each cell given the left (-), right
-(+), and quadrature reconstructions <em>qm</em>, <em>qp</em> and <em>qq</em>;
-and store the result in <em>s</em>.</dd></dl>
+<tt class="descname">source</tt><big>(</big><em>qm</em>, <em>qp</em>, <em>qq</em>, <em>s</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.source.Source.source" title="Permalink to this definition">¶</a></dt>
+<dd>Return source for each cell given the left (-), right (+),
+and quadrature reconstructions <em>qm</em>, <em>qp</em> and <em>qq</em>
+respectively, and store the result in <em>s</em>.</dd></dl>
 
 </dd></dl>
 
@@ -256,13 +277,15 @@ and store the result in <em>s</em>.</dd></dl>
 class </em><tt class="descclassname">pyblaw.source.</tt><tt class="descname">SimpleSource</tt><big>(</big><em>source</em><big>)</big><a class="headerlink" href="#pyblaw.source.SimpleSource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple numerical source.</p>
 <p>This source uses a user supplied numerical source.</p>
-<p>Arguments:</p>
-<blockquote>
+<p><strong>Arguments</strong></p>
 <ul class="simple">
 <li><em>source</em> - source function (callable)</li>
 </ul>
-</blockquote>
-<p>The source function is called as <tt class="docutils literal"><span class="pre">source(qm,</span> <span class="pre">qp,</span> <span class="pre">qq,</span> <span class="pre">dx,</span> <span class="pre">s)</span></tt>.</p>
+<p>The source function is called as <tt class="docutils literal"><span class="pre">source(qm,</span> <span class="pre">qp,</span> <span class="pre">qq,</span> <span class="pre">dx,</span> <span class="pre">s,</span>
+<span class="pre">**kwargs)</span></tt> where:</p>
+<ul class="simple">
+<li>XXX</li>
+</ul>
 <p>Implementing the source function in Cython (or similar) is
 strongly recommended.</p>
 </dd></dl>
@@ -277,47 +300,45 @@ class </em><tt class="descclassname">pyblaw.reconstructor.</tt><tt class="descna
 <dd><p>Abstract reconstructor.</p>
 <p>Given the cell averages q, reconstruct the unkown at various
 points.</p>
-<p>Instance variables:</p>
-<blockquote>
+<p><strong>Instance variables</strong></p>
 <ul class="simple">
 <li><em>n</em>          - number of quadrature points per cell (for source)</li>
 </ul>
-</blockquote>
-<p>Instance variables pulled from elsewhere:</p>
-<blockquote>
+<p><strong>Instance variables pulled from elsewhere</strong></p>
 <ul class="simple">
 <li><em>grid</em>   - pyblaw.grid.Grid</li>
 <li><em>system</em> - pyblaw.system.System</li>
 </ul>
-</blockquote>
-<p>Methods that should be overridden:</p>
-<blockquote>
+<p><strong>Methods that should be overridden</strong></p>
 <ul class="simple">
 <li><em>allocate</em>    - allocate memory etc</li>
 <li><em>reconstruct</em> - reconstruct</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
 <dl class="method">
 <dt id="pyblaw.reconstructor.Reconstructor.reconstruct">
-<tt class="descname">reconstruct</tt><big>(</big><em>q</em>, <em>qm</em>, <em>qp</em>, <em>qq</em><big>)</big><a class="headerlink" href="#pyblaw.reconstructor.Reconstructor.reconstruct" title="Permalink to this definition">¶</a></dt>
-<dd>Reconstruct q and store the result in qm (-), qp (+), and
-qq (quadrature).</dd></dl>
+<tt class="descname">reconstruct</tt><big>(</big><em>q</em>, <em>qm</em>, <em>qp</em>, <em>qq</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.reconstructor.Reconstructor.reconstruct" title="Permalink to this definition">¶</a></dt>
+<dd>Reconstruct <em>q</em> at the cell boundaries and quadrature
+points, and store the result in <em>qm</em> (-), <em>qp</em> (+), and <em>qq</em>
+(quadrature).</dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="pyblaw.wenoclaw.WENOCLAWReconstructor">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWReconstructor</tt><big>(</big><em>order=3</em>, <em>cache='cache.mat'</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWReconstructor" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWReconstructor</tt><big>(</big><em>order=3</em>, <em>cache='cache.mat'</em>, <em>format='mat'</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWReconstructor" title="Permalink to this definition">¶</a></dt>
 <dd><p>WENO CLAW Reconstructor.</p>
-<p><strong>Arguments:</strong></p>
+<p><strong>Arguments</strong></p>
 <ul class="simple">
-<li><em>order</em> - WENO reconstruction order k</li>
-<li><em>cache</em> - MAT cache file name</li>
+<li><em>order</em>  - WENO reconstruction order</li>
+<li><em>cache</em>  - cache file name</li>
+<li><em>format</em> - cache file format (defaults to &#8216;mat&#8217;)</li>
 </ul>
 <p>The pyweno.weno.WENO object is loaded from the cache, which
 must be pre-built.</p>
-<p>The smoothness is based on the first component only.</p>
+<p>The WENO smoothness indicators and weights are computed for
+each component.</p>
 </dd></dl>
 
 </div>
@@ -329,25 +350,27 @@ must be pre-built.</p>
 class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">Evolver</tt><a class="headerlink" href="#pyblaw.evolver.Evolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract evolver (time-stepper).</p>
 <p>Evolve the cell averages q given at time t^n to time t^{n+1}.</p>
-<p>Instance variables:</p>
-<blockquote>
+<p><strong>Instance variables</strong></p>
 <ul class="simple">
-<li><em>t</em>             - times (time grid)</li>
+<li><em>t</em>             - times</li>
 <li><em>dt</em>            - time step sizes</li>
-<li><em>grid</em>          - pyblaw.grid.Grid</li>
-<li><em>system</em>        - pyblaw.system.System</li>
-<li><em>reconstructor</em> - pyblaw.reconstructor.Reconstructor</li>
-<li><em>flux</em>          - pyblaw.flux.Flux</li>
-<li><em>source</em>        - pyblaw.grid.Source</li>
+<li><em>grid</em>          - grid</li>
+<li><em>system</em>        - system</li>
+<li><em>reconstructor</em> - reconstructor</li>
+<li><em>flux</em>          - flux</li>
+<li><em>source</em>        - source</li>
 </ul>
-</blockquote>
-<p>Methods that should be overridden:</p>
-<blockquote>
+<p><strong>Methods that should be overridden</strong></p>
 <ul class="simple">
 <li><em>allocate</em> - allocates memory etc</li>
 <li><em>evolve</em>   - evolve q</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
+<dl class="method">
+<dt id="pyblaw.evolver.Evolver.allocate">
+<tt class="descname">allocate</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.allocate" title="Permalink to this definition">¶</a></dt>
+<dd>Allocate storage space for reconstruction, flux, and source.</dd></dl>
+
 <dl class="method">
 <dt id="pyblaw.evolver.Evolver.evolve">
 <tt class="descname">evolve</tt><big>(</big><em>q</em>, <em>qn</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.evolve" title="Permalink to this definition">¶</a></dt>
@@ -359,12 +382,30 @@ class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">Ev
 <dd>Evolve q (no source) and store the result in qn.</dd></dl>
 
 <dl class="method">
+<dt id="pyblaw.evolver.Evolver.reconstruct_and_compute_flux">
+<tt class="descname">reconstruct_and_compute_flux</tt><big>(</big><em>q</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.reconstruct_and_compute_flux" title="Permalink to this definition">¶</a></dt>
+<dd>Helper function to reconstruct and compute the flux while
+updating the keyword argument dictionary.</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.evolver.Evolver.reconstruct_and_compute_flux_and_source">
+<tt class="descname">reconstruct_and_compute_flux_and_source</tt><big>(</big><em>q</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.reconstruct_and_compute_flux_and_source" title="Permalink to this definition">¶</a></dt>
+<dd>Helper function to reconstruct and compute the flux and
+source while updating the keyword argument dictionary.</dd></dl>
+
+<dl class="method">
 <dt id="pyblaw.evolver.Evolver.set_times">
 <tt class="descname">set_times</tt><big>(</big><em>times</em><big>)</big><a class="headerlink" href="#pyblaw.evolver.Evolver.set_times" title="Permalink to this definition">¶</a></dt>
 <dd>Set times at which the solution is computed to <em>times</em> and
 compute time step sizes.</dd></dl>
 
 </dd></dl>
+
+<dl class="class">
+<dt id="pyblaw.evolver.FE">
+<em class="property">
+class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">FE</tt><a class="headerlink" href="#pyblaw.evolver.FE" title="Permalink to this definition">¶</a></dt>
+<dd>Forward-Euler evolver.</dd></dl>
 
 <dl class="class">
 <dt id="pyblaw.evolver.SSPERK3">
@@ -381,24 +422,21 @@ class </em><tt class="descclassname">pyblaw.evolver.</tt><tt class="descname">SS
 class </em><tt class="descclassname">pyblaw.dumper.</tt><tt class="descname">Dumper</tt><a class="headerlink" href="#pyblaw.dumper.Dumper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract dumper.</p>
 <p>Dump the cell averages q to a file.</p>
-<p>Instance variables:</p>
-<blockquote>
+<p><strong>Instance variables</strong></p>
 <ul class="simple">
 <li><em>x</em> - cell centers</li>
 <li><em>t</em> - times</li>
 </ul>
-</blockquote>
-<p>Methods that should be overridden:</p>
-<blockquote>
+<p><strong>Methods that should be overridden</strong></p>
 <ul class="simple">
 <li><em>init_dump</em> - init and create dump file etc</li>
 <li><em>dump</em>      - dump solution q</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
 <dl class="method">
 <dt id="pyblaw.dumper.Dumper.dump">
 <tt class="descname">dump</tt><big>(</big><em>q</em><big>)</big><a class="headerlink" href="#pyblaw.dumper.Dumper.dump" title="Permalink to this definition">¶</a></dt>
-<dd>Dump q.</dd></dl>
+<dd>Dump <em>q</em>.</dd></dl>
 
 <dl class="method">
 <dt id="pyblaw.dumper.Dumper.init_dump">
@@ -414,22 +452,18 @@ class </em><tt class="descclassname">pyblaw.dumper.</tt><tt class="descname">MAT
 <dd><p>MAT dumper (using SciPy).</p>
 <p>Dump the cell averages q to a MAT file.  The matrices created
 within the MAT file are:</p>
-<blockquote>
 <ul class="simple">
-<li>dims.xdim - cell centres</li>
-<li>dims.tdim - dump times</li>
-<li>parameters.X - parameters</li>
-<li>data.q - cell averages of solution q</li>
+<li><tt class="docutils literal"><span class="pre">dims.xdim</span></tt> - cell centres</li>
+<li><tt class="docutils literal"><span class="pre">dims.tdim</span></tt> - dump times</li>
+<li><tt class="docutils literal"><span class="pre">parameters.X</span></tt> - parameters</li>
+<li><tt class="docutils literal"><span class="pre">data.q</span></tt> - cell averages of solution q</li>
 </ul>
-</blockquote>
 <p>The parameters are taken from the system (pyblaw.system.System).</p>
-<p>The H5Dumper in pyblaw.h5dumper is more efficient.</p>
-<p>Arguments:</p>
-<blockquote>
+<p><strong>Note:</strong> The H5Dumper in pyblaw.h5dumper is much more efficient.</p>
+<p><strong>Arguments</strong></p>
 <ul class="simple">
 <li><em>output</em> - output file name</li>
 </ul>
-</blockquote>
 </dd></dl>
 
 <dl class="class">
@@ -439,21 +473,17 @@ class </em><tt class="descclassname">pyblaw.h5dumper.</tt><tt class="descname">H
 <dd><p>HDF5 dumper (using the h5py Python package).</p>
 <p>Dump the cell averages q to an HDF5 file.  The hierarchy
 created within the HDF5 file is:</p>
-<blockquote>
 <ul class="simple">
-<li>/dims/xdim - cell centres</li>
-<li>/dims/tdim - dump times</li>
-<li>/parameters/X - parameters</li>
-<li>/data/q - cell averages of solution q</li>
+<li><tt class="docutils literal"><span class="pre">/dims/xdim</span></tt> - cell centres</li>
+<li><tt class="docutils literal"><span class="pre">/dims/tdim</span></tt> - dump times</li>
+<li><tt class="docutils literal"><span class="pre">/parameters/X</span></tt> - parameters</li>
+<li><tt class="docutils literal"><span class="pre">/data/q</span></tt> - cell averages of solution q</li>
 </ul>
-</blockquote>
 <p>The parameters are taken from the system (pyblaw.system.System).</p>
-<p>Arguments:</p>
-<blockquote>
+<p><strong>Arguments</strong></p>
 <ul class="simple">
 <li><em>output</em> - output file name</li>
 </ul>
-</blockquote>
 </dd></dl>
 
 </div>
@@ -465,7 +495,7 @@ created within the HDF5 file is:</p>
 class </em><tt class="descclassname">pyblaw.solver.</tt><tt class="descname">Solver</tt><big>(</big><em>grid=None</em>, <em>system=None</em>, <em>reconstructor=None</em>, <em>flux=None</em>, <em>evolver=None</em>, <em>source=None</em>, <em>dumper=None</em>, <em>dump_times=None</em>, <em>times=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solver for 1D systems of balance laws.</p>
 <p>Numerically approximates the solution of a system of hyperbolic
-balances laws of the form</p>
+balance laws of the form</p>
 <blockquote>
 <img class="math" src="_images/math/f4d77f4eeeae8de498a13f8578f50c203a495a3b.png" alt="q_t + f(q)_x = s"/>.</blockquote>
 <p>The PyBLAW System, Flux, Source, and Evolver classes should be
@@ -473,9 +503,8 @@ extended to define the system, compute the flux, compute the
 source terms, and evolve the system.</p>
 <p>The constructor takes care of connecting the PyBLAW classes
 that you have extended (as mentioned in the previous paragraph)
-and calling their <em>allocate</em> methods.</p>
-<p>Keyword arguments:</p>
-<blockquote>
+and calling their <em>allocate</em> and <em>pre_run</em> methods.</p>
+<p><strong>Keyword arguments</strong></p>
 <ul class="simple">
 <li><em>grid</em>           - pyblaw.grid.Grid</li>
 <li><em>system</em>         - pyblaw.system.System</li>
@@ -487,30 +516,34 @@ and calling their <em>allocate</em> methods.</p>
 <li><em>dump_times</em>     - dump times</li>
 <li><em>times</em>          - times</li>
 </ul>
-</blockquote>
-<p>Instance variables:</p>
-<blockquote>
+<p><strong>Instance variables</strong></p>
 <ul class="simple">
 <li><em>t</em>             - times</li>
 <li><em>dt</em>            - time steps</li>
 <li><em>t_dump</em>        - dump times</li>
-<li><em>trace</em>         - trace level</li>
 </ul>
-</blockquote>
-<p>Instance variables pulled from elsewhere:</p>
-<blockquote>
+<p><strong>Instance variables pulled from elsewhere</strong></p>
 <ul class="simple">
 <li><em>N</em>             - number of cells</li>
 <li><em>x</em>             - cell boundaries</li>
 <li><em>dx</em>            - cell sizes</li>
 <li><em>p</em>             - number of unknowns</li>
 </ul>
-</blockquote>
+<p><strong>Methods</strong></p>
 <dl class="method">
 <dt id="pyblaw.solver.Solver.build_cache">
 <tt class="descname">build_cache</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.build_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pre-compute grid etc and cache.</p>
 <p>This method must set self.grid at least.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyblaw.solver.Solver.initialise_and_allocate">
+<tt class="descname">initialise_and_allocate</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.initialise_and_allocate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise the solver.</p>
+<p>Call all allocate methods, set the initial condtions
+(defined by <em>system.initial_conditions</em>), call pre-run
+hooks.</p>
 </dd></dl>
 
 <dl class="method">
@@ -522,15 +555,15 @@ and calling their <em>allocate</em> methods.</p>
 
 <dl class="method">
 <dt id="pyblaw.solver.Solver.run">
-<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.run" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">run</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the solver.</p>
-<p>This method runs the solver.  First, it allocates the cell
-averages q and sets the initial condtions defined by
-<em>system.initial_conditions</em>.  Next, it calls the pre run
-hooks <em>pre_run</em> (last minute initialisations).  Finally, it
-cycles throuth the <em>times</em> and evolves the system using the
-<em>evolver</em>, dumping the cell averages at <em>dump_times</em> using
-the <em>dumper</em>.</p>
+<p>If we are in debugging mode then:</p>
+<ol class="arabic simple">
+<li>If the trace level is non-zero, XXX</li>
+<li>If the trace level is positive, XXX</li>
+</ol>
+<p>The keyword arguments <tt class="docutils literal"><span class="pre">kwargs</span></tt> are passed on to the
+evolver, reconstructor, flux, and source methods.</p>
 </dd></dl>
 
 </dd></dl>
@@ -538,29 +571,24 @@ the <em>dumper</em>.</p>
 <dl class="class">
 <dt id="pyblaw.wenoclaw.WENOCLAWLFSolver">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWLFSolver</tt><big>(</big><em>flux={}</em>, <em>order=3</em>, <em>system=None</em>, <em>evolver=None</em>, <em>dumper=None</em>, <em>times=None</em>, <em>cache='cache.mat'</em>, <em>output='output.mat'</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWLFSolver" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWLFSolver</tt><big>(</big><em>flux={}</em>, <em>order=3</em>, <em>system=None</em>, <em>evolver=None</em>, <em>dumper=None</em>, <em>cache='cache.mat'</em>, <em>format='mat'</em>, <em>output='output.mat'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWLFSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>WENO conservation law solver using a Lax-Friedrichs flux.</p>
-<p><strong>Arguments:</strong></p>
+<p><strong>Arguments</strong></p>
 <ul class="simple">
-<li><em>flux</em> - a dictionary containing two entries: <em>f</em> and <em>alpha</em> (see below)</li>
-<li><em>order</em> - WENO reconstruction order k</li>
-<li><em>system</em> - a PyBLAW system</li>
-<li><em>evolver</em> - a PyBLAW evolver or None (defaults to pyblaw.evolver.SSPERK3)</li>
-<li><em>dumper</em> - a PyBLAW dumper or None (defaults to pyblaw.dumper.MATDumper)</li>
-<li><em>times</em> - NumPy array of times</li>
-<li><em>cache</em> - MAT cache file name (defaults to &#8216;cache.mat&#8217;)</li>
-<li><em>output</em> - MAT output file name (defaults to &#8216;output.mat&#8217;)</li>
+<li><em>flux</em>    - flux dictionary (see below)</li>
+<li><em>order</em>   - WENO reconstruction order</li>
+<li><em>system</em>  - system</li>
+<li><em>evolver</em> - evolver or None (defaults to pyblaw.evolver.SSPERK3)</li>
+<li><em>dumper</em>  - dumper or None (defaults to pyblaw.dumper.MATDumper)</li>
+<li><em>times</em>   - times</li>
+<li><em>cache</em>   - cache file name (defaults to &#8216;cache.mat&#8217;)</li>
+<li><em>format</em>  - cache file format (defaults to &#8216;mat&#8217;)</li>
+<li><em>output</em>  - output file name (defaults to &#8216;output.mat&#8217;)</li>
 </ul>
 <p>The entries of the <em>flux</em> dictionary are:</p>
-<ul>
-<li><dl class="first docutils">
-<dt><em>f</em> - a callable <tt class="docutils literal"><span class="pre">f(q,</span> <span class="pre">f)</span></tt> that compute the flux given the</dt>
-<dd><p class="first last">state <tt class="docutils literal"><span class="pre">q</span></tt> and stores the result in <tt class="docutils literal"><span class="pre">f</span></tt></p>
-</dd>
-</dl>
-</li>
-<li><p class="first"><em>alpha</em> - maximum wave speed for the Lax-Friedrichs flux</p>
-</li>
+<ul class="simple">
+<li><em>flux</em>    - a callable (see pyblaw.flux.LFFlux)</li>
+<li><em>alpha</em>   - maximum wave speed for the LF flux</li>
 </ul>
 </dd></dl>
 

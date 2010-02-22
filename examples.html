@@ -78,9 +78,13 @@
 <span class="kn">import</span> <span class="nn">pyximport</span><span class="p">;</span> <span class="n">pyximport</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
 <span class="kn">import</span> <span class="nn">cflatshallowwater</span>
 
+<span class="c"># import maplotlib for debugging</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+
 <span class="c"># initial conditions (dambreak into shallow tail water)</span>
 <span class="k">def</span> <span class="nf">h0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">1.0</span>
 
     <span class="k">return</span> <span class="mf">0.05</span>
@@ -88,15 +92,41 @@
 <span class="k">def</span> <span class="nf">q0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">t</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
 
-<span class="c"># the solver (XXX: try other k values)</span>
+<span class="c"># the solver</span>
 <span class="n">solver</span> <span class="o">=</span> <span class="n">pyblaw</span><span class="o">.</span><span class="n">wenoclaw</span><span class="o">.</span><span class="n">WENOCLAWLFSolver</span><span class="p">(</span>
     <span class="n">order</span><span class="o">=</span><span class="mf">3</span><span class="p">,</span>
     <span class="n">times</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">15</span><span class="o">*</span><span class="mf">10</span><span class="o">*</span><span class="mf">4</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span>
-    <span class="n">flux</span><span class="o">=</span><span class="p">{</span> <span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="n">cflatshallowwater</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">2.0</span> <span class="p">},</span>
+    <span class="n">flux</span><span class="o">=</span><span class="p">{</span> <span class="s">&#39;flux&#39;</span><span class="p">:</span> <span class="n">cflatshallowwater</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">2.0</span> <span class="p">},</span>
     <span class="n">system</span><span class="o">=</span><span class="n">pyblaw</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">SimpleSystem</span><span class="p">(</span><span class="n">q0</span><span class="p">),</span>
     <span class="n">cache</span><span class="o">=</span><span class="s">&#39;flat_shallow_water_cache.mat&#39;</span><span class="p">,</span>
     <span class="n">output</span><span class="o">=</span><span class="s">&#39;flat_shallow_water.mat&#39;</span>
     <span class="p">)</span>
+
+<span class="c"># debug reconstructor: plot reconstructions</span>
+
+<span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>
+    <span class="n">q</span>  <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;q&#39;</span><span class="p">]</span>
+    <span class="n">qm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;qm&#39;</span><span class="p">]</span>
+    <span class="n">qp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;qp&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mf">7.4</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">centers</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="p">[:,</span><span class="mf">0</span><span class="p">],</span> <span class="s">&#39;-k&#39;</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">boundaries</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">qm</span><span class="p">[:,</span><span class="mf">0</span><span class="p">],</span> <span class="s">&#39;or&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">qp</span><span class="p">[:,</span><span class="mf">0</span><span class="p">],</span> <span class="s">&#39;ob&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">plt</span><span class="o">.</span><span class="n">waitforbuttonpress</span><span class="p">():</span>
+            <span class="k">pass</span>
+
+<span class="n">solver</span><span class="o">.</span><span class="n">reconstructor</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
+
 
 <span class="c"># build/load grid and cache</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">solver</span><span class="o">.</span><span class="n">load_cache</span><span class="p">():</span>
@@ -114,17 +144,23 @@ cimport numpy as np
 cimport cython
 
 @cython.boundscheck(False)
-def f(np.ndarray[np.double_t, ndim=2] q, np.ndarray[np.double_t, ndim=2] flux):
+def f(np.ndarray[np.double_t, ndim=2] q,
+      np.ndarray[np.double_t, ndim=2] flux,
+      **kwargs):
     cdef int N = q.shape[0]
     cdef unsigned int i
 
-    for i in range(N):
+    for i in range(1, N-1):
         if q[i,0] &gt; 0.0:
             flux[i,0] = q[i,1]
             flux[i,1] = q[i,1]*q[i,1]/q[i,0] + 0.5 * q[i,0]*q[i,0]
         else:
             flux[i,0] = 0.0
             flux[i,1] = 0.0
+
+    flux[0,:] = flux[1,:]
+    flux[N-1,:] = flux[N-2,:]
+
 </pre>
 </div>
 <p><strong>Plot</strong></p>
@@ -196,10 +232,10 @@ def f(np.ndarray[np.double_t, ndim=2] q, np.ndarray[np.double_t, ndim=2] flux):
     <span class="k">def</span> <span class="nf">pre_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weno</span> <span class="o">=</span> <span class="n">pyweno</span><span class="o">.</span><span class="n">weno</span><span class="o">.</span><span class="n">WENO</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">qm</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">qq</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">qm</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">qq</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">weno</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weno</span>
 
-        <span class="c"># flux and source reconstructions at boundaries</span>
+        <span class="c"># flux and source reconstructions at cell boundaries</span>
         <span class="n">weno</span><span class="o">.</span><span class="n">smoothness</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">0</span><span class="p">])</span>
 
         <span class="n">weno</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s">&#39;left&#39;</span><span class="p">)</span>
@@ -212,11 +248,11 @@ def f(np.ndarray[np.double_t, ndim=2] q, np.ndarray[np.double_t, ndim=2] flux):
 
         <span class="c"># source reconstructions at quadrature points (see cshallowwater.pyx)</span>
         <span class="n">weno</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s">&#39;gauss_quad3&#39;</span><span class="p">)</span>
-        <span class="n">weno</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">0</span><span class="p">],</span> <span class="s">&#39;gauss_quad3&#39;</span><span class="p">,</span> <span class="n">qq</span><span class="p">[:,:,</span><span class="mf">0</span><span class="p">],</span> <span class="bp">False</span><span class="p">)</span>
-        <span class="n">weno</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">2</span><span class="p">],</span> <span class="s">&#39;gauss_quad3&#39;</span><span class="p">,</span> <span class="n">qq</span><span class="p">[:,:,</span><span class="mf">1</span><span class="p">],</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">weno</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">0</span><span class="p">],</span> <span class="s">&#39;gauss_quad3&#39;</span><span class="p">,</span> <span class="n">qq</span><span class="p">[:,:,</span><span class="mf">0</span><span class="p">],</span> <span class="n">compute_weights</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">weno</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">2</span><span class="p">],</span> <span class="s">&#39;gauss_quad3&#39;</span><span class="p">,</span> <span class="n">qq</span><span class="p">[:,:,</span><span class="mf">1</span><span class="p">],</span> <span class="n">compute_weights</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
         <span class="n">weno</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s">&#39;d|gauss_quad3&#39;</span><span class="p">)</span>
-        <span class="n">weno</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">2</span><span class="p">],</span> <span class="s">&#39;d|gauss_quad3&#39;</span><span class="p">,</span> <span class="n">qq</span><span class="p">[:,:,</span><span class="mf">2</span><span class="p">],</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">weno</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span><span class="mf">2</span><span class="p">],</span> <span class="s">&#39;d|gauss_quad3&#39;</span><span class="p">,</span> <span class="n">qq</span><span class="p">[:,:,</span><span class="mf">2</span><span class="p">],</span> <span class="n">compute_weights</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
         <span class="n">qm</span><span class="p">[</span><span class="mf">1</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">qm</span><span class="p">[:</span><span class="o">-</span><span class="mf">1</span><span class="p">,:]</span>            <span class="c"># XXX, tweak PyWENO so we don&#39;t have to do this</span>
 
@@ -326,7 +362,8 @@ cdef void swflux(double qm[4], double qp[4], double f[4]):
 def f(np.ndarray[np.double_t, ndim=2] qm,
       np.ndarray[np.double_t, ndim=2] qp,
       np.ndarray[np.double_t, ndim=1] dx,
-      np.ndarray[np.double_t, ndim=2] flux):
+      np.ndarray[np.double_t, ndim=2] flux,
+      **kwargs):
 
     # components are: 0: height, 1: momentum
 
@@ -360,7 +397,8 @@ def s(np.ndarray[np.double_t, ndim=2] qm,
       np.ndarray[np.double_t, ndim=2] qp,
       np.ndarray[np.double_t, ndim=3] qq,
       np.ndarray[np.double_t, ndim=1] dx,
-      np.ndarray[np.double_t, ndim=2] source):
+      np.ndarray[np.double_t, ndim=2] source,
+      **kwargs):
 
     # qm, qp components are: 0: height, 1: momentum, 2: bed
     # qq components are: 0: height, 1: bed, 2: d/dx bed
