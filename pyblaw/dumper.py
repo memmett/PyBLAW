@@ -13,15 +13,17 @@ class Dumper(object):
 
        Dump the cell averages q to a file.
 
-       Instance variables:
+       **Instance variables**
 
        * *x* - cell centers
        * *t* - times
 
-       Methods that should be overridden:
+       **Methods that should be overridden**
 
        * *init_dump* - init and create dump file etc
        * *dump*      - dump solution q
+
+       **Methods**
 
     """
 
@@ -41,7 +43,7 @@ class Dumper(object):
         raise NotImplementedError
 
     def dump(self, q):
-        """Dump q."""
+        """Dump *q*."""
 
         raise NotImplementedError
 
@@ -54,16 +56,16 @@ class MATDumper(Dumper):
        Dump the cell averages q to a MAT file.  The matrices created
        within the MAT file are:
 
-       * dims.xdim - cell centres
-       * dims.tdim - dump times
-       * parameters.X - parameters
-       * data.q - cell averages of solution q
+       * ``dims.xdim`` - cell centres
+       * ``dims.tdim`` - dump times
+       * ``parameters.X`` - parameters
+       * ``data.q`` - cell averages of solution q
 
        The parameters are taken from the system (pyblaw.system.System).
 
-       NOTE: The H5Dumper in pyblaw.h5dumper is much more efficient.
+       **Note:** The H5Dumper in pyblaw.h5dumper is much more efficient.
 
-       Arguments:
+       **Arguments**
 
        * *output* - output file name
 

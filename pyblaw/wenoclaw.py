@@ -19,7 +19,7 @@ import pyweno.weno
 class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
     """WENO CLAW Reconstructor.
 
-       **Arguments:**
+       **Arguments**
 
        * *order*  - WENO reconstruction order
        * *cache*  - cache file name
@@ -67,7 +67,7 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 class WENOCLAWLFSolver(pyblaw.solver.Solver):
     """WENO conservation law solver using a Lax-Friedrichs flux.
 
-       **Arguments:**
+       **Arguments**
 
        * *flux*    - flux dictionary (see below)
        * *order*   - WENO reconstruction order

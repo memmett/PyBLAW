@@ -19,16 +19,18 @@ class Flux(pyblaw.base.Base):
 
        Compute the net flux for each cell given the cell averages q.
 
-       Instance variables pulled from elsewhere:
+       **Instance variables pulled from elsewhere**
 
        * *grid*   - pyblaw.grid.Grid
        * *system* - pyblaw.system.System
        * *reconstructor* - pyblaw.system.Reconstructor
 
-       Methods that should be overridden:
+       **Methods that should be overridden**
 
        * *allocate* - allocate memory etc
        * *flux*     - compute net fluxes
+
+       **Methods**
 
     """
 
@@ -79,6 +81,7 @@ class SimpleFlux(Flux):
        * ``f`` is the resulting flux; and
 
        * ``kwargs`` contains:
+
          * ``n``: the current step,
          * ``t``: the current time, and
          * any entries passed to the solver or set by the reconstructor.
@@ -113,12 +116,13 @@ class LFFlux(Flux):
        * *flux*     - flux function (callable)
        * *alpha*    - maximum wave speed
 
-       The (non-numerical) flux function *f* is called as ``f(q, f,
-       **kwargs)`` where:
+       The (non-numerical) flux function *flux* is called as ``flux(q,
+       f, **kwargs)`` where:
 
        * ``q[i,:]`` is the state vector of q at the cell boundaries;
        * ``f`` is the resulting flux; and
        * ``kwargs`` contains:
+
          * ``n``: the current step,
          * ``t``: the current time, and
          * any entries passed to the solver or set by the reconstructor.

@@ -28,7 +28,7 @@ class Solver(pyblaw.base.Base):
        that you have extended (as mentioned in the previous paragraph)
        and calling their *allocate* and *pre_run* methods.
 
-       Keyword arguments:
+       **Keyword arguments**
 
        * *grid*           - pyblaw.grid.Grid
        * *system*         - pyblaw.system.System
@@ -40,18 +40,20 @@ class Solver(pyblaw.base.Base):
        * *dump_times*     - dump times
        * *times*          - times
 
-       Instance variables:
+       **Instance variables**
 
        * *t*             - times
        * *dt*            - time steps
        * *t_dump*        - dump times
 
-       Instance variables pulled from elsewhere:
+       **Instance variables pulled from elsewhere**
 
        * *N*             - number of cells
        * *x*             - cell boundaries
        * *dx*            - cell sizes
        * *p*             - number of unknowns
+
+       **Methods**
 
     """
 
@@ -192,6 +194,9 @@ class Solver(pyblaw.base.Base):
 
            1. If the trace level is non-zero, XXX
            2. If the trace level is positive, XXX
+
+           The keyword arguments ``kwargs`` are passed on to the
+           evolver, reconstructor, flux, and source methods.
 
         """
 

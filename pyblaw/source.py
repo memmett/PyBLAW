@@ -16,16 +16,18 @@ class Source(pyblaw.base.Base):
 
        Compute the source for each cell given the cell averages q.
 
-       Instance variables pulled from elsewhere:
+       **Instance variables pulled from elsewhere**
 
        * *grid*   - pyblaw.grid.Grid
        * *system* - pyblaw.system.System
        * *reconstructor* - pyblaw.reconstructor.Reconstructor
 
-       Methods that should be overridden:
+       **Methods that should be overridden**
 
        * *allocate* - allocate memory etc
        * *source*   - compute sources
+
+       **Methods**
 
     """
 
@@ -43,9 +45,9 @@ class Source(pyblaw.base.Base):
         self.reconstructor = reconstructor
 
     def source(self, qm, qp, qq, s, **kwargs):
-        """Return next source for each cell given the left (-), right
-           (+), and quadrature reconstructions *qm*, *qp* and *qq*;
-           and store the result in *s*."""
+        """Return source for each cell given the left (-), right (+),
+           and quadrature reconstructions *qm*, *qp* and *qq*
+           respectively, and store the result in *s*."""
 
         raise NotImplementedError
 
@@ -57,11 +59,14 @@ class SimpleSource(Source):
 
        This source uses a user supplied numerical source.
 
-       Arguments:
+       **Arguments**
 
        * *source* - source function (callable)
 
-       The source function is called as ``source(qm, qp, qq, t, dx, s)``.
+       The source function is called as ``source(qm, qp, qq, dx, s,
+       **kwargs)`` where:
+
+       * XXX
 
        Implementing the source function in Cython (or similar) is
        strongly recommended.

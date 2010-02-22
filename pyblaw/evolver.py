@@ -13,21 +13,23 @@ class Evolver(pyblaw.base.Base):
 
        Evolve the cell averages q given at time t^n to time t^{n+1}.
 
-       Instance variables:
+       **Instance variables**
 
-       * *t*             - times (time grid)
+       * *t*             - times
        * *dt*            - time step sizes
 
-       * *grid*          - pyblaw.grid.Grid
-       * *system*        - pyblaw.system.System
-       * *reconstructor* - pyblaw.reconstructor.Reconstructor
-       * *flux*          - pyblaw.flux.Flux
-       * *source*        - pyblaw.grid.Source
+       * *grid*          - grid
+       * *system*        - system
+       * *reconstructor* - reconstructor
+       * *flux*          - flux
+       * *source*        - source
 
-       Methods that should be overridden:
+       **Methods that should be overridden**
 
        * *allocate* - allocates memory etc
        * *evolve*   - evolve q
+
+       **Methods**
 
     """
 
@@ -71,7 +73,7 @@ class Evolver(pyblaw.base.Base):
 
 
     def allocate(self):
-        """Allocate storate space for reconstruction, flux, and source."""
+        """Allocate storage space for reconstruction, flux, and source."""
 
         N = self.grid.N
         p = self.system.p
@@ -84,7 +86,8 @@ class Evolver(pyblaw.base.Base):
         self.s  = np.zeros((N,p))
 
     def reconstruct_and_compute_flux_and_source(self, q, **kwargs):
-        """Reconstruct and compute flux and source."""
+        """Helper function to reconstruct and compute the flux and
+        source while updating the keyword argument dictionary."""
 
         f  = self.f
         ql = self.ql
@@ -108,7 +111,8 @@ class Evolver(pyblaw.base.Base):
 
 
     def reconstruct_and_compute_flux(self, q, **kwargs):
-        """Reconstruct and compute flux."""
+        """Helper function to reconstruct and compute the flux while
+        updating the keyword argument dictionary."""
 
         f  = self.f
         ql = self.ql

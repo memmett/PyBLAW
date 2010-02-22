@@ -13,20 +13,22 @@ class System(pyblaw.base.Base):
 
        Define initial conditions, abstract mass, and other parameters.
 
-       Instance variables:
+       **Instance variables**
 
        * *p*          - number of unknowns
        * *parameters* - parameters (dictionary)
 
-       Instrance variables pulled from elsewhere:
+       **Instrance variables pulled from elsewhere**
 
        * *grid* - pyblaw.grid.Grid
 
-       Methods that should be overridden:
+       **Methods that should be overridden**
 
        * *allocate*           - allocate memory
        * *initial_conditions* - set initial condtions at time t
        * *mass*               - compute 'mass' of system
+
+       **Methods**
 
     """
 
@@ -56,13 +58,14 @@ class SimpleSystem(System):
        The class implements a simple system that holds a dictionary of
        parameters and a callable *q0* for the initial conditions.
 
-       Arguments:
+       **Arguments**
 
        * *q0* - initial condition (callable)
        * *parameters* - parameters (dictionary)
 
-       The initial condition function is called as q0(x, t), and
-       should return a vector.
+       The initial condition function is called as ``q0(x, t)`` where
+       *x* and *t* are real numbers, and should return a vector.  The
+       number of components *p* is determined by calling *q0*.
 
        The first component of the solution is taken to be the 'mass'
        of the system.

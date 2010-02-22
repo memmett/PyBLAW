@@ -14,14 +14,14 @@ class H5PYDumper(pyblaw.dumper.Dumper):
        Dump the cell averages q to an HDF5 file.  The hierarchy
        created within the HDF5 file is:
 
-       * /dims/xdim - cell centres
-       * /dims/tdim - dump times
-       * /parameters/X - parameters
-       * /data/q - cell averages of solution q
+       * ``/dims/xdim`` - cell centres
+       * ``/dims/tdim`` - dump times
+       * ``/parameters/X`` - parameters
+       * ``/data/q`` - cell averages of solution q
 
        The parameters are taken from the system (pyblaw.system.System).
 
-       Arguments:
+       **Arguments**
 
        * *output* - output file name
 

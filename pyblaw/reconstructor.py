@@ -13,19 +13,21 @@ class Reconstructor(pyblaw.base.Base):
        Given the cell averages q, reconstruct the unkown at various
        points.
 
-       Instance variables:
+       **Instance variables**
 
        * *n*          - number of quadrature points per cell (for source)
 
-       Instance variables pulled from elsewhere:
+       **Instance variables pulled from elsewhere**
 
        * *grid*   - pyblaw.grid.Grid
        * *system* - pyblaw.system.System
 
-       Methods that should be overridden:
+       **Methods that should be overridden**
 
        * *allocate*    - allocate memory etc
        * *reconstruct* - reconstruct
+
+       **Methods**
 
     """
 
@@ -41,7 +43,8 @@ class Reconstructor(pyblaw.base.Base):
         self.system = system
 
     def reconstruct(self, q, qm, qp, qq, **kwargs):
-        """Reconstruct q and store the result in qm (-), qp (+), and
-        qq (quadrature)."""
+        """Reconstruct *q* at the cell boundaries and quadrature
+        points, and store the result in *qm* (-), *qp* (+), and *qq*
+        (quadrature)."""
 
         raise NotImplementedError
