@@ -147,7 +147,7 @@ class LFFlux(Flux):
     def pre_run(self, **kwargs):
         self.dx = self.grid.x[1:] - self.grid.x[:-1]
 
-        pyblaw.clfflux.init_lf_flux(self.alpha, 0, self.dx, self.fl, self.fr)
+        pyblaw.clfflux.init_lf_flux(self.alpha, self.dx, self.fl, self.fr)
 
 
     def flux(self, qm, qp, f, **kwargs):
