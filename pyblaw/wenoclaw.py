@@ -97,6 +97,7 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
         self.k       = order
         self.cache   = cache
         self.output  = output
+        self.format  = format
 
         if evolver is None:
             evolver = pyblaw.evolver.SSPERK3()
@@ -125,8 +126,8 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
         if not os.access(self.cache, os.F_OK):
             return False
 
-        self.grid = pyweno.grid.Grid(cache=self.cache, format='mat')
-        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format='mat')
+        self.grid = pyweno.grid.Grid(cache=self.cache, format=self.format)
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format=self.format)
 
         return True
 
