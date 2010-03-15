@@ -59,4 +59,4 @@ patches to the primary author (`Matthew Emmett`_).  You will be credited.
 .. _`PyBLAW project page`: http://github.com/memmett/PyBLAW
 .. _`Matthew Emmett`: http://www.math.ualberta.ca/~memmett/
 .. _`PyBLAW 0.5.0`: http://cloud.github.com/downloads/memmett/PyBLAW/PyBLAW-0.5.0.tar.gz
-.. _`PyBLAW 0.5.0`: http://cloud.github.com/downloads/memmett/PyBLAW/PyBLAW-0.5.1.tar.gz
+.. _`PyBLAW 0.5.1`: http://cloud.github.com/downloads/memmett/PyBLAW/PyBLAW-0.5.1.tar.gz
