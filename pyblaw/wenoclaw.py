@@ -10,6 +10,8 @@ import pyblaw.source
 import pyblaw.reconstructor
 import pyblaw.evolver
 import pyblaw.solver
+import pyblaw.dumper
+import pyblaw.h5dumper                  # moving this creates problems with cython
 import pyweno.grid
 import pyweno.weno
 
@@ -53,7 +55,7 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
             self.weno.reconstruct(q[:,m], 'left', qp[:,m], compute_weights=True)
             self.weno.reconstruct(q[:,m], 'right', qm[:,m], compute_weights=True)
 
-        qp[-1,:] = qm[-1,:]
+        qp[-1,:] = qm[-2,:]
         qm[1:,:] = qm[:-1,:]
         qm[0,:]  = qp[0,:]
 
@@ -103,9 +105,12 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
             evolver = pyblaw.evolver.SSPERK3()
 
         if dumper is None:
-            dumper = pyblaw.dumper.MATDumper(output)
+            if self.format == 'mat':
+                dumper = pyblaw.dumper.MATDumper(output)
+            elif self.format == 'h5py':
+                dumper = pyblaw.h5dumper.H5PYDumper(output)
 
-        reconstructor = WENOCLAWReconstructor(order=self.k, cache=self.cache)
+        reconstructor = WENOCLAWReconstructor(order=self.k, cache=self.cache, format=self.format)
 
         flux = pyblaw.flux.LFFlux(self.f['flux'], self.f['alpha'])
 
@@ -137,7 +142,7 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
         weno = pyweno.weno.WENO(grid=grid, order=self.k)
         weno.precompute_reconstruction('left')
         weno.precompute_reconstruction('right')
-        weno.cache(self.cache)
+        weno.cache(self.cache, format=self.format)
 
         self.grid = grid
         self.weno = weno
