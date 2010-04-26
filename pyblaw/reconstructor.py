@@ -15,7 +15,9 @@ class Reconstructor(pyblaw.base.Base):
 
        **Instance variables**
 
-       * *n*          - number of quadrature points per cell (for source)
+       * *ghost* - number of ghost cells required to
+                   reconstruct (if using MPI)
+       * *n*     - number of quadrature points per cell (for source)
 
        **Instance variables pulled from elsewhere**
 
@@ -31,6 +33,7 @@ class Reconstructor(pyblaw.base.Base):
 
     """
 
+    ghosts = 0                          # number of ghost cells
     n = 0                               # number of quadrature points
 
     grid   = None
