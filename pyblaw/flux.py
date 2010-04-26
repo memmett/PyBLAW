@@ -135,13 +135,14 @@ class LFFlux(Flux):
 
 
     def allocate(self):
-        N = self.grid.size
+        M = self.M
         p = self.system.p
 
-        self.fl = np.zeros((N+1,p))
-        self.fr = np.zeros((N+1,p))
-        self.fm = np.zeros((N+1,p))
-        self.fp = np.zeros((N+1,p))
+        # XXX: mpi: M+1 or just M?
+        self.fl = np.zeros((M+1,p))
+        self.fr = np.zeros((M+1,p))
+        self.fm = np.zeros((M+1,p))
+        self.fp = np.zeros((M+1,p))
 
 
     def pre_run(self, **kwargs):
@@ -151,6 +152,8 @@ class LFFlux(Flux):
 
 
     def flux(self, qm, qp, f, **kwargs):
+
+        # XXX: mpi?
 
         self.f(qm, self.fm, **kwargs)
         self.f(qp, self.fp, **kwargs)

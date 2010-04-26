@@ -19,6 +19,7 @@ class Base(object):
 
     """
 
+    M = 0                               # number of cells in this process
     trace = 0                           # trace level
     debug = {}                          # debug information
 
@@ -34,6 +35,9 @@ class Base(object):
     def allocate(self):
         """Allocate storage space etc."""
         pass
+
+    def set_solver(self, solver):
+        self.solver = solver
 
     def pre_run(self, **kwargs):
         """Perform any last minute initialisations (this is called by

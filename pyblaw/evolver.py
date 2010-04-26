@@ -75,15 +75,15 @@ class Evolver(pyblaw.base.Base):
     def allocate(self):
         """Allocate storage space for reconstruction, flux, and source."""
 
-        N = self.grid.N
+        M = self.M
         p = self.system.p
         n = self.reconstructor.n
 
-        self.f  = np.zeros((N,p))
-        self.ql = np.zeros((N+1,p))
-        self.qr = np.zeros((N+1,p))
-        self.qq = np.zeros((N,n,p))
-        self.s  = np.zeros((N,p))
+        self.f  = np.zeros((M,p))
+        self.ql = np.zeros((M+1,p))
+        self.qr = np.zeros((M+1,p))
+        self.qq = np.zeros((M,n,p))
+        self.s  = np.zeros((M,p))
 
     def reconstruct_and_compute_flux_and_source(self, q, **kwargs):
         """Helper function to reconstruct and compute the flux and
@@ -176,11 +176,11 @@ class SSPERK3(Evolver):
 
         Evolver.allocate(self)
 
-        N = self.grid.N
+        M = self.M
         p = self.system.p
 
-        self.q1 = np.zeros((N, p))
-        self.q2 = np.zeros((N, p))
+        self.q1 = np.zeros((M, p))
+        self.q2 = np.zeros((M, p))
 
 
     def evolve(self, q, qn, **kwargs):
