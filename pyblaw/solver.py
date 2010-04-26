@@ -9,6 +9,11 @@ import pyblaw.base
 import pyblaw.dumper
 import pyblaw.evolver
 
+try:
+    from mpi4py import MPI as mpi
+except:
+    pass
+
 
 ######################################################################
 
@@ -75,6 +80,7 @@ class Solver(pyblaw.base.Base):
                  times=[],
                  **kwargs):
 
+        # init times
         self.t  = times
         self.dt = times[1:] - times[:-1]
 
@@ -83,6 +89,20 @@ class Solver(pyblaw.base.Base):
         else:
             self.t_dump = dump_times.copy()
 
+        # are we running through MPI?
+        try:
+            self.comm = mpi.COMM_WORLD
+            self.workers = comm.Get_size() - 1
+            self.rank = comm.Get_rank()
+            self.mpi = True
+
+        except:
+            self.workers = 1
+            self.rank = 0
+            self.mpi = False
+
+
+        # init self
         self.grid           = grid
         self.system         = system
         self.reconstructor  = reconstructor
@@ -112,23 +132,122 @@ class Solver(pyblaw.base.Base):
         self.dx = self.grid.sizes()
         self.p  = self.system.p
 
+        #
+        # initialise ``slices`` and ``gathers``:
+        #
+        # * ``slices`` - dictionary (keyed by the rank of the worker) of index
+        #                arrays that describe which slice of the solution
+        #                (initial condition) is distributed to each worker.
+        #                this includes the ghost cells.
+        #
+        # * ``gathers`` - list of lengths of the above slices (excluding the
+        #                 ghost cells) that will be used to gather the
+        #                 solutions.  the first entry corresponds to the
+        #                 marshaller, which doesn't send anything during the
+        #                 gather operation.
+        #
+
+        N = self.N
+        workers = self.workers
+        ghosts  = self.reconstructor.ghosts
+
+        slices  = {}
+        gathers = [ 0 ]
+
+        if workers == 1:
+            slices[1] = range(N)
+            gathers.append(N)
+
+        else:
+            slices[1] = range(0, N/workers+ghosts)
+            gathers.append(N/workers)
+
+            for i in range(2,workers):
+                slices[i] = range((i-1)*(N/workers)-ghosts, i*(N/workers)+ghosts)
+                gathers.append(N/workers)
+
+            slices[workers] = range(N-(N/workers + ghosts + N%workers), N)
+            gathers.append(N/workers + N%workers)
+
+        self.slices = slices
+        self.gathers = gathers
+        self.ghosts = ghosts
+
+        #
+        # initialise ``right``, ``left``, ``right_worker`` and ``left_worker``:
+        #
+        # * ``right`` - index of the right-most non-ghosts cell in the worker's
+        #               solution.
+        #
+        # * ``left`` - index of the left-most non-ghosts cell in the worker's
+        #              solution.
+        #
+
+        rank = self.rank
+
+        right = N
+        left  = 0
+
+        right_worker = mpi.PROC_NULL
+        left_worker  = mpi.PROC_NULL
+
+        if rank != 0 and workers > 1:
+            self.M = M = len(slices[rank])
+
+            if rank == 1:
+                right = M - ghosts
+                left  = 0
+
+                right_worker = rank + 1
+
+            elif rank == workers:
+                right = M
+                left  = ghosts
+
+                left_worker = rank - 1
+
+            else:
+                right = M - ghosts
+                left  = ghosts
+
+                right_worker = rank + 1
+                left_worker  = rank - 1
+        else:
+            self.M = N
+
+        self.left = left
+        self.right = right
+        self.left_worker = left_worker
+        self.right_worker = right_worker
+
+
         # link everything up
         self.system.set_grid(self.grid)
+        self.system.set_solver(self)
+        self.system.M = self.M
         self.reconstructor.set_grid(self.grid)
         self.reconstructor.set_system(self.system)
+        self.reconstructor.set_solver(self)
+        self.reconstructor.M = self.M
         self.flux.set_grid(self.grid)
         self.flux.set_system(self.system)
         self.flux.set_reconstructor(self.reconstructor)
+        self.flux.set_solver(self)
+        self.flux.M = self.M
         if self.source is not None:
             self.source.set_grid(self.grid)
             self.source.set_system(self.system)
             self.source.set_reconstructor(self.reconstructor)
+            self.source.set_solver(self)
+            self.source.M = self.M
         self.evolver.set_grid(self.grid)
         self.evolver.set_system(self.system)
         self.evolver.set_reconstructor(self.reconstructor)
         self.evolver.set_flux(self.flux)
         self.evolver.set_source(self.source)
+        self.evolver.set_solver(self)
         self.evolver.set_times(self.t)
+        self.evolver.M = self.M
         self.dumper.set_dims(self.grid.centers(), self.t_dump)
         self.dumper.set_system(self.system)
 
@@ -141,11 +260,21 @@ class Solver(pyblaw.base.Base):
         self.evolver.allocate()
         self.allocate()
 
-        self.q  = np.zeros((self.N, self.p))
-        self.qn = np.zeros((self.N, self.p))
+        self.q  = np.zeros((self.M, self.p))
+        self.qn = np.zeros((self.M, self.p))
 
-        # apply initial conditions
-        self.system.initial_conditions(self.t[0], self.q)
+        # apply initial conditions and distribute
+        if self.rank == 0:
+
+            # XXX: support loading initial conditions from file...
+            self.system.initial_conditions(self.t[0], self.q)
+
+            if self.mpi:
+                for i in range(1,self.workers+1):
+                    self.comm.Send(self.q[self.slices[i]], dest=i)
+
+        elif self.mpi:
+            self.comm.Recv(self.q, source=0)
 
         # run pre-run hooks
         pre_run_args = {'t0': self.t[0], 'q0': self.q}
@@ -158,7 +287,8 @@ class Solver(pyblaw.base.Base):
         self.pre_run(**pre_run_args)
 
         # init the dumper
-        self.dumper.init_dump()
+        if self.rank == 0:
+            self.dumper.init_dump()
 
         # done
         self.initialised = True
@@ -174,6 +304,7 @@ class Solver(pyblaw.base.Base):
            This method must set self.grid at least.
         """
         raise NotImplementedError, 'load_cache not implemented'
+
 
     def build_cache(self, **kwargs):
         """Pre-compute grid etc and cache.
@@ -215,7 +346,7 @@ class Solver(pyblaw.base.Base):
         for n, t in enumerate(self.t[0:-1]):
 
             # debug: time step header
-            if __debug__:
+            if __debug__ and self.rank == 0:
                 if abs(self.trace) > 0:
                     if abs(self.trace) > 1:
                         print "="*69
@@ -223,10 +354,24 @@ class Solver(pyblaw.base.Base):
                     print "n = %d, t = %11.5f, mass = %11.5f" % (n, t, self.system.mass(q))
 
             # dump solution if necessary
-            if t >= self.t_dump[0]:
-                print "data dump at t = %11.2f, mass = %11.5f" % (t, self.system.mass(q))
-                self.dumper.dump(q)
-                self.t_dump = self.t_dump[1:]
+            if self.rank == 0:
+                if t >= self.t_dump[0] and self.rank == 0:
+                    print "data dump at t = %11.2f, mass = %11.5f" % (t, self.system.mass(q))
+
+                    if self.mpi:
+                        if self.rank != 0:
+                            recv = None
+                            send = q[self.left:self.right]
+                        else:
+                            recv = q
+                            send = None
+
+                        self.comm.Gatherv(sendbuf=[send, mpi.DOUBLE],
+                                          recvbuf=[recv, (self.gathers, None), mpi.DOUBLE],
+                                          root=0)
+
+                    self.dumper.dump(q)
+                    self.t_dump = self.t_dump[1:]
 
             # evolve
             kwargs.update({'n': n, 't': t})
@@ -236,6 +381,16 @@ class Solver(pyblaw.base.Base):
             else:
                 self.evolver.evolve_homogeneous(q, qn, **kwargs)
             q[:,:] = qn[:,:]
+
+            if self.mpi:
+                # send non-ghost cells to right_worker's left ghost cells
+                self.comm.Sendrecv(q[self.right-self.ghosts:self.right], self.right_worker, 0,
+                                   q[:self.left],                        self.left_worker,  0)
+
+                # send non-ghost cells to left_worker's right ghost cells
+                self.comm.Sendrecv(q[self.left:self.left+self.ghosts],   self.left_worker,  0,
+                                   q[self.right:],            self.right_worker, 0)
+
 
             # debug: break?
             if __debug__:
