@@ -1,7 +1,7 @@
 PyBLAW
 ======
 
-PyBLAW is a python framework for solving one-dimensional system of
+PyBLAW is a python framework for solving one-dimensional systems of
 hyperbolic balance laws.
 
 Please see
@@ -15,10 +15,16 @@ Installing PyBLAW
 -----------------
 
 PyBLAW uses the 'setuptools' package to automate building and
-installing PyBLAW.  As such, to install PyBLAW, you can follow the
-instructions described in
+installing PyBLAW.  Once you have installed setuptools, you can
+install PyBLAW by running:
 
-  http://docs.python.org/install/index.html
+# python setup.py install
+
+If you plan on modifying PyBLAW you can install PyBLAW into your
+PYHTONPATH in development mode by running, eg,
+
+$ python setup.py develop -d ~/opt/python
+$ export PYTHONPATH=~/opt/python:$PYTHONPATH
 
 
 License

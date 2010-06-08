@@ -28,12 +28,6 @@ Documentation
 * :doc:`Reference <reference>` - reference documentation.
 
 
-**Features**
-
-
-**Known issues**
-
-
 Download
 --------
 
