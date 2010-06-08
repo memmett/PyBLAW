@@ -60,6 +60,7 @@ class Solver(pyblaw.base.Base):
     t      = []                         # times
     dt     = []                         # time steps
     t_dump = []                         # dump times
+    t_diag = []                         # diagnostic times
 
     grid    = None                      # pyblaw.grid.Grid
     system  = None                      # pyblaw.system.System
@@ -70,8 +71,11 @@ class Solver(pyblaw.base.Base):
 
 
     def __init__(self,
-                 grid=None, system=None, reconstructor=None, flux=None, evolver=None, source=None,
+                 grid=None, system=None,
+                 reconstructor=None, evolver=None,
+                 flux=None, source=None,
                  dumper=None, dump_times=None,
+                 diagnostic_times=None,
                  times=[],
                  **kwargs):
 
@@ -82,6 +86,8 @@ class Solver(pyblaw.base.Base):
             self.t_dump = np.linspace(self.t[0], self.t[-1], 10+1)
         else:
             self.t_dump = dump_times.copy()
+
+        self.t_diag = diagnostic_times
 
         self.grid           = grid
         self.system         = system
@@ -224,9 +230,21 @@ class Solver(pyblaw.base.Base):
 
             # dump solution if necessary
             if t >= self.t_dump[0]:
-                print "data dump at t = %11.2f, mass = %11.5f" % (t, self.system.mass(q))
+                print "data dump at   t = %11.5f, mass = %11.5f" % (t, self.system.mass(q))
                 self.dumper.dump(q)
-                self.t_dump = self.t_dump[1:]
+                while t >= self.t_dump[0]:
+                    self.t_dump = self.t_dump[1:]
+
+            # diagnose solution if necessary
+            if (self.t_diag is not None) and (t >= self.t_diag[0]):
+                diag = self.system.diagnostics(q)
+                if diag:
+                    print "diagnostics at t = %11.5f; %s" % (t, diag)
+                else:
+                    print "diagnostics at t = %11.5f" % t
+
+                while t >= self.t_diag[0]:
+                    self.t_diag = self.t_diag[1:]
 
             # evolve
             kwargs.update({'n': n, 't': t})

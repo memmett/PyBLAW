@@ -27,6 +27,7 @@ class System(pyblaw.base.Base):
        * *allocate*           - allocate memory
        * *initial_conditions* - set initial condtions at time t
        * *mass*               - compute 'mass' of system
+       * *diagnostics*        - diagnose solution
 
        **Methods**
 
@@ -47,7 +48,11 @@ class System(pyblaw.base.Base):
 
     def mass(self, q):
         """Compute 'mass' of q."""
-        raise NotImplementedError
+        pass
+
+    def diagnostics(self, q):
+        """Display/perform diagnostics given q."""
+        pass
 
 
 ######################################################################
@@ -73,7 +78,7 @@ class SimpleSystem(System):
     """
 
     def __init__(self, q0, parameters={}):
-        pyblaw.system.System(parameters)
+        pyblaw.system.System.__init__(self, parameters)
 
         self.q0 = q0
         self.p = len(q0(0.0, 0.0))
