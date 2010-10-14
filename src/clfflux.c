@@ -127,11 +127,10 @@ lf_flux(PyObject *self, PyObject *args)
   p = PyArray_DIM(f_py, 1);
 
   /* init right flux */
-  for (j=0; j<p; j++)
-    fr[j] = fp[j];
+  nflux_lf(qm, qp, fm, fp, fr);
 
-  /* compute net flux in all but last cell */
-  for (i=0; i<N-1; i++) {
+  /* compute net flux in all cells */
+  for (i=0; i<N; i++) {
     for (j=0; j<p; j++)
       fl[j] = fr[j];
 
@@ -142,10 +141,6 @@ lf_flux(PyObject *self, PyObject *args)
     for (j=0; j<p; j++)
       f[i*p+j] = - ( fr[j] - fl[j] ) / dx[i];
   }
-
-  /* compute flux in the last cell */
-  for (j=0; j<p; j++)
-    f[(N-1)*p+j] = - ( fp[N*p+j] - fr[j] ) / dx[i];
 
   /*
    * done
