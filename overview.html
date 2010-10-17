@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PyBLAW Overview &mdash; PyBLAW v0.5.2.dev documentation</title>
+    <title>PyBLAW Overview &mdash; PyBLAW v0.5.7 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.2.dev',
+        VERSION:     '0.5.7',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="PyBLAW v0.5.2.dev documentation" href="index.html" />
+    <link rel="top" title="PyBLAW v0.5.7 documentation" href="index.html" />
     <link rel="next" title="PyBLAW Examples" href="examples.html" />
     <link rel="prev" title="PyBLAW" href="index.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="index.html" title="PyBLAW"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5.2.dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.5.7 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,9 +47,8 @@
             
   <div class="section" id="pyblaw-overview">
 <h1>PyBLAW Overview<a class="headerlink" href="#pyblaw-overview" title="Permalink to this headline">¶</a></h1>
-<p>Finding a numerical solution to a system of hyperbolic balance laws
-can be done in several different ways - PyBLAW uses the <em>finite
-volume</em> approach.</p>
+<p>PyBLAW is based upon the <em>finite volume</em> approach to solving a system
+of hyperbolic balance laws numerically.</p>
 <p>We integrate the system over a grid cell (finite volume) from
 <img class="math" src="_images/math/ea60decd65f501b0c2c19c5489d8eaafc758e2fb.png" alt="x_{i-1/2}"/> to <img class="math" src="_images/math/63c004db65fe572a32d3216bcd528faad91e993c.png" alt="x_{i+1/2}"/> and re-arrange to obtain</p>
 <div class="math">
@@ -67,7 +66,8 @@ quadrature points given the cell averages of <img class="math" src="_images/math
 <em>reconstruction</em> problem.  Therefore, in order to solve a particular
 system of hyperbolic balance laws we need to</p>
 <ol class="arabic simple">
-<li>reconstruct the solution at various points (cell boundaries and source quadrature points),</li>
+<li>reconstruct the solution at various points (cell boundaries and
+source quadrature points),</li>
 <li>compute the flux and source terms, and</li>
 <li>evolve the system.</li>
 </ol>
@@ -159,12 +159,12 @@ use PyBLAW.</p>
         <li class="right" >
           <a href="index.html" title="PyBLAW"
              >previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5.2.dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.5.7 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Matthew Emmett.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
     </div>
   </body>
 </html>

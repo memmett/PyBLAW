@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PyBLAW Reference &mdash; PyBLAW v0.5.2.dev documentation</title>
+    <title>PyBLAW Reference &mdash; PyBLAW v0.5.7 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.2.dev',
+        VERSION:     '0.5.7',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="PyBLAW v0.5.2.dev documentation" href="index.html" />
+    <link rel="top" title="PyBLAW v0.5.7 documentation" href="index.html" />
     <link rel="next" title="Downloading and installing" href="download.html" />
     <link rel="prev" title="PyBLAW Examples" href="examples.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="examples.html" title="PyBLAW Examples"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5.2.dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.5.7 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -122,8 +122,14 @@ class </em><tt class="descclassname">pyblaw.system.</tt><tt class="descname">Sys
 <li><em>allocate</em>           - allocate memory</li>
 <li><em>initial_conditions</em> - set initial condtions at time t</li>
 <li><em>mass</em>               - compute &#8216;mass&#8217; of system</li>
+<li><em>diagnostics</em>        - diagnose solution</li>
 </ul>
 <p><strong>Methods</strong></p>
+<dl class="method">
+<dt id="pyblaw.system.System.diagnostics">
+<tt class="descname">diagnostics</tt><big>(</big><em>q</em><big>)</big><a class="headerlink" href="#pyblaw.system.System.diagnostics" title="Permalink to this definition">¶</a></dt>
+<dd>Display/perform diagnostics given q.</dd></dl>
+
 <dl class="method">
 <dt id="pyblaw.system.System.initial_conditions">
 <tt class="descname">initial_conditions</tt><big>(</big><em>t</em>, <em>q</em><big>)</big><a class="headerlink" href="#pyblaw.system.System.initial_conditions" title="Permalink to this definition">¶</a></dt>
@@ -492,7 +498,7 @@ created within the HDF5 file is:</p>
 <dl class="class">
 <dt id="pyblaw.solver.Solver">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.solver.</tt><tt class="descname">Solver</tt><big>(</big><em>grid=None</em>, <em>system=None</em>, <em>reconstructor=None</em>, <em>flux=None</em>, <em>evolver=None</em>, <em>source=None</em>, <em>dumper=None</em>, <em>dump_times=None</em>, <em>times=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.solver.</tt><tt class="descname">Solver</tt><big>(</big><em>grid=None</em>, <em>system=None</em>, <em>reconstructor=None</em>, <em>evolver=None</em>, <em>flux=None</em>, <em>source=None</em>, <em>dumper=None</em>, <em>dump_times=None</em>, <em>diagnostic_times=None</em>, <em>times=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.solver.Solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solver for 1D systems of balance laws.</p>
 <p>Numerically approximates the solution of a system of hyperbolic
 balance laws of the form</p>
@@ -656,12 +662,12 @@ class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">W
         <li class="right" >
           <a href="examples.html" title="PyBLAW Examples"
              >previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5.2.dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.5.7 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Matthew Emmett.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
     </div>
   </body>
 </html>

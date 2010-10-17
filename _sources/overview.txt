@@ -1,9 +1,8 @@
 PyBLAW Overview
 ---------------
 
-Finding a numerical solution to a system of hyperbolic balance laws
-can be done in several different ways - PyBLAW uses the *finite
-volume* approach.
+PyBLAW is based upon the *finite volume* approach to solving a system
+of hyperbolic balance laws numerically.
 
 We integrate the system over a grid cell (finite volume) from
 :math:`x_{i-1/2}` to :math:`x_{i+1/2}` and re-arrange to obtain
@@ -23,7 +22,8 @@ quadrature points given the cell averages of :math:`q`.  This is the
 *reconstruction* problem.  Therefore, in order to solve a particular
 system of hyperbolic balance laws we need to
 
-1. reconstruct the solution at various points (cell boundaries and source quadrature points),
+1. reconstruct the solution at various points (cell boundaries and
+   source quadrature points),
 2. compute the flux and source terms, and
 3. evolve the system.
 
