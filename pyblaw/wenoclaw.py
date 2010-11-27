@@ -25,7 +25,6 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 
        * *order*  - WENO reconstruction order
        * *cache*  - cache file name
-       * *format* - cache file format (defaults to 'mat')
 
        The pyweno.weno.WENO object is loaded from the cache, which
        must be pre-built.
@@ -35,15 +34,14 @@ class WENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 
     """
 
-    def __init__(self, order=3, cache='cache.mat', format='mat'):
+    def __init__(self, order=3, cache='cache.h5'):
         self.k = order
         self.cache = cache
-        self.format = format
 
 
     def pre_run(self, **kwargs):
 
-        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format=self.format)
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
 
 
     def reconstruct(self, q, qm, qp, qq, **kwargs):
@@ -76,9 +74,9 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
        * *evolver* - evolver or None (defaults to pyblaw.evolver.SSPERK3)
        * *dumper*  - dumper or None (defaults to pyblaw.dumper.MATDumper)
        * *times*   - times
-       * *cache*   - cache file name (defaults to 'cache.mat')
-       * *format*  - cache file format (defaults to 'mat')
-       * *output*  - output file name (defaults to 'output.mat')
+       * *cache*   - cache file name (defaults to 'cache.h5')
+       * *output*  - output file name (defaults to 'output.h5')
+       * *format*  - output file format
 
        The entries of the *flux* dictionary are:
 
@@ -91,8 +89,8 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
                  flux={},
                  order=3,
                  system=None, evolver=None, dumper=None,
-                 cache='cache.mat', format='mat',
-                 output='output.mat',
+                 cache='cache.h5',
+                 output='output.h5', format = 'h5py',
                  **kwargs):
 
         self.f       = flux
@@ -111,8 +109,7 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
                 dumper = pyblaw.h5dumper.H5PYDumper(output)
 
         reconstructor = WENOCLAWReconstructor(order=self.k,
-                                              cache=self.cache,
-                                              format=self.format)
+                                              cache=self.cache)
 
         flux = pyblaw.flux.LFFlux(self.f['flux'], self.f['alpha'])
 
@@ -133,8 +130,8 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
         if not os.access(self.cache, os.F_OK):
             return False
 
-        self.grid = pyweno.grid.Grid(cache=self.cache, format=self.format)
-        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format=self.format)
+        self.grid = pyweno.grid.Grid(cache=self.cache)
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
 
         return True
 
@@ -144,7 +141,7 @@ class WENOCLAWLFSolver(pyblaw.solver.Solver):
         weno = pyweno.weno.WENO(grid=grid, order=self.k)
         weno.precompute_reconstruction('left')
         weno.precompute_reconstruction('right')
-        weno.cache(self.cache, format=self.format)
+        weno.cache(self.cache)
 
         self.grid = grid
         self.weno = weno
@@ -159,7 +156,6 @@ class PeriodicWENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 
        * *order*  - WENO reconstruction order
        * *cache*  - cache file name
-       * *format* - cache file format (defaults to 'mat')
 
        The pyweno.weno.WENO object is loaded from the cache, which
        must be pre-built.
@@ -169,15 +165,14 @@ class PeriodicWENOCLAWReconstructor(pyblaw.reconstructor.Reconstructor):
 
     """
 
-    def __init__(self, order=3, cache='cache.mat', format='mat'):
+    def __init__(self, order=3, cache='cache.h5'):
         self.k = order
         self.cache = cache
-        self.format = format
 
 
     def pre_run(self, **kwargs):
 
-        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format=self.format)
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
         self.grid = self.weno.grid      # set our grid to the ghost grid
 
         N = self.grid.N
@@ -231,9 +226,9 @@ class PeriodicWENOCLAWLFSolver(pyblaw.solver.Solver):
        * *evolver* - evolver or None (defaults to pyblaw.evolver.SSPERK3)
        * *dumper*  - dumper or None (defaults to pyblaw.dumper.MATDumper)
        * *times*   - times
-       * *cache*   - cache file name (defaults to 'cache.mat')
-       * *format*  - cache file format (defaults to 'mat')
-       * *output*  - output file name (defaults to 'output.mat')
+       * *cache*   - cache file name (defaults to 'cache.h5')
+       * *output*  - output file name (defaults to 'output.h5')
+       * *format*  - cache file format (defaults to 'h5py')
 
        The entries of the *flux* dictionary are:
 
@@ -246,8 +241,8 @@ class PeriodicWENOCLAWLFSolver(pyblaw.solver.Solver):
                  flux={},
                  order=3,
                  system=None, evolver=None, dumper=None,
-                 cache='cache.mat', format='mat',
-                 output='output.mat',
+                 cache='cache.h5', format='h5py',
+                 output='output.h5',
                  **kwargs):
 
         self.f       = flux
@@ -266,8 +261,7 @@ class PeriodicWENOCLAWLFSolver(pyblaw.solver.Solver):
                 dumper = pyblaw.h5dumper.H5PYDumper(output)
 
         reconstructor = PeriodicWENOCLAWReconstructor(order=self.k,
-                                                      cache=self.cache,
-                                                      format=self.format)
+                                                      cache=self.cache)
 
         flux = pyblaw.flux.LFFlux(self.f['flux'], self.f['alpha'])
 
@@ -288,8 +282,8 @@ class PeriodicWENOCLAWLFSolver(pyblaw.solver.Solver):
         if not os.access(self.cache, os.F_OK):
             return False
 
-        self.ghost_grid = pyweno.grid.Grid(cache=self.cache, format=self.format)
-        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache, format=self.format)
+        self.ghost_grid = pyweno.grid.Grid(cache=self.cache)
+        self.weno = pyweno.weno.WENO(order=self.k, cache=self.cache)
 
         # remove ghost cells and create new grid
         k = self.k
@@ -318,7 +312,7 @@ class PeriodicWENOCLAWLFSolver(pyblaw.solver.Solver):
         weno = pyweno.weno.WENO(grid=ghost_grid, order=self.k)
         weno.precompute_reconstruction('left')
         weno.precompute_reconstruction('right')
-        weno.cache(self.cache, format=self.format)
+        weno.cache(self.cache)
 
         self.ghost_grid = ghost_grid
         self.grid = pyblaw.grid.Grid(x)
