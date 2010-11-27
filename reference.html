@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PyBLAW Reference &mdash; PyBLAW v0.5.7 documentation</title>
+    <title>PyBLAW Reference &mdash; PyBLAW v0.5.9 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.7',
+        VERSION:     '0.5.9',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="PyBLAW v0.5.7 documentation" href="index.html" />
+    <link rel="top" title="PyBLAW v0.5.9 documentation" href="index.html" />
     <link rel="next" title="Downloading and installing" href="download.html" />
     <link rel="prev" title="PyBLAW Examples" href="examples.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="examples.html" title="PyBLAW Examples"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5.7 documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.5.9 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -333,13 +333,12 @@ points, and store the result in <em>qm</em> (-), <em>qp</em> (+), and <em>qq</em
 <dl class="class">
 <dt id="pyblaw.wenoclaw.WENOCLAWReconstructor">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWReconstructor</tt><big>(</big><em>order=3</em>, <em>cache='cache.mat'</em>, <em>format='mat'</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWReconstructor" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWReconstructor</tt><big>(</big><em>order=3</em>, <em>cache='cache.h5'</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWReconstructor" title="Permalink to this definition">¶</a></dt>
 <dd><p>WENO CLAW Reconstructor.</p>
 <p><strong>Arguments</strong></p>
 <ul class="simple">
 <li><em>order</em>  - WENO reconstruction order</li>
 <li><em>cache</em>  - cache file name</li>
-<li><em>format</em> - cache file format (defaults to &#8216;mat&#8217;)</li>
 </ul>
 <p>The pyweno.weno.WENO object is loaded from the cache, which
 must be pre-built.</p>
@@ -577,7 +576,7 @@ evolver, reconstructor, flux, and source methods.</p>
 <dl class="class">
 <dt id="pyblaw.wenoclaw.WENOCLAWLFSolver">
 <em class="property">
-class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWLFSolver</tt><big>(</big><em>flux={}</em>, <em>order=3</em>, <em>system=None</em>, <em>evolver=None</em>, <em>dumper=None</em>, <em>cache='cache.mat'</em>, <em>format='mat'</em>, <em>output='output.mat'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWLFSolver" title="Permalink to this definition">¶</a></dt>
+class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">WENOCLAWLFSolver</tt><big>(</big><em>flux={}</em>, <em>order=3</em>, <em>system=None</em>, <em>evolver=None</em>, <em>dumper=None</em>, <em>cache='cache.h5'</em>, <em>output='output.h5'</em>, <em>format='h5py'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyblaw.wenoclaw.WENOCLAWLFSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>WENO conservation law solver using a Lax-Friedrichs flux.</p>
 <p><strong>Arguments</strong></p>
 <ul class="simple">
@@ -587,9 +586,9 @@ class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">W
 <li><em>evolver</em> - evolver or None (defaults to pyblaw.evolver.SSPERK3)</li>
 <li><em>dumper</em>  - dumper or None (defaults to pyblaw.dumper.MATDumper)</li>
 <li><em>times</em>   - times</li>
-<li><em>cache</em>   - cache file name (defaults to &#8216;cache.mat&#8217;)</li>
-<li><em>format</em>  - cache file format (defaults to &#8216;mat&#8217;)</li>
-<li><em>output</em>  - output file name (defaults to &#8216;output.mat&#8217;)</li>
+<li><em>cache</em>   - cache file name (defaults to &#8216;cache.h5&#8217;)</li>
+<li><em>output</em>  - output file name (defaults to &#8216;output.h5&#8217;)</li>
+<li><em>format</em>  - output file format</li>
 </ul>
 <p>The entries of the <em>flux</em> dictionary are:</p>
 <ul class="simple">
@@ -662,7 +661,7 @@ class </em><tt class="descclassname">pyblaw.wenoclaw.</tt><tt class="descname">W
         <li class="right" >
           <a href="examples.html" title="PyBLAW Examples"
              >previous</a> |</li>
-        <li><a href="index.html">PyBLAW v0.5.7 documentation</a> &raquo;</li> 
+        <li><a href="index.html">PyBLAW v0.5.9 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

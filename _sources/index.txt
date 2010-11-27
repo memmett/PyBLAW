@@ -8,6 +8,7 @@ systems of hyperbolic balance laws of the form
 
 **News**
 
+* November 27 2010: `PyBLAW 0.5.9`_ released.
 * October 17 2010: `PyBLAW 0.5.7`_ released (periodic WENOCLAW solver, fixed LF flux).
 * May 3 2010: `PyBLAW 0.5.2`_ released (easy Cython support).
 * March 15 2010: `PyBLAW 0.5.1`_ released (minor fixes to the WENOCLAW solver).
@@ -58,3 +59,4 @@ patches to the primary author (`Matthew Emmett`_).  You will be credited.
 .. _`PyBLAW 0.5.1`: http://github.com/memmett/PyBLAW/downloads
 .. _`PyBLAW 0.5.2`: http://github.com/memmett/PyBLAW/downloads
 .. _`PyBLAW 0.5.7`: http://github.com/memmett/PyBLAW/downloads
+.. _`PyBLAW 0.5.9`: http://github.com/memmett/PyBLAW/downloads
